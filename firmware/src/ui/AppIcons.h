@@ -50,23 +50,55 @@ static const uint8_t apps[] PROGMEM = {
     0x92, 0x04, 0x92, 0x04, 0xfe, 0x07, 0x00, 0x00
 };
 
-// "Unknown app" placeholder — square frame with a centered '?'. Shown
-// when AppRegistry can't parse a dynamic app's icon.py (missing file,
-// 0 bytes, malformed DATA tuple, etc.). Distinct from AppIcons::apps
-// so the user can tell at a glance which tiles are misconfigured.
+// "Unknown app" placeholder — centered Temporal star (StarIcon, 7×7
+// in a 12×12 tile). Shown when AppRegistry can't parse a dynamic app's
+// icon.py (missing file, 0 bytes, malformed DATA tuple, etc.).
+// Distinct from AppIcons::apps so misconfigured tiles don't look like
+// the generic 3×3 grid.
+static const uint8_t unknown2[] PROGMEM = {
+    0xfc, 0x03,   // ..XXXXXXXX..
+    0x02, 0x04,   // .X........X.
+    0xf1, 0x08,   // X...XXXX...X
+    0xf9, 0x09,   // X..XXXXXX..X
+    0x99, 0x09,   // X..XX..XX..X
+    0x99, 0x09,   // X..XX..XX..X
+    0xf9, 0x09,   // X..XXXXXX..X
+    0xf9, 0x09,   // X..XXXXXX..X
+    0x99, 0x09,   // X..XX..XX..X
+    0x99, 0x09,   // X..XX..XX..X
+    0x02, 0x04,   // .X........X.
+    0xfc, 0x03,   // ..XXXXXXXX..
+};
+
+static const uint8_t docs[] PROGMEM = {
+    0xfc, 0x03,   // ..XXXXXXXX..
+    0x02, 0x04,   // .X........X.
+    0xf1, 0x08,   // X...XXXX...X
+    0xf9, 0x09,   // X..XXXXXX..X
+    0x99, 0x09,   // X..XX..XX..X
+    0x81, 0x09,   // X......XX..X
+    0xe1, 0x08,   // X....XXX...X
+    0x61, 0x08,   // X....XX....X
+    0x01, 0x08,   // X..........X
+    0x61, 0x08,   // X....XX....X
+    0x02, 0x04,   // .X........X.
+    0xfc, 0x03,   // ..XXXXXXXX..
+};
+
+
 static const uint8_t unknown[] PROGMEM = {
-    0x00, 0x00,   // ............
-    0xfe, 0x07,   // .XXXXXXXXXX.
-    0x02, 0x04,   // .X........X.
-    0x72, 0x04,   // .X.XXXX...X.
-    0x42, 0x04,   // .X.X..X...X.
-    0x02, 0x04,   // .X..X.....X.   (shaft of '?')
-    0x12, 0x04,   // .X..X.....X.
-    0x02, 0x04,   // .X........X.
-    0x12, 0x04,   // .X..X.....X.   (dot of '?')
-    0x02, 0x04,   // .X........X.
-    0xfe, 0x07,   // .XXXXXXXXXX.
-    0x00, 0x00,   // ............
+    0xe0, 0x03,   // .....XXXXX..
+    0x06, 0x04,   // .XX.......X.
+    0x09, 0x08,   // X..X.......X
+    0x09, 0x08,   // X..X.......X
+    0xef, 0x00,   // XXXX.XXX....
+    0xa9, 0x00,   // X..X.X.X....
+    0xe9, 0x0e,   // X..X.XXX.XXX
+    0x20, 0x0a,   // .....X...X.X
+    0x21, 0x0e,   // X....X...XXX
+    0x01, 0x02,   // X........X..
+    0x02, 0x02,   // .X.......X..
+    0xfc, 0x00,   // ..XXXXXX....
 };
 
 // Persistent LED-matrix-app picker (MATRIX APPS tile). 4×4 grid of
@@ -193,28 +225,11 @@ static const uint8_t map[] PROGMEM = {
     0x98, 0x01, 0x90, 0x00, 0x60, 0x00, 0x00, 0x00
 };
 
-// Replay folder — event tools grouped under one home-menu tile. The
-// spark + page motif keeps it distinct from Schedule, Map, Files, and Apps.
-static const uint8_t replay[] PROGMEM = {
-    0x00, 0x00,   // ............
-    0x24, 0x00,   // ..X..X......
-    0x18, 0x00,   // ...XX.......
-    0x7e, 0x00,   // .XXXXXX.....
-    0x18, 0x00,   // ...XX.......
-    0x24, 0x00,   // ..X..X......
-    0x00, 0x00,   // ............
-    0xf8, 0x07,   // ...XXXXXXXX.
-    0x08, 0x04,   // ...X......X.
-    0xe8, 0x05,   // ...X.X.XXX.
-    0x08, 0x04,   // ...X......X.
-    0xf8, 0x07,   // ...XXXXXXXX.
-};
-
 // Chunky question-mark — used as the "Help / docs" launcher tile.
 // 12×12, two bytes per row (LSB = leftmost column) — same convention
 // as every other AppIcons glyph. The strokes are 2 px wide so the
 // glyph reads cleanly against the inverted-selection background.
-static const uint8_t docs[] PROGMEM = {
+static const uint8_t docs2[] PROGMEM = {
     0x00, 0x00,   // ............
     0xf8, 0x01,     // ...XXXXXX...
     0x0c, 0x03,     // ..XX....XX..
@@ -241,18 +256,6 @@ static const uint8_t profile[] PROGMEM = {
     0x04, 0x02, 0x04, 0x02, 0xf8, 0x01, 0x00, 0x00
 };
 
-static const uint8_t contacts[] PROGMEM = {
-    0x00, 0x00, 0x30, 0x03, 0x48, 0x04, 0x48, 0x04,
-    0x30, 0x03, 0x00, 0x00, 0x78, 0x07, 0x84, 0x08,
-    0x82, 0x10, 0x82, 0x10, 0xfc, 0x0f, 0x00, 0x00
-};
-
-static const uint8_t badgeInfo[] PROGMEM = {
-    0x00, 0x00, 0xfe, 0x07, 0x02, 0x04, 0x72, 0x04,
-    0x8a, 0x04, 0x8a, 0x04, 0x72, 0x04, 0x02, 0x04,
-    0x7a, 0x04, 0x02, 0x04, 0xfe, 0x07, 0x00, 0x00
-};
-
 static const uint8_t schedule[] PROGMEM = {
     0xff, 0x0f, 0x81, 0x08, 0xff, 0x0f, 0xff, 0x0f,
     0x49, 0x09, 0x49, 0x09, 0x49, 0x09, 0xff, 0x0f,
@@ -263,23 +266,6 @@ static const uint8_t settings[] PROGMEM = {
     0x70, 0x00, 0x56, 0x03, 0x8a, 0x02, 0x74, 0x01,
     0xdb, 0x06, 0x89, 0x04, 0xdb, 0x06, 0x74, 0x01,
     0x8a, 0x02, 0x56, 0x03, 0x70, 0x00, 0x00, 0x00
-};
-
-// Badge Config folder — a small toolbox tray. Used for the grouped
-// operational menu that contains WiFi, Settings, OTA, and Diagnostics.
-static const uint8_t badgeConfig[] PROGMEM = {
-    0x00, 0x00,   // ............
-    0xfe, 0x07,   // .XXXXXXXXXX.
-    0x02, 0x04,   // .X........X.
-    0x7a, 0x04,   // .X.XXXX.X.X.
-    0x4a, 0x04,   // .X.X..X.X.X.
-    0x7a, 0x04,   // .X.XXXX.X.X.
-    0x02, 0x04,   // .X........X.
-    0xd2, 0x04,   // .X.X..X.X.X.
-    0x72, 0x04,   // .X.XXX...X..
-    0x52, 0x04,   // .X.X.X...X..
-    0xfe, 0x07,   // .XXXXXXXXXX.
-    0x00, 0x00,   // ............
 };
 
 // 12×12 WiFi icon — three concentric arcs above a centre dot, the

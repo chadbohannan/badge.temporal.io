@@ -22,13 +22,15 @@ Outputs from a single walk:
 
 3) firmware/initial_filesystem/manifest.json
    Full filesystem manifest (every file, with sha256 + fnv1a32 + size +
-   raw URL). Consumed by:
-     - badge_sync.py (USB raw-REPL diff sync)
-     - JumperIDE "Sync Filesystem" button
+   raw URL). Consumed by badge_sync.py and JumperIDE. On the public repo
+   this file is **committed** and preserved across builds; regenerate only
+   with TEMPORAL_BADGE_REGEN_MANIFEST=1 or when the file is missing.
 
-4) firmware/build/community_apps.json  (local generated file, ignored by git)
-   The Community Apps registry consumed by the on-badge screen after the
-   release workflow uploads it as a GitHub Release asset.
+4) registry/community_apps.json  (repo root, committed)
+   The Community Apps registry the badge fetches over WiFi
+   (REPO_COMMUNITY_APPS_URL → raw .../registry/community_apps.json).
+   Also copied to firmware/build/community_apps.json (gitignored) for
+   the release workflow to attach as a GitHub Release asset.
    Each kind:"app" entry has its full file list inlined under "files":
    [...] — no separate per-app manifest.json needed.
    It includes optional community-only apps from community_apps/.
@@ -52,10 +54,127 @@ from pathlib import Path
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-# Only files inside these top-level directories are baked into app0. The
-# rest of firmware/data/ is shipped via fatfs.bin (factory flash) or
-# Community Apps / JumperIDE sync.
-BAKE_DIRS = {'lib', 'matrixApps'}
+# Files under these paths are baked into app0 and provisioned to FATFS at
+# boot when missing. Entries may be a top-level dir (`lib`) or a nested
+# prefix (`apps/synth`) — a file bakes if its relative path equals an entry
+# or sits under `entry + '/'`. The selected `apps/*` games are baked so the
+# badge ships them even on an OTA update (firmware.bin carries app0 but not
+# the factory fatfs.bin). Everything else under initial_filesystem (other
+# apps, docs, micropython_tests, loose helper scripts) ships via fatfs.bin
+# (factory flash) or Community Apps / JumperIDE sync, and never bakes.
+# Optional community-only apps live in community_apps/ and are downloaded.
+BAKE_DIRS = {'lib', 'matrixApps', 'apps/synth', 'apps/flappy_asteroids', 'apps/breaksnake', 'apps/ir_block_battle', 'apps/ir_remote'}
+
+
+def _matches_bake_dir(rel_str: str) -> bool:
+    """True if `rel_str` (posix path, no leading slash) is covered by a
+    BAKE_DIRS entry. An entry matches an exact path or any descendant
+    (`entry` or `entry/...`), so both top-level dirs (`lib`) and nested
+    prefixes (`apps/synth`) work without false `apps/synthXYZ` matches."""
+    for entry in BAKE_DIRS:
+        if rel_str == entry or rel_str.startswith(entry + '/'):
+            return True
+    return False
+
+
+# Big committed files that are excluded from the normal scan/bake by
+# SKIP_EXTENSIONS (too large to bake into app0) but should still be
+# installable from the Community Apps screen. Each lives in
+# initial_filesystem/ and is served from its committed location via the
+# raw URL; size + sha256 are computed at generation time so the registry
+# entry is self-verifying. doom1.wad ships inside the factory fatfs.bin,
+# so factory-flashed badges already have it; this entry lets OTA-updated
+# or reformatted badges re-download it on demand.
+DOWNLOADABLE_ASSETS = [
+    {
+        'rel_path': '/doom1.wad',
+        'id': 'doom1-shareware',
+        'name': 'DOOM 1 Shareware',
+        'version': '1.9',
+        'description': 'Original 1993 shareware episode. Required for the DOOM tile.',
+        'min_free_bytes': 4500000,
+    },
+]
+
+
+def generate_downloadable_assets(src_dir: Path, raw_base: str) -> list[dict]:
+    """Build kind:"file" registry entries for the DOWNLOADABLE_ASSETS that
+    are present under `src_dir` (initial_filesystem). Missing files are
+    skipped with a warning rather than emitting a dead URL."""
+    entries: list[dict] = []
+    for cfg in DOWNLOADABLE_ASSETS:
+        rel_path = cfg['rel_path']
+        local = src_dir / rel_path.lstrip('/')
+        if not local.is_file():
+            print(f"[generate_startup_files] WARNING: downloadable asset "
+                  f"{rel_path} not found at {local}; skipping registry entry")
+            continue
+        content = local.read_bytes()
+        size = len(content)
+        sha256 = hashlib.sha256(content).hexdigest()
+        entries.append({
+            'id': cfg.get('id', rel_path.lstrip('/').replace('/', '-')[:32]),
+            'kind': 'file',
+            'name': cfg.get('name', rel_path.rsplit('/', 1)[-1]),
+            'version': cfg.get('version') or sha256[:12],
+            'dest_path': rel_path,
+            'url': f"{raw_base}{rel_path}",
+            'sha256': sha256,
+            'size': size,
+            'min_free_bytes': cfg.get('min_free_bytes', size + 4096),
+            'description': cfg.get('description', f"Optional asset ({rel_path})"),
+        })
+    return entries
+
+
+def generate_registry_downloadables_header(entries: list[dict]) -> str:
+    """Emit RegistryDownloadables.h — firmware-baked kind:"file" entries
+    merged into AssetRegistry after every remote fetch (doom1.wad until
+    the release registry catches up)."""
+    lines = [
+        '#pragma once',
+        '',
+        '#include <stddef.h>',
+        '#include <stdint.h>',
+        '',
+        '// Auto-generated by generate_startup_files.py — do not edit.',
+        '',
+        'namespace ota::registry {',
+        '',
+        'struct BuiltinDownloadable {',
+        '  const char* id;',
+        '  const char* name;',
+        '  const char* version;',
+        '  const char* url;',
+        '  const char* sha256;',
+        '  const char* dest_path;',
+        '  const char* description;',
+        '  uint32_t size;',
+        '  uint32_t min_free_bytes;',
+        '};',
+        '',
+    ]
+    if not entries:
+        lines += [
+            'inline constexpr BuiltinDownloadable kBuiltinDownloadables[] = {};',
+            'inline constexpr size_t kBuiltinDownloadableCount = 0;',
+        ]
+    else:
+        lines.append('inline constexpr BuiltinDownloadable kBuiltinDownloadables[] = {')
+        for entry in entries:
+            lines.append('  {')
+            for key in ('id', 'name', 'version', 'url', 'sha256', 'dest_path',
+                        'description'):
+                lines.append(f'    {json.dumps(entry[key])},')
+            lines.append(f'    {entry["size"]}u,')
+            lines.append(f'    {entry["min_free_bytes"]}u,')
+            lines.append('  },')
+        lines.append('};')
+        lines.append(
+            f'inline constexpr size_t kBuiltinDownloadableCount = {len(entries)};')
+    lines += ['', '}  // namespace ota::registry', '']
+    return '\n'.join(lines)
+
 
 # Dev-only: additional path prefixes that should ALSO be baked into
 # kStartupFiles[] for the duration of an iteration cycle. Driven by
@@ -279,6 +398,11 @@ def scan_files(data_dir: Path,
     files = []
     for path in sorted(data_dir.rglob('*')):
         rel_parts = path.relative_to(data_dir).parts
+        # The committed manifest lives inside the source tree so it can be
+        # mirrored onto the badge, but it cannot describe its own hash: writing
+        # that hash changes the file and makes the entry stale immediately.
+        if rel_parts == ('manifest.json',):
+            continue
         if any(part.startswith('.') or part in SKIP_DIR_NAMES for part in rel_parts):
             continue
         if path.suffix.lower() in SKIP_EXTENSIONS:
@@ -288,7 +412,7 @@ def scan_files(data_dir: Path,
         rel_path = '/' + path.relative_to(data_dir).as_posix()
         content = path.read_bytes()
         rel_str = path.relative_to(data_dir).as_posix()
-        bake = (rel_parts and rel_parts[0] in BAKE_DIRS) or \
+        bake = _matches_bake_dir(rel_str) or \
                _matches_dev_bake(rel_str, dev_bake_paths)
         files.append({
             'rel_path': rel_path,
@@ -327,7 +451,8 @@ def generate_header(bake_files: list[dict], history: dict) -> tuple[str, dict]:
     L.append('// AUTO-GENERATED by scripts/generate_startup_files.py')
     L.append('// DO NOT EDIT — modify files in firmware/data/ and rebuild.')
     L.append('//')
-    L.append('// Only files under BAKE_DIRS = {lib, matrixApps} are embedded here.')
+    L.append('// Only files under BAKE_DIRS = {' +
+             ', '.join(sorted(BAKE_DIRS)) + '} are embedded here.')
     L.append('// Everything else ships via fatfs.bin (factory flash) or Community Apps')
     L.append('// / JumperIDE sync — see firmware/docs/STORAGE-MODEL.md.')
     L.append('// ═══════════════════════════════════════════════════════════════════════')
@@ -439,7 +564,8 @@ def generate_full_manifest(files: list[dict], raw_base: str) -> str:
 
 
 def generate_community_apps(files: list[dict], data_dir: Path,
-                            raw_base: str) -> str:
+                            raw_base: str,
+                            extra_assets: list[dict] | None = None) -> str:
     """Emit the generated Community Apps registry JSON.
 
     Sources:
@@ -447,6 +573,8 @@ def generate_community_apps(files: list[dict], data_dir: Path,
       - <file>   → kind:"file" (loose top-level scripts like hello.py)
       - docs/, images/, messages/  → kind:"file"
       - data/ root files in LOOSE_ROOT_FILES → kind:"file"
+      - extra_assets → pre-built kind:"file" entries (big committed
+        downloadables like doom1.wad), appended and deduped on dest_path
 
     For app entries the per-file list (path/sha256/size/url) is
     inlined directly rather than referenced through a per-app
@@ -569,6 +697,15 @@ def generate_community_apps(files: list[dict], data_dir: Path,
             "description": f"Optional asset ({f['rel_path']})",
         })
 
+    # Big committed downloadables (doom1.wad). Dedup on dest_path so a
+    # scanned file can't be shadowed by a release-asset entry.
+    existing_dests = {a.get("dest_path") for a in assets if "dest_path" in a}
+    for entry in (extra_assets or []):
+        if entry.get("dest_path") in existing_dests:
+            continue
+        assets.append(entry)
+        existing_dests.add(entry.get("dest_path"))
+
     return json.dumps({
         "schema_version": 2,
         "generator": "generate_startup_files.py",
@@ -589,10 +726,12 @@ def generate(project_dir: Path, script_file: Path = None):
     # by the release workflow, so contributors only commit app source.
     repo_root = project_dir.parent if project_dir.name == 'firmware' else project_dir
     community_src_dir = repo_root / 'community_apps'
-    registry_file = Path(os.environ.get(
-        "TEMPORAL_BADGE_COMMUNITY_REGISTRY_OUT",
-        str(project_dir / 'build' / 'community_apps.json'),
-    ))
+    registry_file = repo_root / 'registry' / 'community_apps.json'
+    build_registry_file = project_dir / 'build' / 'community_apps.json'
+    downloadables_header = project_dir / 'src' / 'ota' / 'RegistryDownloadables.h'
+    registry_out_override = os.environ.get("TEMPORAL_BADGE_COMMUNITY_REGISTRY_OUT")
+    if registry_out_override:
+        registry_file = Path(registry_out_override)
 
     if not src_dir.exists():
         print(f"[generate_startup_files] WARNING: {src_dir} not found, generating empty header")
@@ -612,7 +751,11 @@ def generate(project_dir: Path, script_file: Path = None):
     needs_mirror = not mirror_dir.exists() or needs_run
 
     if not needs_run:
-        if full_manifest_file.exists() and registry_file.exists() and not needs_mirror:
+        registry_ok = registry_file.exists()
+        if registry_out_override is None:
+            registry_ok = registry_ok and build_registry_file.exists()
+        if (full_manifest_file.exists() and registry_ok
+                and downloadables_header.exists() and not needs_mirror):
             print("[generate_startup_files] Up to date, skipping")
             return
 
@@ -663,11 +806,18 @@ def generate(project_dir: Path, script_file: Path = None):
     else:
         print(f"[generate_startup_files] {output_header.name} unchanged")
 
-    # 2) firmware/data/manifest.json (every file).
-    manifest_text = generate_full_manifest(files, raw_base)
-    if write_if_changed(full_manifest_file, manifest_text):
-        print(f"[generate_startup_files] wrote {full_manifest_file.relative_to(project_dir)} "
-              f"({len(files)} files)")
+    # 2) firmware/initial_filesystem/manifest.json — committed on the public
+    #    repo; mirror to data/ but do not overwrite unless explicitly
+    #    requested (TEMPORAL_BADGE_REGEN_MANIFEST=1) or missing.
+    regen_manifest = os.environ.get("TEMPORAL_BADGE_REGEN_MANIFEST") == "1"
+    if regen_manifest or not full_manifest_file.exists():
+        manifest_text = generate_full_manifest(files, raw_base)
+        if write_if_changed(full_manifest_file, manifest_text):
+            print(f"[generate_startup_files] wrote {full_manifest_file.relative_to(project_dir)} "
+                  f"({len(files)} files)")
+    elif full_manifest_file.exists():
+        print("[generate_startup_files] preserving committed manifest.json "
+              "(set TEMPORAL_BADGE_REGEN_MANIFEST=1 to regenerate)")
 
     # Clean up any stale per-app manifest.json files left over from
     # the older schema where each app folder had its own manifest.
@@ -692,13 +842,24 @@ def generate(project_dir: Path, script_file: Path = None):
         registry_files.extend(with_raw_base(community_files,
                                             community_raw_base))
 
-    registry_text = generate_community_apps(registry_files, src_dir, raw_base)
-    if write_if_changed(registry_file, registry_text):
-        try:
-            display = registry_file.relative_to(project_dir)
-        except ValueError:
-            display = registry_file
-        print(f"[generate_startup_files] wrote {display}")
+    release_assets = generate_downloadable_assets(src_dir, raw_base)
+    registry_text = generate_community_apps(registry_files, src_dir, raw_base,
+                                            extra_assets=release_assets)
+    registry_targets = [registry_file]
+    if registry_out_override is None:
+        registry_targets.append(build_registry_file)
+    for target in registry_targets:
+        if write_if_changed(target, registry_text):
+            try:
+                display = target.relative_to(repo_root)
+            except ValueError:
+                display = target
+            print(f"[generate_startup_files] wrote {display}")
+
+    dl_header_text = generate_registry_downloadables_header(release_assets)
+    if write_if_changed(downloadables_header, dl_header_text):
+        print(f"[generate_startup_files] wrote {downloadables_header.name} "
+              f"({len(release_assets)} downloadable entries)")
 
     # 5) Mirror initial_filesystem/ → data/ for `pio run -t buildfs/uploadfs`.
     #    Done last so the per-app manifest.json files we just wrote also

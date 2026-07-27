@@ -3,8 +3,9 @@ firmware/.pio/
 firmware/build/
 firmware/compile_commands.json
 firmware/src/micropython/StartupFilesData.h
+firmware/src/ota/RegistryDownloadables.h
 firmware/src/infra/BuildWifiConfig.generated.h
-firmware/initial_filesystem/manifest.json
+# manifest.json is committed — regenerate with TEMPORAL_BADGE_REGEN_MANIFEST=1
 firmware/scripts/startup_hash_history.json
 firmware/data/
 firmware/logs/
@@ -69,3 +70,4 @@ data/**/*.pyc
 !/firmware/lib/**
 !/firmware/initial_filesystem/lib/
 !/firmware/initial_filesystem/lib/**
+*code-workspace

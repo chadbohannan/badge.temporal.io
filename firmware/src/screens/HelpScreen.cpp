@@ -21,7 +21,7 @@ constexpr uint8_t kQrIde = 1;
 constexpr uint8_t kQrTemporal = 2;
 
 constexpr const char* kQrUrls[] = {
-    "https://badge.temporal.io/developer-guide.html",
+    "https://badge.temporal.io/developer-guide",
     "https://ide.jumperless.org/",
     "https://badge.temporal.io/",
 };
@@ -44,8 +44,11 @@ enum class ItemKind : uint8_t {
   kText,
   kGlyphs,
   kQr,
+  kAction,
   kGap,
 };
+
+constexpr uint8_t kActionCredits = 0;
 
 struct Item {
   ItemKind kind;
@@ -78,8 +81,6 @@ constexpr Item kItems[] = {
     {ItemKind::kHeading, "SLEEP",                         0},
     {ItemKind::kGlyphs,  "v hold 3s on home",             0},
     {ItemKind::kGap,     nullptr,                         0},
-
-    // ── 
 
     // ── Nametag (IMU flip) ───────────────────────────────────────────
     {ItemKind::kHeading, "NAMETAG",                       0},
@@ -114,8 +115,8 @@ constexpr Item kItems[] = {
 
     // ── Docs URLs ────────────────────────────────────────────────────
     {ItemKind::kHeading, "DEV GUIDE",                     0},
-    {ItemKind::kText,    "badge.temporal.io/",             0},
-    {ItemKind::kText,    "developer-guide.html",           0},
+    {ItemKind::kText,    "docs.jumperless.org/",               0},
+    {ItemKind::kText,    "badge-developer-guide/",         0},
     {ItemKind::kQr,      "docs",                          kQrDocs},
     {ItemKind::kGap,     nullptr,                         0},
 
@@ -124,9 +125,13 @@ constexpr Item kItems[] = {
     {ItemKind::kQr,      "ide",                           kQrIde},
     {ItemKind::kGap,     nullptr,                         0},
 
-    {ItemKind::kHeading, "SITE",                          0},
+    {ItemKind::kHeading, "MIRROR",                        0},
     {ItemKind::kText,    "badge.temporal.io",             0},
     {ItemKind::kQr,      "temporal",                      kQrTemporal},
+    {ItemKind::kGap,     nullptr,                         0},
+
+    // ── Credits (scroll to bottom) ───────────────────────────────────
+    {ItemKind::kAction,  "Confirm Meet the crew",         kActionCredits},
 };
 constexpr size_t kItemCount = sizeof(kItems) / sizeof(kItems[0]);
 
@@ -134,6 +139,7 @@ constexpr size_t kItemCount = sizeof(kItems) / sizeof(kItems[0]);
 constexpr uint8_t kHeadingH = 10;  // small inverted bar
 constexpr uint8_t kTextH = 8;
 constexpr uint8_t kGlyphsH = 12;   // 10-px glyph + small lead
+constexpr uint8_t kActionH = kGlyphsH;
 // Plate sized to hold a 29-module v3 QR at 2 px/module (58 px) plus a
 // 1-module quiet zone on each side. Smaller QRs (v2 = 25 modules) get
 // the same plate with extra surrounding white, which only helps
@@ -147,16 +153,11 @@ uint8_t itemHeight(const Item& it) {
     case ItemKind::kHeading: return kHeadingH;
     case ItemKind::kText:    return kTextH;
     case ItemKind::kGlyphs:  return kGlyphsH;
+    case ItemKind::kAction:  return kActionH;
     case ItemKind::kQr:      return kQrH;
     case ItemKind::kGap:     return kGapH;
   }
   return 0;
-}
-
-int16_t totalContentHeight() {
-  int16_t h = 0;
-  for (size_t i = 0; i < kItemCount; i++) h += itemHeight(kItems[i]);
-  return h;
 }
 
 // ── Layout constants ──────────────────────────────────────────────────────
@@ -169,6 +170,16 @@ constexpr uint8_t kBodyTopY = kHeaderRuleY + 1;
 constexpr uint8_t kBodyBotY = OLEDLayout::kScreenH;
 constexpr uint8_t kBodyH = kBodyBotY - kBodyTopY;
 constexpr uint8_t kBodyPadX = 2;
+// Trailing blank scroll room so the last action row ("Meet the crew")
+// lands in the vertical center when the user scrolls to the bottom.
+constexpr uint8_t kBottomScrollPad =
+    static_cast<uint8_t>((kBodyH - kActionH) / 2);
+
+int16_t totalContentHeight() {
+  int16_t h = 0;
+  for (size_t i = 0; i < kItemCount; i++) h += itemHeight(kItems[i]);
+  return h + kBottomScrollPad;
+}
 
 // ── QR sizing ─────────────────────────────────────────────────────────────
 // Capacity table: smallest version that holds the URL with ECC_LOW in
@@ -195,7 +206,7 @@ constexpr float   kScrollPxPerSecAtFull = 120.0f;
 // Speed is interpolated from 1.0 (no QR visible) down to this value
 // (QR fully covers body) so users get a "sticky" pause that gives a
 // phone time to lock on. 0.25 ≈ 4× slower at the worst-case QR.
-constexpr float   kStickyMinMultiplier = 0.35f;
+constexpr float   kStickyMinMultiplier = 0.55f;
 constexpr uint16_t kFrameTickMinMs = 8;
 
 }  // namespace
@@ -351,6 +362,7 @@ void HelpScreen::render(oled& d, GUIManager& /*gui*/) {
           drawText(d, y, it.text);
           break;
         case ItemKind::kGlyphs:
+        case ItemKind::kAction:
           drawGlyphs(d, y, it.text);
           break;
         case ItemKind::kQr: {
@@ -375,11 +387,36 @@ void HelpScreen::render(oled& d, GUIManager& /*gui*/) {
   d.setMaxClipWindow();
 }
 
+namespace {
+
+bool actionVisibleInViewport(uint8_t actionId, int16_t scrollPx) {
+  int16_t y = 0;
+  for (size_t i = 0; i < kItemCount; i++) {
+    const Item& it = kItems[i];
+    const uint8_t h = itemHeight(it);
+    if (it.kind == ItemKind::kAction && it.qrIndex == actionId) {
+      const int16_t viewTop = scrollPx;
+      const int16_t viewBot = scrollPx + kBodyH;
+      return (y + h) > viewTop && y < viewBot;
+    }
+    y += h;
+  }
+  return false;
+}
+
+}  // namespace
+
 void HelpScreen::handleInput(const Inputs& inputs, int16_t /*cx*/,
                              int16_t /*cy*/, GUIManager& gui) {
   const Inputs::ButtonEdges& e = inputs.edges();
   if (e.cancelPressed) {
     gui.popScreen();
+    return;
+  }
+
+  if (e.confirmPressed &&
+      actionVisibleInViewport(kActionCredits, scrollPx_)) {
+    gui.launchCredits();
     return;
   }
 

@@ -60,6 +60,10 @@ class GUIManager : public IService {
   void bindConfig(Config* cfg) { config_ = cfg; }
   void requestRender();
 
+  // Native AboutCreditsScreen or MicroPython /apps/credits.py, per
+  // kCreditsUsePython. Launched from Help (scroll to bottom).
+  void launchCredits();
+
   // Badge-flipped-upside-down overlay. Main loop calls this from its
   // IMU flip handler: true when the badge is inverted, false when
   // upright. While inverted, a full-screen nametag covers most screens

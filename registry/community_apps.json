@@ -1,0 +1,123 @@
+{
+  "schema_version": 2,
+  "generator": "generate_startup_files.py",
+  "assets": [
+    {
+      "id": "durable-snake",
+      "kind": "app",
+      "name": "Durable Snake",
+      "version": "9b5046269224",
+      "dest_dir": "/apps/durable_snake",
+      "size": 23272,
+      "min_free_bytes": 27368,
+      "description": "Snake game with three retries.",
+      "files": [
+        {
+          "path": "/README.md",
+          "size": 3505,
+          "sha256": "515a4acd362881a5897ce50f7a725124794ffc01807404aa1035a9303d8fd821",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/durable_snake/README.md"
+        },
+        {
+          "path": "/ds_engine.py",
+          "size": 18953,
+          "sha256": "0f3a8785df0f46194c5b8b4a6559752a6e140e99b1109b4ed0c5c76f9b30c94b",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/durable_snake/ds_engine.py"
+        },
+        {
+          "path": "/main.py",
+          "size": 814,
+          "sha256": "da04f5e0d8c62109bd4b5863e34e66c5cce825619c62eb03c6443ac3f8fff95c",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/durable_snake/main.py"
+        }
+      ],
+      "community_contributors": [
+        "Alexandre Roman <alexandre.roman@temporal.io>"
+      ]
+    },
+    {
+      "id": "starfield-nametag",
+      "kind": "app",
+      "name": "Starfield Nametag",
+      "version": "a42c59f16a31",
+      "dest_dir": "/apps/starfield_nametag",
+      "size": 12173,
+      "min_free_bytes": 16269,
+      "description": "Animated starfield with a personalized nametag.",
+      "files": [
+        {
+          "path": "/README.md",
+          "size": 4767,
+          "sha256": "300a36d5af41ccfb192a9dfeb103d47257fba4ba253e67c5a886572b7a4a3eee",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/starfield_nametag/README.md"
+        },
+        {
+          "path": "/main.py",
+          "size": 1567,
+          "sha256": "8909dc6a816a61c6e574f9ac9568ddc905906d768360760d695e6be3a369bd8e",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/starfield_nametag/main.py"
+        },
+        {
+          "path": "/sn_engine.py",
+          "size": 5839,
+          "sha256": "daac9cfd4dafaccc134cb2cad3fb256e1814ebd666b618fe433664d1e24b8635",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/starfield_nametag/sn_engine.py"
+        }
+      ],
+      "community_contributors": [
+        "Alexandre Roman <alexandre.roman@temporal.io>"
+      ]
+    },
+    {
+      "id": "tardigotchi",
+      "kind": "app",
+      "name": "Tardigotchi",
+      "version": "ab04321f602f",
+      "dest_dir": "/apps/tardigotchi",
+      "size": 66319,
+      "min_free_bytes": 70415,
+      "description": "Hatch and care for a tiny tardigrade.",
+      "files": [
+        {
+          "path": "/engine.py",
+          "size": 24793,
+          "sha256": "600dd71c54274749c92d6cf9e5090b7b1df319c882d434bb04f97395a431219f",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/tardigotchi/engine.py"
+        },
+        {
+          "path": "/icon.py",
+          "size": 9551,
+          "sha256": "98f51d607fad32ff52b1e026a169b15d116c0408c9043f8beb4dc273a4a76e90",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/tardigotchi/icon.py"
+        },
+        {
+          "path": "/main.py",
+          "size": 383,
+          "sha256": "184b0db7c85615c473e2abd3daf0e2da3677aab3d9d7c19b0d2939d15f03c7da",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/tardigotchi/main.py"
+        },
+        {
+          "path": "/sprites.py",
+          "size": 31592,
+          "sha256": "69bbe5034119462d5d558e692284a6da9b97fdebeec3fb5e2f44bae6c1ade57d",
+          "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/community_apps/tardigotchi/sprites.py"
+        }
+      ],
+      "community_contributors": [
+        "aask42 <amelia.leah.w@gmail.com>"
+      ]
+    },
+    {
+      "id": "doom1-shareware",
+      "kind": "file",
+      "name": "DOOM 1 Shareware",
+      "version": "1.9",
+      "dest_path": "/doom1.wad",
+      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/doom1.wad",
+      "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771",
+      "size": 4196020,
+      "min_free_bytes": 4500000,
+      "description": "Original 1993 shareware episode. Required for the DOOM tile."
+    }
+  ]
+}
