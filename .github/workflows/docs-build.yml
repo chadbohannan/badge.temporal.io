@@ -35,14 +35,25 @@ jobs:
           test -f docs/css/base.css
           test -f docs/css/components.css
           python3 - <<'PY'
+          import re
           from pathlib import Path
-          missing = [
-              str(path)
-              for path in Path("docs").glob("*.html")
-              if '<link rel="stylesheet"' not in path.read_text()
-          ]
+
+          missing = []
+          misordered = []
+          for path in sorted(Path("docs").glob("*.html")):
+              text = path.read_text()
+              sheets = re.findall(r'<link rel="stylesheet" href="(css/[^"]+)"', text)
+              if not sheets:
+                  missing.append(str(path))
+                  continue
+              # responsive.css carries every breakpoint rule and must win the
+              # cascade over the page-level sheets, so it has to be linked last.
+              if sheets[-1] != "css/responsive.css":
+                  misordered.append(f"{path} (last sheet is {sheets[-1]})")
           if missing:
               raise SystemExit("HTML files missing stylesheet links: " + ", ".join(missing))
+          if misordered:
+              raise SystemExit("css/responsive.css must be linked last: " + ", ".join(misordered))
 
           brand_font_url = (
               "https://fonts.googleapis.com/css2?"

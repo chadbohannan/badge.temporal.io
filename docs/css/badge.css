@@ -8,20 +8,6 @@
   overflow: hidden;
 }
 
-.hero::before {
-  position: absolute;
-  top: 24px;
-  left: clamp(16px, 4vw, 56px);
-  right: clamp(16px, 4vw, 56px);
-  color: var(--dim);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 .hero::after {
   content: "";
   position: absolute;
@@ -41,8 +27,7 @@
 .eyebrow {
   margin: 0 0 16px;
   color: var(--white);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.76rem;
   font-weight: 900;
   letter-spacing: 0.1em;
@@ -93,8 +78,7 @@ h3 {
   max-width: 690px;
   margin: 0;
   color: var(--ink);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 1.12rem;
   line-height: 1.65;
 }
@@ -115,8 +99,7 @@ h3 {
   border: 1px solid var(--line);
   background: transparent;
   color: var(--ink);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -166,28 +149,6 @@ h3 {
   backface-visibility: hidden;
 }
 
-.badge-body::before {
-  position: absolute;
-  top: -28px;
-  left: 0;
-  color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-}
-
-.badge-body::after {
-  position: absolute;
-  right: 0;
-  bottom: -27px;
-  color: var(--green);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-}
-
 .screen {
   position: absolute;
   inset: 82px 44px auto;
@@ -196,8 +157,7 @@ h3 {
   background: #020404;
   color: #dff7ff;
   padding: 14px;
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: -moz-crisp-edges;
   image-rendering: pixelated;
@@ -520,16 +480,14 @@ h3 {
 .stats-strip strong {
   display: block;
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 3.5rem;
   line-height: 0.95;
 }
 
 .stats-strip span {
   color: var(--muted);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.08em;

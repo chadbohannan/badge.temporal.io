@@ -1,0 +1,229 @@
+/*
+ * Responsive overrides.
+ *
+ * These rules must cascade after every other stylesheet. Page-level sheets
+ * (badge.css, basics.css, components.css, guide.css, hacks.css) redeclare many
+ * of the same selectors at equal specificity, so a media block that lives
+ * earlier in the cascade loses to them and never takes effect. Keep this file
+ * last in every <link> list.
+ */
+
+@media (max-width: 980px) {
+  h1 {
+    font-size: 5.75rem;
+  }
+
+  .page-hero h1 {
+    font-size: 5.25rem;
+  }
+
+  h2 {
+    font-size: 3.6rem;
+  }
+
+  .stats-strip strong {
+    font-size: 2.75rem;
+  }
+
+  .feature-row h2 {
+    font-size: 2.4rem;
+  }
+
+  .hero,
+  .hardware-map,
+  .split-band,
+  .procedure,
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+.card-grid.four,
+  .card-grid.three,
+  .guide-toc,
+  .screenshot-demo,
+  .api-grid,
+  .api-grid.dense,
+  .callout-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screenshot-demo {
+    grid-template-columns: 1fr;
+    max-width: 760px;
+  }
+
+  .screenshot-demo img {
+    max-width: 100%;
+  }
+
+  .site-footer nav {
+    justify-content: start;
+  }
+}
+
+@media (max-width: 720px) {
+  /* The nav wraps to three rows on a phone; pinned, that is a fifth of the
+     screen on every scroll. Let it scroll away instead. */
+  .site-header {
+    position: static;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .site-nav {
+    justify-content: flex-start;
+  }
+
+  .header-link {
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+  }
+
+  .hero {
+    padding-top: 66px;
+  }
+
+.section,
+  .page-hero,
+  .procedure-list,
+  .hardware-map,
+  .feature-row,
+  .guide-section {
+    padding-inline: clamp(22px, 7vw, 36px);
+  }
+
+  h1,
+  .page-hero h1 {
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.75rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  .lede {
+    font-size: 1rem;
+  }
+
+  /* Size the badge mock from its own column, not the viewport: viewport units
+     ignore the section's inline padding and push the page sideways. */
+  .badge-visual {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 95 / 95.24;
+    min-height: 0;
+    justify-self: center;
+    place-items: start;
+    overflow: visible;
+  }
+
+  .badge-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 131.93%;
+    transform: scale(0.7);
+    transform-origin: top left;
+  }
+
+  .screen {
+    inset: 82px 44px auto;
+    height: 250px;
+  }
+
+  .menu-tile strong {
+    font-size: 1rem;
+  }
+
+  .badge-menu-footer {
+    font-size: 0.86rem;
+  }
+
+  .controls {
+    left: 58px;
+    right: 58px;
+    bottom: 56px;
+  }
+
+  .controls span {
+    width: 58px;
+    height: 58px;
+  }
+
+.stats-strip,
+  .card-grid.two,
+  .card-grid.three,
+  .card-grid.four,
+  .component-grid,
+  .spec-grid,
+  .feature-row,
+  .guide-toc,
+  .basics-section,
+  .api-grid,
+  .api-grid.dense,
+  .callout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hack-list a {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  /* A single long word ("Communication", "PlatformIO") is wider than a phone
+     column at these display sizes, and the desktop rules forbid breaking.
+     `anywhere` rather than `break-word` so the word also stops inflating the
+     min-content width of the grid track it sits in. */
+  h1,
+  h2,
+  h3 {
+    overflow-wrap: anywhere;
+  }
+
+  /* Long identifiers and file paths are the main source of sideways scroll on
+     a phone. Let them wrap everywhere except inside code blocks, which scroll
+     on their own so the listing stays readable. */
+  p,
+  li,
+  dd,
+  .lede {
+    overflow-wrap: anywhere;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+
+  .code-block,
+  .code-block code {
+    overflow-wrap: normal;
+  }
+
+  /* Tables scroll inside their wrapper instead of wrapping every cell down to
+     one character per line. hardware.html uses .table-wrap without loading
+     guide.css, so it needs both rules here. */
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 720px;
+  }
+
+  th,
+  td,
+  th code,
+  td code {
+    overflow-wrap: normal;
+  }
+}

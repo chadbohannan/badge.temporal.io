@@ -16,6 +16,27 @@
   --red: #ff6d55;
   --indigo: #444ce7;
   --shadow: 0 0 0 1px rgba(196, 230, 68, 0.08), 0 28px 90px rgba(0, 0, 0, 0.46);
+  --panel-solid: rgba(17, 18, 23, 0.93);
+  --mono: "Space Mono", "Space Mono Fallback", ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
+}
+
+/* Space Mono is loaded asynchronously, so the first paint uses a fallback and
+   the swap reflows the page. Space Mono's advance is 1.65% wider than the
+   monospace faces browsers fall back to here, which is enough to re-wrap the
+   header nav from two rows to three and shove the page down ~47px. Matching
+   the advance up front keeps the line breaks identical before and after the
+   swap. Only the pre-swap frame is affected; the loaded font renders as
+   before. */
+@font-face {
+  font-family: "Space Mono Fallback";
+  src:
+    local("Menlo"),
+    local("DejaVu Sans Mono"),
+    local("Liberation Mono"),
+    local("Consolas"),
+    local("Courier New");
+  size-adjust: 101.65%;
 }
 
 * {
@@ -50,8 +71,7 @@ body {
     auto,
     auto;
   color: var(--ink);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   line-height: 1.48;
   text-transform: uppercase;
 }
@@ -92,8 +112,7 @@ li {
 
 code {
   color: var(--yellow-soft);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   text-transform: none;
 }
 
@@ -112,17 +131,6 @@ code {
   background: rgba(5, 5, 5, 0.9);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-}
-
-.site-header::before {
-  position: absolute;
-  left: clamp(16px, 3vw, 40px);
-  bottom: -25px;
-  color: var(--dim);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
 }
 
 .brand {
@@ -154,8 +162,7 @@ code {
   justify-content: center;
   gap: 6px 18px;
   color: var(--muted);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -192,9 +199,7 @@ code {
 .page-hero,
 .procedure-list,
 .hardware-map,
-.feature-row,
-.hack-directory,
-.steps {
+.feature-row {
   padding: clamp(52px, 7vw, 94px) clamp(24px, 5vw, 64px);
 }
 
@@ -204,17 +209,6 @@ code {
   background:
     linear-gradient(90deg, rgba(196, 230, 68, 0.11), transparent 36%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
-}
-
-.page-hero::after {
-  position: absolute;
-  right: clamp(16px, 4vw, 56px);
-  bottom: 22px;
-  color: var(--green);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
 }
 
 .page-hero.compact {
@@ -228,9 +222,6 @@ code {
 .procedure p,
 .component-grid p,
 .spec-grid p,
-.steps p,
-.steps li,
-.hack-card p,
 .app-card p,
 .site-footer p {
   color: var(--muted);
@@ -245,21 +236,36 @@ code {
   margin-bottom: 30px;
 }
 
-.section-heading h2::before,
-.hack-directory h2::before {
+.section-heading h2::before {
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.25em;
   vertical-align: middle;
 }
 
-
-.card-grid {
+/* Hairline grid: cells sit on a 1px gap that lets the track colour through,
+   so the dividers cost no extra borders. Page sheets add the column counts. */
+.card-grid,
+.hack-list,
+.component-grid,
+.spec-grid,
+.api-grid,
+.callout-grid,
+.basics-facts,
+.basics-detail {
   display: grid;
   gap: 1px;
-  background: var(--line);
   border: 1px solid var(--line);
+  background: var(--line);
+}
+
+/* Full-bleed section variants take a bottom rule instead of a box. */
+.procedure-list,
+.feature-row {
+  display: grid;
+  gap: 1px;
+  border-bottom: 1px solid var(--line);
+  background: var(--line);
 }
 
 .card-grid.two {
@@ -276,13 +282,10 @@ code {
 
 .app-card,
 .procedure,
-.diagram-card,
 .component-grid article,
 .spec-grid article,
-.feature-row article,
-.hack-card,
-.steps article {
-  background: rgba(17, 18, 23, 0.93);
+.feature-row article {
+  background: var(--panel-solid);
 }
 
 .app-card {
@@ -370,24 +373,10 @@ code {
     var(--yellow);
 }
 
-.tag {
-  display: inline-flex;
-  margin-top: 10px;
-  padding: 4px 8px;
-  border: 1px solid var(--yellow);
-  color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-}
-
 .section-link {
   margin-top: 24px;
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -405,13 +394,6 @@ code {
   background: rgba(255, 255, 255, 0.025);
 }
 
-.hack-list {
-  display: grid;
-  gap: 1px;
-  border: 1px solid var(--line);
-  background: var(--line);
-}
-
 .hack-list a {
   display: grid;
   grid-template-columns: 120px minmax(0, 1fr) 78px;
@@ -426,32 +408,21 @@ code {
   background: var(--panel-2);
 }
 
-.hack-list span,
-.hack-card span {
+.hack-list span {
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
 
-.hack-list em,
-.hack-card em {
+.hack-list em {
   color: var(--green);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.72rem;
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.05em;
-}
-
-.procedure-list {
-  display: grid;
-  gap: 1px;
-  border-bottom: 1px solid var(--line);
-  background: var(--line);
 }
 
 .procedure {
@@ -465,8 +436,7 @@ code {
   display: inline-block;
   margin-bottom: 12px;
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-weight: 950;
 }
 
@@ -481,50 +451,6 @@ code {
 
 .procedure li + li {
   margin-top: 10px;
-}
-
-.steps {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.steps article {
-  padding: 24px;
-}
-
-.steps article > span {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  margin-bottom: 18px;
-  border: 1px solid var(--yellow);
-  background: var(--yellow);
-  color: var(--bg);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-weight: 950;
-}
-
-.steps ul {
-  padding-left: 20px;
-}
-
-.checklist {
-  display: grid;
-  gap: 1px;
-  border: 1px solid var(--line);
-  background: var(--line);
-}
-
-.checklist p {
-  margin: 0;
-  padding: 16px;
-  background: var(--panel);
-}
-
-.checklist strong {
-  color: var(--yellow);
-  text-transform: uppercase;
 }
 
 .site-footer {
@@ -543,8 +469,7 @@ code {
   left: clamp(16px, 4vw, 56px);
   bottom: 20px;
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.76rem;
   letter-spacing: 0.06em;
 }
@@ -567,197 +492,8 @@ code {
   align-content: start;
   justify-content: end;
   color: var(--muted);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
-}
-
-@media (max-width: 980px) {
-  h1 {
-    font-size: 5.75rem;
-  }
-
-  .page-hero h1 {
-    font-size: 5.25rem;
-  }
-
-  h2 {
-    font-size: 3.6rem;
-  }
-
-  .stats-strip strong {
-    font-size: 2.75rem;
-  }
-
-  .feature-row h2 {
-    font-size: 2.4rem;
-  }
-
-  .hero,
-  .hardware-map,
-  .split-band,
-  .procedure,
-  .site-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .hero {
-    min-height: auto;
-  }
-
-  .card-grid.four,
-  .card-grid.three,
-  .hack-directory,
-  .steps,
-  .guide-toc,
-  .screenshot-demo,
-  .api-grid,
-  .api-grid.dense,
-  .callout-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .screenshot-demo {
-    grid-template-columns: 1fr;
-    max-width: 760px;
-  }
-
-  .screenshot-demo img {
-    max-width: 100%;
-  }
-
-  .site-footer nav {
-    justify-content: start;
-  }
-}
-
-@media (max-width: 720px) {
-  .site-header {
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: 10px;
-  }
-
-  .site-header::before {
-    display: none;
-  }
-
-  .site-nav {
-    justify-content: flex-start;
-  }
-
-  .header-link {
-    width: -webkit-max-content;
-    width: -moz-max-content;
-    width: max-content;
-  }
-
-  .hero {
-    padding-top: 66px;
-  }
-
-  .section,
-  .page-hero,
-  .procedure-list,
-  .hardware-map,
-  .feature-row,
-  .hack-directory,
-  .steps,
-  .guide-section {
-    padding-inline: clamp(22px, 7vw, 36px);
-  }
-
-  .hero::before {
-    top: 20px;
-  }
-
-  h1,
-  .page-hero h1 {
-    font-size: 3.5rem;
-  }
-
-  h2 {
-    font-size: 2.75rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-  }
-
-  .lede {
-    font-size: 1rem;
-  }
-
-  .badge-visual {
-    width: 95vw;
-    height: 95.24vw;
-    min-height: 0;
-    justify-self: center;
-    place-items: start;
-    overflow: visible;
-  }
-
-  .badge-body {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 125.333vw;
-    transform: scale(0.7);
-    transform-origin: top left;
-  }
-
-  .screen {
-    inset: 82px 44px auto;
-    height: 250px;
-  }
-
-  .menu-tile strong {
-    font-size: 1rem;
-  }
-
-  .badge-menu-footer {
-    font-size: 0.86rem;
-  }
-
-  .controls {
-    left: 58px;
-    right: 58px;
-    bottom: 56px;
-  }
-
-  .controls span {
-    width: 58px;
-    height: 58px;
-  }
-
-  .stats-strip,
-  .card-grid.two,
-  .card-grid.three,
-  .card-grid.four,
-  .component-grid,
-  .spec-grid,
-  .feature-row,
-  .guide-toc,
-  .basics-section,
-  .api-grid,
-  .api-grid.dense,
-  .callout-grid,
-  .hack-directory,
-  .steps,
-  .board-diagram {
-    grid-template-columns: 1fr;
-  }
-
-  .hack-list a {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-
-  .page-hero::after {
-    position: static;
-    display: block;
-    margin-top: 28px;
-  }
 }

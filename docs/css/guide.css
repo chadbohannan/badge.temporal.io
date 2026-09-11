@@ -12,8 +12,7 @@
   padding: 14px;
   background: var(--panel);
   color: var(--muted);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -54,8 +53,7 @@ td {
 
 th {
   color: var(--yellow);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -63,11 +61,7 @@ th {
 
 .api-grid,
 .callout-grid {
-  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  border: 1px solid var(--line);
-  background: var(--line);
 }
 
 .api-grid article,
@@ -75,7 +69,7 @@ th {
   min-width: 0;
   margin: 0;
   padding: 20px;
-  background: rgba(17, 18, 23, 0.93);
+  background: var(--panel-solid);
   color: var(--muted);
 }
 
@@ -91,8 +85,7 @@ th {
   display: block;
   margin-bottom: 10px;
   color: var(--green);
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -110,8 +103,7 @@ th {
   border: 1px solid var(--line);
   background: #080808;
   color: #d7ffe1;
-  font-family:
-    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.9rem;
   line-height: 1.55;
   text-transform: none;
@@ -143,4 +135,3 @@ th {
   padding-top: 18px;
   border-top: 1px solid var(--line);
 }
-
