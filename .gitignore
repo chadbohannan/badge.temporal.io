@@ -71,3 +71,6 @@ data/**/*.pyc
 !/firmware/initial_filesystem/lib/
 !/firmware/initial_filesystem/lib/**
 *code-workspace
+
+# Engineering wiki: machine-local repo paths for scripts/pull-repos.sh.
+repos.txt

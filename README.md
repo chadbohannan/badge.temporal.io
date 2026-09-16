@@ -25,6 +25,7 @@ tooling are intentionally not part of this public repo.
 | Update the docs site | [`docs/README.md`](docs/README.md) |
 | Review release artifacts or OTA | [`release-assets/README.md`](release-assets/README.md) and [`.github/workflows/release-firmware.yml`](.github/workflows/release-firmware.yml) |
 | Check licensing and third-party terms | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and [`licenses/`](licenses/) |
+| Understand how subsystems fit together and why | [`wiki/index.md`](wiki/index.md) |
 | Contribute a fix | Open a pull request against `temporal-community/badge.temporal.io`; see [Contributing](#contributing) below. |
 
 ## Repository Map
@@ -40,6 +41,7 @@ tooling are intentionally not part of this public repo.
 | [`release-assets/`](release-assets/) | Notes for OTA and factory image release artifacts. | [`release-assets/README.md`](release-assets/README.md) |
 | [`licenses/`](licenses/) | Third-party license texts and notices for bundled non-MIT components. | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) |
 | [`.github/workflows/`](.github/workflows/) | CI release workflow that builds `firmware.bin` and `replay2026-factory-16MB.bin`. | [`.github/workflows/release-firmware.yml`](.github/workflows/release-firmware.yml) |
+| [`wiki/`](wiki/) | LLM-maintained engineering wiki: how the subsystems above connect, non-obvious design decisions, and operational runbooks. | [`wiki/index.md`](wiki/index.md) |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Pull request guidance and change-type checks. | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 
 ## Quick Start

@@ -1,0 +1,11 @@
+# Example repo list for scripts/pull-repos.sh
+#
+# One absolute path per line. Blank lines and lines starting with '#' are
+# ignored. This project is single-repo, so the only entry most people need is
+# this checkout itself — pull-repos.sh still fast-forwards it and reports
+# whether HEAD moved, which is useful before a Sync pass.
+#
+# Copy this file to repos.txt at the repo root (which is what pull-repos.sh
+# reads by default, and which is gitignored since the path is machine-local).
+#
+# /home/you/workspace/badge.temporal.io
