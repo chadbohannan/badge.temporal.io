@@ -5,9 +5,9 @@
 #   ./make_factory.sh [env] [--no-build] [--no-fs]
 #     env         PlatformIO env (default: replay2026)
 #     --no-build  skip pio build, reuse last .pio/build/<env> artifacts
-#     --no-fs     omit the FAT filesystem image (apps/lib/doom1.wad).
-#                 Resulting badge will boot but show an empty apps menu and
-#                 doom won't run until you push a fatfs over USB.
+#     --no-fs     omit the FAT filesystem image (apps/lib).
+#                 Resulting badge will boot but show an empty apps menu
+#                 until you push a fatfs over USB.
 #
 # Output: firmware/factory_<env>_16MB.bin
 #

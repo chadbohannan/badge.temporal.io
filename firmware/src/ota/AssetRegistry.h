@@ -1,6 +1,6 @@
 // AssetRegistry.h — Generic file fetcher driven by a remote registry.json.
 //
-// Lets the badge install user-facing asset files (DOOM WAD, sound packs,
+// Lets the badge install user-facing asset files (sound packs,
 // fonts, anything else) on demand from a configurable URL set in
 // `settings.txt` (`community_apps_url`, formerly `asset_registry_url`).
 //
@@ -12,14 +12,14 @@
 //     "schema_version": 2,
 //     "assets": [
 //       {
-//         "id": "doom1-shareware",
+//         "id": "example-asset",
 //         "kind": "file",
-//         "name": "DOOM 1 Shareware WAD",
-//         "version": "1.9",
-//         "url": "https://.../doom1.wad",
+//         "name": "Example Asset",
+//         "version": "1.0",
+//         "url": "https://.../example-asset.bin",
 //         "sha256": "<hex>",            // optional, corruption check only
 //         "size": 4196020,
-//         "dest_path": "/doom1.wad",
+//         "dest_path": "/example-asset.bin",
 //         "min_free_bytes": 4500000,    // optional
 //         "description": "..."
 //       },
@@ -89,7 +89,7 @@ struct AssetEntry {
   // live in the AssetFileEntry pool).
   char url[kAssetUrlMax];
   char sha256[kAssetSha256Max];   // empty if not provided / kind=app
-  // For kind=file: target file path (e.g. "/doom1.wad").
+  // For kind=file: target file path (e.g. "/example-asset.bin").
   // For kind=app:  target directory (e.g. "/apps/zigmoji").
   char dest_path[kAssetPathMax];
   char description[kAssetDescMax];

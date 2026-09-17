@@ -4,8 +4,8 @@
 
 #include "../ota/AssetRegistry.h"
 
-// Browse + install user-installable assets (DOOM WAD, sound packs,
-// etc.) from the registry URL configured in settings.txt.
+// Browse + install user-installable assets (sound packs, etc.) from
+// the registry URL configured in settings.txt.
 //
 // Two screens:
 //   AssetLibraryScreen  — scrollable list of registry entries with a
@@ -28,7 +28,7 @@ class AssetLibraryScreen : public ListMenuScreen {
   const char* hintText() const override { return "Confirm:Open  X:Refresh"; }
 
   // Public so the main menu's launcher can pre-set a target id when
-  // routing from DOOM's no-WAD screen.
+  // deep-linking into a specific registry entry.
   static void selectAssetById(const char* id);
 
  private:

@@ -101,8 +101,8 @@ bool isPlausibleUrl(const char* url) {
   return true;
 }
 
-// Merge firmware-baked downloadable entries (doom1.wad) that may be
-// absent from the published release registry until the next cut.
+// Merge firmware-baked downloadable entries that may be absent from
+// the published release registry until the next cut.
 void mergeBuiltinDownloadables() {
   for (size_t i = 0; i < kBuiltinDownloadableCount; ++i) {
     const BuiltinDownloadable& b = kBuiltinDownloadables[i];
@@ -292,9 +292,9 @@ void freeFilePool() {
 //     NVS `v_<id>` marker, so statusOf can report them as installed
 //     rather than queueing a fresh download.
 //   * short-circuit `install()` when the bytes are already in place
-//     — without this, the free-space gate fails for big assets like
-//     the DOOM WAD whose own footprint dominates the free count, and
-//     the user sees "insufficient space" on an asset they already have.
+//     — without this, the free-space gate fails for big assets whose
+//     own footprint dominates the free count, and the user sees
+//     "insufficient space" on an asset they already have.
 //
 // kFile checks the file size matches `entry.size`.
 // kApp checks every bundled file exists, with a size match for each
@@ -694,7 +694,7 @@ AssetStatus statusOf(const AssetEntry& entry) {
   char installed[kAssetVersionMax] = "";
   loadInstalledVersion(entry.id, installed, sizeof(installed));
   // Pure read: no NVS writes, no FATFS-walk for non-installed assets.
-  // The "adopt-from-disk" path (DOOM WAD landed via uploadfs, etc.)
+  // The "adopt-from-disk" path (a big asset landed via uploadfs, etc.)
   // runs once at the end of refresh() via adoptInstalledFromDisk()
   // so the GUI thread never pays for it on render.
   if (installed[0] == '\0') {
@@ -1069,8 +1069,8 @@ bool install(const AssetEntry& entry, AssetProgressCb cb, void* user) {
   // statusOf() now does the same on read, but a per-asset Install press
   // from AssetDetailScreen bypasses statusOf entirely — and the
   // free-space gate below would otherwise fail for assets whose own
-  // existing footprint dominates the free count (DOOM WAD: 4.5 MB
-  // against ~2 MB residual free on a typical ffat partition).
+  // existing footprint dominates the free count (a multi-MB asset
+  // against a couple MB of residual free on a typical ffat partition).
   if (destFullyPresent(entry)) {
     DBG("[registry] install %s: already on disk, adopting\n",
                   entry.id);

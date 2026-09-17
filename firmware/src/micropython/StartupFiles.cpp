@@ -425,7 +425,7 @@ void provisionStartupFiles(bool forceSync) {
     // it's the persistent dev-build behavior.
     consumeForceRefreshMarker(fs);
 
-    // Most user-facing files (apps, docs, images, doom1.wad) are
+    // Most user-facing files (apps, docs, images) are
     // expected-missing on a freshly-flashed badge that hasn't run
     // `pio run -t uploadfs` / Community Apps install / JumperIDE sync
     // yet. Suppressing per-file warnings here keeps the boot log

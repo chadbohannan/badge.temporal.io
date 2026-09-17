@@ -4,8 +4,8 @@ name: release-firmware
 # attaches both to a GitHub release.
 #
 # firmware.bin is consumed by badge OTA. replay2026-factory-16MB.bin is a full
-# 16 MB factory flash: bootloader, partition table, application firmware, FAT
-# filesystem, and firmware/initial_filesystem/doom1.wad.
+# 16 MB factory flash: bootloader, partition table, application firmware, and
+# FAT filesystem.
 #
 # Triggers:
 #   - Automatically when firmware/VERSION changes on main.
@@ -107,7 +107,7 @@ jobs:
             printf 'Firmware release v%s for the Replay 2026 Badge.\n\n' "$firmware_version"
             printf '### Downloads\n\n'
             printf -- '- `firmware.bin`: OTA update image. The badge firmware updater looks for this exact asset name on the latest GitHub release.\n'
-            printf -- '- `replay2026-factory-16MB.bin`: complete 16 MB factory image for Ignition, first-time setup, or recovery. This includes bootloader, partition table, firmware, filesystem, bundled apps, docs, and the DOOM shareware data file.\n\n'
+            printf -- '- `replay2026-factory-16MB.bin`: complete 16 MB factory image for Ignition, first-time setup, or recovery. This includes bootloader, partition table, firmware, filesystem, and bundled apps and docs.\n\n'
             printf -- '- `community_apps.json`: generated Community Apps registry fetched by badges over WiFi.\n\n'
             printf '### Flashing\n\n'
             printf 'Use Ignition for the recommended flashing path:\n\n'
@@ -118,7 +118,6 @@ jobs:
             printf 'Use `./start.sh --release-tag %s` to pin this release, or `./start.sh --no-build --factory-image ~/Downloads/replay2026-factory-16MB.bin` for a manually downloaded image.\n\n' "$RELEASE_TAG"
             printf 'Developers can also build and flash from `firmware/` with PlatformIO using the `replay2026` environment.\n\n'
             printf '### Notes\n\n'
-            printf -- '- `doom1.wad` is freely redistributable shareware game data with separate terms; it is not MIT-licensed source code.\n'
             printf -- '- See the repository docs for Ignition setup, OTA behavior, firmware development, hardware files, and third-party notices.\n'
           } > artifacts/release/release-notes.md
 
@@ -211,11 +210,6 @@ jobs:
           key: pio-build-${{ runner.os }}-replay2026-${{ hashFiles('firmware/platformio.ini', 'firmware/boards/**', 'firmware/src/**', 'firmware/lib/**', 'firmware/micropython/**', 'firmware/initial_filesystem/**', 'firmware/scripts/**') }}
           restore-keys: |
             pio-build-${{ runner.os }}-replay2026-
-
-      - name: Require bundled DOOM shareware data
-        if: steps.release_scope.outputs.should_build == 'true'
-        run: |
-          test -f firmware/initial_filesystem/doom1.wad
 
       - name: Generate Community Apps registry
         if: steps.release_scope.outputs.should_build == 'true'

@@ -60,9 +60,6 @@ struct Item {
 //   - PanicReset.cpp: kPollPeriodUs * {kMpyExitTicks, kRebootTicks,
 //     kForceRebootTicks} = 1s/2s/4s (4-button hold from anywhere).
 //   - GridMenuScreen.cpp: kShutdownHoldMs = 3000 (DOWN hold on home menu).
-//   - doom_input.cpp: kExitComboMs = 1500; UP=KEY_FIRE,
-//     DOWN=KEY_USE/ENTER, LEFT/RIGHT=strafe (joystick X turns,
-//     joystick Y moves fwd/back).
 //   - GUI.cpp: setNametagMode triggered by IMU `kInverted` orientation.
 //   - scripts/generate_build_wifi_config.py: WiFi creds come from
 //     wifi.local.env or BADGE_WIFI_{SSID,PASS} env vars at build time.
@@ -87,16 +84,6 @@ constexpr Item kItems[] = {
     {ItemKind::kText,    "Flip the badge",                0},
     {ItemKind::kText,    "upside down to",                0},
     {ItemKind::kText,    "show nametag.",                 0},
-    {ItemKind::kGap,     nullptr,                         0},
-
-    // ── DOOM ─────────────────────────────────────────────────────────
-    {ItemKind::kHeading, "DOOM",                          0},
-    {ItemKind::kGlyphs,  "L/R 1.5s quit",                 0},
-    {ItemKind::kGlyphs,  "Y fire   A use",                0},
-    {ItemKind::kGlyphs,  "U/D escape",                    0},
-    {ItemKind::kGlyphs,  "L/R strafe",                    0},
-    {ItemKind::kText,    "Joystick X turns,",             0},
-    {ItemKind::kText,    "Y is fwd/back.",                0},
     {ItemKind::kGap,     nullptr,                         0},
 
     // ── WiFi ─────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ Three storage tiers; one rule for picking which to use:
 | Tier | Holds | Survives |
 |------|-------|----------|
 | **NVS** (`badge_*` namespaces) | internal badge identity, HMAC, WiFi creds, contacts, Badge Info contact card, `badge.kv` (game saves, scores), asset version stamps, menu order | **EVERY** flash type |
-| **FATFS** (`/lib`, `/apps`, `/docs`, `/images`, …) | Python source code, docs, images, `doom1.wad`, user uploads | Firmware-only flash. **Wiped** by `fatfs.bin` reflash + uploadfs + a `clear-extras` sync |
+| **FATFS** (`/lib`, `/apps`, `/docs`, `/images`, …) | Python source code, docs, images, user uploads | Firmware-only flash. **Wiped** by `fatfs.bin` reflash + uploadfs + a `clear-extras` sync |
 | **app0** (firmware binary) | C++ binary + embedded `/lib` + `/matrixApps` survival floor | Replaced only by a firmware flash |
 
 Rule of thumb:
@@ -65,18 +65,13 @@ initial_filesystem/matrixApps/led_runtime.py ← bake
 initial_filesystem/apps/**                 ← NOT baked, ships via fatfs.bin
 initial_filesystem/docs/**                 ← NOT baked, ships via fatfs.bin
 initial_filesystem/images/**               ← NOT baked, ships via fatfs.bin
-initial_filesystem/doom1.wad               ← NOT baked, ships via fatfs.bin
-                                              (and downloadable via Community Apps
-                                              for badges that didn't get an
-                                              uploadfs pass)
 ```
 
-doom1.wad is intentionally excluded from `manifest.json` (it's a 4 MB
-binary; pushing it over the raw REPL takes several minutes) but it
-IS included in `firmware/data/` and therefore in `fatfs.bin`. The
-canonical way to install it is `pio run -t uploadfs`; badge_sync's
-diff will report it as "extras" on the badge (which is fine — extras
-are preserved by default).
+Large binary assets (several MB) follow the same "NOT baked, ships via
+fatfs.bin" pattern and are intentionally excluded from `manifest.json`
+(pushing them over the raw REPL takes several minutes); the canonical
+way to install them is `pio run -t uploadfs`, with Community Apps as
+the over-WiFi fallback for badges that didn't get an uploadfs pass.
 
 The boot-time `provisionStartupFiles()` walks the bake set and
 restores any that are missing or hash-mismatched (with user-edit
@@ -122,9 +117,9 @@ identity, regardless of which flash path the badge goes through.
 ```python
 import badge
 
-score = badge.kv_get("hi_breaksnake", 0)
+score = badge.kv_get("hi_myapp", 0)
 score += 1
-badge.kv_put("hi_breaksnake", score)
+badge.kv_put("hi_myapp", score)
 ```
 
 Or via the friendlier wrapper that ships in `/lib/badge_kv.py`:
@@ -132,7 +127,7 @@ Or via the friendlier wrapper that ships in `/lib/badge_kv.py`:
 ```python
 from badge_kv import kv
 
-kv.put("hi_breaksnake", kv.get("hi_breaksnake", 0) + 1)
+kv.put("hi_myapp", kv.get("hi_myapp", 0) + 1)
 ```
 
 Limits:
@@ -172,7 +167,7 @@ cd firmware
 ```
 
 Writes the full `firmware/data/` tree (apps + docs + images +
-**doom1.wad** + everything) into a fresh `fatfs.bin` and flashes it.
+everything else) into a fresh `fatfs.bin` and flashes it.
 Fastest path. Doesn't touch NVS — saves, contacts, badge identity all
 preserved.
 

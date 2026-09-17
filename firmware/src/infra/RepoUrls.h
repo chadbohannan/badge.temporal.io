@@ -53,8 +53,7 @@
 // Community Apps registry JSON — fetched once a day by AssetRegistry.
 // Primary: GitHub Release asset (always published). AssetRegistry also
 // tries REPO_COMMUNITY_APPS_RAW_URL on 404 and merges firmware-baked
-// downloadable entries (doom1.wad) so the catalog stays complete between
-// releases.
+// downloadable entries so the catalog stays complete between releases.
 #define REPO_COMMUNITY_APPS_RELEASE_URL \
     "https://github.com/" REPO_OWNER_SLUG \
     "/releases/latest/download/community_apps.json"

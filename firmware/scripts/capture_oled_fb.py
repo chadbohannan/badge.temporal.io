@@ -34,36 +34,6 @@ SCREEN_H = 64
 FB_RE = re.compile(r"^P([0-7]) ([0-9a-fA-F]{256})$")
 
 
-SYNTH_IMPORT = r"""
-import badge
-
-src = open('/apps/synth/main.py').read()
-cut = src.find('\nrun_app("Synth"')
-if cut < 0:
-    cut = src.find("\nrun_app('Synth'")
-if cut < 0:
-    cut = len(src)
-ns = {'__name__': 'synth_capture'}
-exec(src[:cut], ns)
-"""
-
-
-SYNTH_LIVE_SNIPPET = SYNTH_IMPORT + r"""
-ns['recording'] = False
-ns['looping'] = False
-ns['loop'] = []
-ns['loop_len'] = 0
-ns['draw_live_screen'](0, '---', 0, 0, 0)
-print(badge.dev('fb'))
-"""
-
-
-SYNTH_SOUNDS_SNIPPET = SYNTH_IMPORT + r"""
-ns['draw_sound_screen']()
-print(badge.dev('fb'))
-"""
-
-
 def png_chunk(kind: bytes, data: bytes) -> bytes:
     body = kind + data
     return (
@@ -186,19 +156,9 @@ def main() -> int:
     parser.add_argument("--out", required=True, type=Path, help="PNG output path")
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--scale", type=int, default=6)
-    parser.add_argument(
-        "--screen",
-        default="synth-live",
-        choices=("synth-live", "synth-sounds"),
-        help="Built-in screen capture snippet to run",
-    )
     args = parser.parse_args()
 
-    snippet = {
-        "synth-live": SYNTH_LIVE_SNIPPET,
-        "synth-sounds": SYNTH_SOUNDS_SNIPPET,
-    }[args.screen]
-    output = exec_raw(args.port, snippet, args.baud)
+    output = exec_raw(args.port, "import badge\nprint(badge.dev('fb'))\n", args.baud)
     pages = parse_pages(output)
     write_png(args.out, unpack_framebuffer(pages), max(1, args.scale))
     print(os.fspath(args.out))

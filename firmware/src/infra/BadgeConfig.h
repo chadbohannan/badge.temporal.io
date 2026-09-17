@@ -275,8 +275,8 @@ class Config {
      void setOtaManifestUrl(const char* value);
 
      /// `[ota] community_apps_url = ...` — JSON file enumerating
-     /// installable Community Apps + assets (DOOM WAD, etc.). Empty
-     /// disables the Community Apps screen.
+     /// installable Community Apps + assets. Empty disables the
+     /// Community Apps screen.
      ///
      /// The legacy `asset_registry_url` setting is read transparently
      /// (and written into `communityAppsUrl_`) so settings.txt files
@@ -285,8 +285,8 @@ class Config {
      void setCommunityAppsUrl(const char* value);
 
      // Backwards-compat aliases. Existing call sites (BadgeConfig.cpp,
-     // GUI.cpp, DoomScreen.cpp, AssetRegistry.cpp) still call these;
-     // they forward to the new community_apps_url field.
+     // GUI.cpp, AssetRegistry.cpp) still call these; they forward to
+     // the new community_apps_url field.
      const char* assetRegistryUrl() const { return communityAppsUrl(); }
      void setAssetRegistryUrl(const char* value) { setCommunityAppsUrl(value); }
 
@@ -308,7 +308,7 @@ class Config {
      // The v2 Community Apps registry is published as a GitHub Release asset.
      // generate_startup_files.py also writes registry/community_apps.json on
      // main; AssetRegistry tries that raw URL as a fallback and merges
-     // firmware-baked downloadable entries (doom1.wad) after every fetch.
+     // firmware-baked downloadable entries after every fetch.
      char communityAppsUrl_[160] = REPO_COMMUNITY_APPS_URL;
 
      uint32_t lastFileSize_ = 0;

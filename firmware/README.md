@@ -2,10 +2,8 @@
 
 Firmware for the Temporal Replay 2026 Badge. The public `replay2026` build is
 PlatformIO Arduino firmware for the ESP32-S3 badge hardware, with native C++
-screens, badge-to-badge IR flows, Doom, embedded MicroPython apps, and
+screens, badge-to-badge IR flows, embedded MicroPython apps, and
 developer-friendly app-building affordances.
-
-![Badge synth screen](../docs/assets/screenshots/badge-synth-live.png)
 
 If you only want to flash a badge, start with
 [`../ignition/README.md`](../ignition/README.md). If you want to change the
@@ -51,7 +49,7 @@ python3 scripts/generate_startup_files.py
 # Flash firmware only.
 ~/.platformio/penv/bin/pio run -e replay2026 -t upload
 
-# Flash filesystem only: apps, docs, and doom1.wad.
+# Flash filesystem only: apps and docs.
 ~/.platformio/penv/bin/pio run -e replay2026 -t uploadfs
 
 # Build a complete 16 MB factory image.
@@ -87,8 +85,6 @@ Tips:
 
 - The default output is `../docs/assets/screenshots/badge-screenshot.png`.
 - Pass `--scale 4` or `--scale 6` to control PNG size.
-- Pass `--screen synth-live` or `--screen synth-sounds` to render built-in
-  app screenshot fixtures without manually navigating the badge UI.
 - Close JumperIDE, serial monitors, and Ignition before capturing; only one
   process can own the badge serial port at a time.
 

@@ -1106,7 +1106,7 @@ int8_t fontFamilyFromName(const char* name) {
     pos += snprintf(buf + pos, room(),
         "# Community Apps: URL of a registry JSON describing installable\n");
     pos += snprintf(buf + pos, room(),
-        "# apps + assets (DOOM WAD, etc.). Empty disables the Community\n");
+        "# apps + assets. Empty disables the Community\n");
     pos += snprintf(buf + pos, room(),
         "# Apps screen. (Legacy alias: asset_registry_url.)\n");
     pos += snprintf(buf + pos, room(),

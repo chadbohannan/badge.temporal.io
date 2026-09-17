@@ -477,7 +477,7 @@ const PixelFloorLayout* PIXEL_LAYOUTS[kFloorCount] = {
 };
 
 // ── Sponsor booth tables ────────────────────────────────────────
-// Indices reference AboutSponsors::kSponsors which is alphabetised
+// Indices reference BoothSponsors::kSponsors which is alphabetised
 // at generation time:
 //   0 Apartment 304   1 Augment Code   2 AWS         3 Bitovi
 //   4 Braintrust      5 Google for Startups          6 Grid Dynamics
