@@ -34,7 +34,6 @@
 
 /.pio/libdeps
 /.pio/build/
-/.pio/doom_wad_cache/
 /src/JumperlOSstuff
 /src/modular/*
 

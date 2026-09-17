@@ -42,11 +42,6 @@
 #include "ota/BadgeOTA.h"
 #include "ota/OTAService.h"
 
-#ifdef BADGE_HAS_DOOM
-#include "doom/doom_app.h"
-#include "doom/doom_resources.h"
-#endif
-
 #include "hardware/PanicReset.h"
 
 // Loop task stack: MicroPython, OLED composition, and optional hacker HTTP
@@ -498,79 +493,12 @@ extern "C" void initDeferredPeripherals() {
 }
 
 void loop( ) {
-#ifdef BADGE_HAS_DOOM
-    const bool doomOwnsBadge = !gWakeOnlyMode && doom_resources_active();
-    if ( !doomOwnsBadge ) {
-        scheduler.runOnce( );
-    }
-#else
     scheduler.runOnce( );
-#endif
 
     if ( !gWakeOnlyMode ) {
-#ifdef BADGE_HAS_DOOM
-        if ( doom_resources_active() ) {
-            if ( !doom_app_is_running() ) {
-                doom_app_exit();
-                doom_app_deinit();
-                doom_resources_exit();
-
-                Haptics::off();
-
-                // Wait for the user to release all buttons (they were
-                // holding L+R for the exit combo) before restarting input.
-                // Doom detaches input interrupts while it runs, so first
-                // resync the logical state with the physical pins before
-                // waiting; otherwise a launch/exit button can stay logically
-                // held and repeat into the restored menu.
-                inputs.resyncButtons();
-                DBG("[doom] waiting for input release before GUI restore\n");
-
-                // Spin until all buttons are released so the exit combo
-                // doesn't leak into the GUI as spurious presses.
-                {
-                    uint32_t releaseDeadline = millis() + 2000;
-                    bool allUp = false;
-                    while ( !allUp && millis() < releaseDeadline ) {
-                        inputs.update();
-                        inputs.clearEdges();
-                        const Inputs::ButtonStates& b = inputs.buttons();
-                        allUp = !b.up && !b.down && !b.left && !b.right;
-                        inputs.service();
-                        delay(20);
-                    }
-                    if (!allUp) {
-                        DBG("[doom] input release wait timed out\n");
-                    }
-                    // One final flush after release
-                    uint32_t quietUntil = millis() + 250;
-                    while (millis() < quietUntil) {
-                        inputs.update();
-                        inputs.clearEdges();
-                        delay(20);
-                    }
-                }
-
-                guiManager.activate();
-                DBG("[doom] teardown complete, GUI restored\n");
-            } else {
-                Power::noteActivity();
-                delay(1);
-            }
-            return;
-        }
-#endif
-
         if ( guiManager.isActive() ) {
             guiManager.handleInputIfActive();
         }
-#ifdef BADGE_HAS_DOOM
-        if ( doom_resources_active() ) {
-            Power::noteActivity();
-            delay(1);
-            return;
-        }
-#endif
         inputs.clearEdges();
     }
 

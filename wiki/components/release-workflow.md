@@ -5,7 +5,7 @@
 Three artifacts come out of a release build, all produced from the `replay2026` PlatformIO environment described on the [firmware system page](../systems/replay2026-firmware.md):
 
 - `firmware.bin` — the OTA application image. The badge's own OTA updater ([`BadgeOTA`](../components/ota-and-assets.md)) checks GitHub Releases on `temporal-community/badge.temporal.io` for this exact asset name.
-- `replay2026-factory-16MB.bin` — a complete factory image: bootloader, partition table, application firmware, FAT filesystem, and `firmware/initial_filesystem/doom1.wad`. This is what [Ignition](../systems/ignition.md)'s `--latest-release` path downloads and flashes.
+- `replay2026-factory-16MB.bin` — a complete factory image: bootloader, partition table, application firmware, and FAT filesystem (`firmware/initial_filesystem/`). This is what [Ignition](../systems/ignition.md)'s `--latest-release` path downloads and flashes.
 - `community_apps.json` — the registry described on the [Community Apps](community-apps-registry.md) page, regenerated fresh from `community_apps/` at release time rather than reused from a previous build.
 
 ## Recovery paths and idempotency

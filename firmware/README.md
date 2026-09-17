@@ -2,7 +2,7 @@
 
 Firmware for the Temporal Replay 2026 Badge. The public `replay2026` build is
 PlatformIO Arduino firmware for the ESP32-S3 badge hardware, with native C++
-screens, badge-to-badge IR flows, Doom, embedded MicroPython apps, and
+screens, badge-to-badge IR flows, embedded MicroPython apps, and
 developer-friendly app-building affordances.
 
 ![Badge synth screen](../docs/assets/screenshots/badge-synth-live.png)
@@ -51,7 +51,7 @@ python3 scripts/generate_startup_files.py
 # Flash firmware only.
 ~/.platformio/penv/bin/pio run -e replay2026 -t upload
 
-# Flash filesystem only: apps, docs, and doom1.wad.
+# Flash filesystem only: apps and docs.
 ~/.platformio/penv/bin/pio run -e replay2026 -t uploadfs
 
 # Build a complete 16 MB factory image.

@@ -5,9 +5,9 @@
   "files": [
     {
       "path": "/apps/README.md",
-      "size": 16785,
-      "sha256": "fac495652b88f1b52c2674cd035cb9f7083e92a2ca2f9df72feff72b01ee3cf9",
-      "fnv1a32": "0x702FA70E",
+      "size": 16810,
+      "sha256": "2e5c97a6550861fc33728c0235c3be216c0209e46ccf1c6fb0246d0d0f0a10f2",
+      "fnv1a32": "0xE8CD0724",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/README.md",
       "baked": false
     },
@@ -122,46 +122,6 @@
       "fnv1a32": "0x338E3F50",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/diagnostics/viperide_reinit.py",
       "baked": false
-    },
-    {
-      "path": "/apps/flappy_asteroids/fa_data.py",
-      "size": 6616,
-      "sha256": "19c1c035c6887ba4d8a4d7f8816c27b3a2a6e17bdcc4d4764c1b1e48f7bf6af4",
-      "fnv1a32": "0x89BD350B",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/flappy_asteroids/fa_data.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/flappy_asteroids/fa_engine.py",
-      "size": 10327,
-      "sha256": "fd7cb84a2953f40b1066069e768175208b1cfe629b7399a374bcfcb2a9a308bd",
-      "fnv1a32": "0x1010260F",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/flappy_asteroids/fa_engine.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/flappy_asteroids/fa_screens.py",
-      "size": 5298,
-      "sha256": "b78815b02a783e14ee3963ea021651ea5d0121046906ff66665e6617a29b6c54",
-      "fnv1a32": "0x63563925",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/flappy_asteroids/fa_screens.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/flappy_asteroids/icon.py",
-      "size": 383,
-      "sha256": "cdd2943dbc4555c857c321072d11c7201d9768ca5fb04f25504ac0d127a8bbae",
-      "fnv1a32": "0x4EB40382",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/flappy_asteroids/icon.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/flappy_asteroids/main.py",
-      "size": 242,
-      "sha256": "128d6024d54ded31ee25da283b972947eb23512949e1dc96956d15ca16a0dfb1",
-      "fnv1a32": "0xB93A0E38",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/flappy_asteroids/main.py",
-      "baked": true
     },
     {
       "path": "/apps/font_demo.py",
@@ -309,9 +269,9 @@
     },
     {
       "path": "/apps/ir_remote/ir_lib.py",
-      "size": 28293,
-      "sha256": "0c020dae8bbd0b560213059dc81b3bb4cca82ef2c7bec867c6d1f04c293c0411",
-      "fnv1a32": "0x40B957DB",
+      "size": 28285,
+      "sha256": "487b6611a5ba5931527c3fa5b37910ee1c363adbd665a666ed55a3c5679cc65a",
+      "fnv1a32": "0x0C279ACB",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/ir_lib.py",
       "baked": true
     },
@@ -354,38 +314,6 @@
       "fnv1a32": "0xA6620D0C",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/synth/main.py",
       "baked": true
-    },
-    {
-      "path": "/apps/tardigotchi/engine.py",
-      "size": 24793,
-      "sha256": "600dd71c54274749c92d6cf9e5090b7b1df319c882d434bb04f97395a431219f",
-      "fnv1a32": "0x7E27C230",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/tardigotchi/engine.py",
-      "baked": false
-    },
-    {
-      "path": "/apps/tardigotchi/icon.py",
-      "size": 9551,
-      "sha256": "98f51d607fad32ff52b1e026a169b15d116c0408c9043f8beb4dc273a4a76e90",
-      "fnv1a32": "0xF0AD7DEF",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/tardigotchi/icon.py",
-      "baked": false
-    },
-    {
-      "path": "/apps/tardigotchi/main.py",
-      "size": 187,
-      "sha256": "171be364d063b14dcae88066b03a3f9d5b580496be023a9181621d27e4b849a4",
-      "fnv1a32": "0x700ADC98",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/tardigotchi/main.py",
-      "baked": false
-    },
-    {
-      "path": "/apps/tardigotchi/sprites.py",
-      "size": 31592,
-      "sha256": "69bbe5034119462d5d558e692284a6da9b97fdebeec3fb5e2f44bae6c1ade57d",
-      "fnv1a32": "0xA9BD6BB0",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/tardigotchi/sprites.py",
-      "baked": false
     },
     {
       "path": "/apps/tilt_ball.py",
@@ -725,9 +653,9 @@
     },
     {
       "path": "/docs/MicroPythonDeveloperGuide.md",
-      "size": 29427,
-      "sha256": "e300aa11fb251be4ddeebc287d5e52601b5cf28baeac7ee5e0c41870baf92baa",
-      "fnv1a32": "0x1B88D9FB",
+      "size": 29408,
+      "sha256": "eadf42c8890a53e7a0d9298e6fe1f9f363d80153dad555fb33aa2332004cc9ca",
+      "fnv1a32": "0x0F624FC7",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/docs/MicroPythonDeveloperGuide.md",
       "baked": false
     },

@@ -18,6 +18,7 @@
 #include "screens/GridMenuScreen.h"
 #include "screens/UpdateFirmwareScreen.h"
 #include "screens/HapticsTestScreen.h"
+#include "screens/HelgrindScreen.h"
 #include "screens/InputTestScreen.h"
 #include "screens/LEDScreen.h"
 #include "screens/MapScreens.h"
@@ -31,10 +32,6 @@
 #include "screens/draw/ScalePickerScreen.h"
 #include "screens/draw/StickerPickerScreen.h"
 #include "screens/draw/AnimDoc.h"
-
-#ifdef BADGE_HAS_DOOM
-#include "doom/DoomScreen.h"
-#endif
 
 #include <cstdio>
 #include <cstring>
@@ -215,10 +212,6 @@ static void launchSynth(GUIManager& gui) {
   launchPythonApp(gui, "/apps/synth/main.py", "Synth");
 }
 
-static void launchFlappyAsteroids(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/flappy_asteroids/main.py", "Flappy Asteroids");
-}
-
 static void launchIRBlockBattle(GUIManager& gui) {
   launchPythonApp(gui, "/apps/ir_block_battle/main.py", "IR Block Battle");
 }
@@ -241,7 +234,6 @@ static void launchTardigotchi(GUIManager& gui) {
 // icon without the dedupe in rebuildMainMenuFromRegistry().
 static const char* const kCuratedPythonDuplicateEntryPaths[] = {
     "/apps/synth/main.py",
-    "/apps/flappy_asteroids/main.py",
     "/apps/ir_block_battle/main.py",
     "/apps/ir_remote/main.py",
     "/apps/breaksnake/main.py",
@@ -296,7 +288,6 @@ static bool assetLibraryVisible() {
 // haven't installed certain apps yet.
 #ifdef BADGE_HIDE_MISSING_APPS
 static bool synthVisible()           { return Filesystem::fileExists("/apps/synth/main.py"); }
-static bool flappyVisible()          { return Filesystem::fileExists("/apps/flappy_asteroids/main.py"); }
 static bool irBlockBattleVisible()   { return Filesystem::fileExists("/apps/ir_block_battle/main.py"); }
 static bool irPlaygroundVisible()    { return Filesystem::fileExists("/apps/ir_remote/main.py"); }
 static bool breakSnakeVisible()      { return Filesystem::fileExists("/apps/breaksnake/main.py"); }
@@ -346,15 +337,6 @@ static const GridMenuItem kCuratedMenuItems[] = {
      nullptr,
 #endif
      nullptr},
-    {"FLAPPY", "Play Asteroids and Flappy Bird together",
-     AppIcons::flappyAsteroids, kScreenNone, launchFlappyAsteroids,
-#ifdef BADGE_HIDE_MISSING_APPS
-     flappyVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-
     {"SYNTH", "Play joystick tones, loops, and loadable sounds",
      AppIcons::synth, kScreenNone, launchSynth,
 #ifdef BADGE_HIDE_MISSING_APPS
@@ -372,13 +354,13 @@ static const GridMenuItem kCuratedMenuItems[] = {
 #endif
      nullptr},
 
-    {"DOOM",        "Play DOOM on the badge",
-     AppIcons::doom,      kScreenDoom,        nullptr, nullptr, nullptr},
+    {"HELGRIND",    "A badge game, coming soon",
+     AppIcons::games,     kScreenHelgrind,    nullptr, nullptr, nullptr},
 
     {"APPS",        "Run MicroPython apps stored on the badge",
      AppIcons::apps,      kScreenApps,        nullptr, nullptr, nullptr},
      {"COMMUNITY APPS",
-      "Browse and install community-built apps + assets like the DOOM WAD",
+      "Browse and install community-built apps and assets",
       AppIcons::assetLibrary, kScreenAssetLibrary, nullptr,
       &assetLibraryVisible, nullptr, nullptr},
     {"MATRIX", "Pick a persistent LED matrix animation or app",
@@ -570,9 +552,7 @@ static WifiScreen sWifi;
 static UpdateFirmwareScreen sUpdateFirmware;
 static AssetLibraryScreen sAssetLibrary;
 static AssetDetailScreen sAssetDetail;
-#ifdef BADGE_HAS_DOOM
-static DoomScreen sDoom;
-#endif
+static HelgrindScreen sHelgrind;
 
 // Default sort key offsets:
 //   Curated items: 10 * array index, leaving room (1, 2, ..., 9) for
@@ -813,9 +793,7 @@ void GUIManager::begin(oled* display, Inputs* inputs) {
   registerScreen(&sUpdateFirmware);
   registerScreen(&sAssetLibrary);
   registerScreen(&sAssetDetail);
-#ifdef BADGE_HAS_DOOM
-  registerScreen(&sDoom);
-#endif
+  registerScreen(&sHelgrind);
 
   // Populate the main-menu grid with curated items + AppRegistry-discovered
   // dynamic Python apps before the first render. Safe to call again later

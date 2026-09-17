@@ -42,8 +42,8 @@ bool beginControllerOnly();
 // hazards, and WiFi cannot be safely restarted while BLE owns internal DRAM.
 void endSession();
 
-// Best-effort full BLE shutdown for exclusive-takeover apps (e.g. Doom)
-// that need every byte of contiguous internal DRAM. Stops scan, deinits
+// Best-effort full BLE shutdown for exclusive-takeover apps that need
+// every byte of contiguous internal DRAM. Stops scan, deinits
 // the BLE host + controller, and releases the BT mode memory. Frees
 // ~60 KB internal that the "controller stays up" policy normally
 // preserves. After this call BLE is considered permanently dead until

@@ -63,7 +63,7 @@ from pathlib import Path
 # apps, docs, micropython_tests, loose helper scripts) ships via fatfs.bin
 # (factory flash) or Community Apps / JumperIDE sync, and never bakes.
 # Optional community-only apps live in community_apps/ and are downloaded.
-BAKE_DIRS = {'lib', 'matrixApps', 'apps/synth', 'apps/flappy_asteroids', 'apps/breaksnake', 'apps/ir_block_battle', 'apps/ir_remote'}
+BAKE_DIRS = {'lib', 'matrixApps', 'apps/synth', 'apps/breaksnake', 'apps/ir_block_battle', 'apps/ir_remote'}
 
 
 def _matches_bake_dir(rel_str: str) -> bool:
@@ -82,19 +82,8 @@ def _matches_bake_dir(rel_str: str) -> bool:
 # installable from the Community Apps screen. Each lives in
 # initial_filesystem/ and is served from its committed location via the
 # raw URL; size + sha256 are computed at generation time so the registry
-# entry is self-verifying. doom1.wad ships inside the factory fatfs.bin,
-# so factory-flashed badges already have it; this entry lets OTA-updated
-# or reformatted badges re-download it on demand.
-DOWNLOADABLE_ASSETS = [
-    {
-        'rel_path': '/doom1.wad',
-        'id': 'doom1-shareware',
-        'name': 'DOOM 1 Shareware',
-        'version': '1.9',
-        'description': 'Original 1993 shareware episode. Required for the DOOM tile.',
-        'min_free_bytes': 4500000,
-    },
-]
+# entry is self-verifying.
+DOWNLOADABLE_ASSETS = []
 
 
 def generate_downloadable_assets(src_dir: Path, raw_base: str) -> list[dict]:
@@ -129,8 +118,7 @@ def generate_downloadable_assets(src_dir: Path, raw_base: str) -> list[dict]:
 
 def generate_registry_downloadables_header(entries: list[dict]) -> str:
     """Emit RegistryDownloadables.h — firmware-baked kind:"file" entries
-    merged into AssetRegistry after every remote fetch (doom1.wad until
-    the release registry catches up)."""
+    merged into AssetRegistry after every remote fetch."""
     lines = [
         '#pragma once',
         '',
@@ -574,7 +562,7 @@ def generate_community_apps(files: list[dict], data_dir: Path,
       - docs/, images/, messages/  → kind:"file"
       - data/ root files in LOOSE_ROOT_FILES → kind:"file"
       - extra_assets → pre-built kind:"file" entries (big committed
-        downloadables like doom1.wad), appended and deduped on dest_path
+        downloadables), appended and deduped on dest_path
 
     For app entries the per-file list (path/sha256/size/url) is
     inlined directly rather than referenced through a per-app
@@ -697,7 +685,7 @@ def generate_community_apps(files: list[dict], data_dir: Path,
             "description": f"Optional asset ({f['rel_path']})",
         })
 
-    # Big committed downloadables (doom1.wad). Dedup on dest_path so a
+    # Big committed downloadables. Dedup on dest_path so a
     # scanned file can't be shadowed by a release-asset entry.
     existing_dests = {a.get("dest_path") for a in assets if "dest_path" in a}
     for entry in (extra_assets or []):

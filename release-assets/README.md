@@ -17,8 +17,7 @@ These files are built by
 for this asset when firmware OTA is enabled.
 
 `replay2026-factory-16MB.bin` is a complete 16 MB factory image. It includes
-the bootloader, partition table, application firmware, FAT filesystem image, and
-`firmware/initial_filesystem/doom1.wad`.
+the bootloader, partition table, application firmware, and FAT filesystem image.
 
 Recommended Ignition flash command:
 

@@ -30,7 +30,7 @@ timezone = PST8PDT,M3.2.0,M11.1.0
 manifest_url =
 
 # Community Apps registry. A JSON file enumerating user-installable
-# apps + assets (DOOM WAD, sound packs, etc.). The badge fetches this
+# apps + assets (sound packs, etc.). The badge fetches this
 # once a day and lets users browse / install entries from the
 # Community Apps screen. See firmware/docs/OTA-MAINTAINER.md for the
 # schema. The legacy `asset_registry_url` key is still accepted for

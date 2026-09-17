@@ -289,12 +289,6 @@ def _partition_offset(build_dir: Path, *, name: str = "", subtypes: set[int] | N
     return info[0] if info else None
 
 
-def _doom_wad_present(fw_dir: Path) -> bool:
-    data_dir = fw_dir / "data"
-    return any((data_dir / name).is_file()
-               for name in ("doom1.wad", "DOOM1.WAD", "Doom1.wad", "Doom1.WAD"))
-
-
 _VID_PID_RE = re.compile(r"VID:PID=([0-9A-F]{4}:[0-9A-F]{4})", re.IGNORECASE)
 _SER_RE = re.compile(r"\bSER=([^\s]+)", re.IGNORECASE)
 _LOC_RE = re.compile(r"\bLOCATION=([^\s]+)", re.IGNORECASE)
@@ -448,24 +442,6 @@ async def prepare_flash_artifacts(
         if key in _PREPARED_FLASH_ARTIFACTS and _find_filesystem_image(build_dir):
             return {"success": True, "env": env, "output": "Flash artifacts already prepared.",
                     "error": "", "duration_s": round(time.monotonic() - start, 1)}
-
-        # If a Doom WAD is not available locally but a filesystem image
-        # already exists, keep the previous image usable for --no-build
-        # production runs instead of forcing an unnecessary rebuild.
-        if (
-            not rebuild_filesystem
-            and env == ONLY_ENV
-            and not _doom_wad_present(fw_dir)
-            and _find_filesystem_image(build_dir)
-        ):
-            _PREPARED_FLASH_ARTIFACTS.add(key)
-            return {
-                "success": True,
-                "env": env,
-                "output": "Using existing filesystem image; data/doom1.wad is not present to rebuild it.",
-                "error": "",
-                "duration_s": round(time.monotonic() - start, 1),
-            }
 
         if rebuild_filesystem:
             _remove_filesystem_images(build_dir)

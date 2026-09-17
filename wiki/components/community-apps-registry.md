@@ -8,7 +8,7 @@ Everything under `firmware/initial_filesystem/` ships to every badge via the fac
 
 An app's registry entry also determines what shows up in the on-badge Apps menu: `main.py` should declare `__title__`, `__description__`, and `__icon__` near the top so the installed app displays correctly, distinct from `community.json`'s registry-level metadata used by the Community Apps screen itself before install.
 
-The actual on-badge download mechanism isn't Community-Apps-specific: it's the generic `AssetRegistry` fetcher covered on the [OTA and assets](ota-and-assets.md) page, which also delivers `doom1.wad` and other non-app assets through the same `registry.json` schema and the same `community_apps_url` setting.
+The actual on-badge download mechanism isn't Community-Apps-specific: it's the generic `AssetRegistry` fetcher covered on the [OTA and assets](ota-and-assets.md) page, which also delivers non-app assets (sound packs, fonts) through the same `registry.json` schema and the same `community_apps_url` setting.
 
 ## Review and validation
 

@@ -36,7 +36,7 @@ The 16 MB flash is split by a PlatformIO partition table rather than a fixed OS 
 | `ffat` (FATFS) | 6 MB | ~7.1 MB |
 | `coredump` | 64 KB | 64 KB |
 
-The default `replay2026` table trades OTA-slot headroom for enough FATFS space to also carry the embedded `doom1.wad` shareware data; `replay2026-expanded` gives back that headroom to the OTA slots and FATFS instead, and `BadgeOTA::isExpandedPartitionLayout` lets a single `firmware.bin` OTA image serve both layouts by detecting which one is mounted at runtime rather than needing separate release artifacts. How a given flash path (factory image vs. firmware-only vs. `badge_sync`) interacts with `nvs` vs. `ffat` vs. `app0`/`app1` is the subject of the [storage model](storage-model.md) page — this page only owns the partition sizes themselves.
+The default `replay2026` table trades OTA-slot headroom for extra FATFS space — a legacy of once carrying the embedded `doom1.wad` shareware data, which the now-removed [Doom port](doom.md) needed but which no longer ships; `replay2026-expanded` gives back that headroom to the OTA slots and FATFS instead, and `BadgeOTA::isExpandedPartitionLayout` lets a single `firmware.bin` OTA image serve both layouts by detecting which one is mounted at runtime rather than needing separate release artifacts. How a given flash path (factory image vs. firmware-only vs. `badge_sync`) interacts with `nvs` vs. `ffat` vs. `app0`/`app1` is the subject of the [storage model](storage-model.md) page — this page only owns the partition sizes themselves.
 
 ## Accessories and form factor
 

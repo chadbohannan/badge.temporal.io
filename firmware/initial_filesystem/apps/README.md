@@ -252,8 +252,9 @@ MicroPython heap behavior.
 # Flash firmware + embedded startup files together
 pio run -e echo -t upload --upload-port /dev/cu.usbmodemXXXX
 
-# Upload the raw FatFS image from firmware/data/ when you need data files
-# such as doom1.wad. This does not replace generated startup files.
+# Upload the raw FatFS image from firmware/data/ when you need large data
+# files not baked into the firmware binary. This does not replace generated
+# startup files.
 pio run -e echo -t uploadfs --upload-port /dev/cu.usbmodemXXXX
 ```
 

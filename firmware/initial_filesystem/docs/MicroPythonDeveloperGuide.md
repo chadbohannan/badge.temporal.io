@@ -271,7 +271,7 @@ import time
 import gc
 ```
 
-This pattern is used by BreakSnake, Flappy Asteroids, and Synth. The
+This pattern is used by BreakSnake and Synth. The
 `sys.path.insert` lets Python find sibling modules in the app directory.
 
 ### Shared App Helpers

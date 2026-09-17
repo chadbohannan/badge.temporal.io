@@ -11,8 +11,8 @@ a fresh badge needs pre-positioned at its production offset:
   0x00E000  boot_app0.bin        (framework — points OTA pointer at app0)
   0x010000  firmware.bin         (the production app — built by
                                   `pio run -e replay2026`)
-  0x7D0000  fatfs.bin            (initial_filesystem + DOOM WAD + every
-                                  in-repo community app preloaded into
+  0x7D0000  fatfs.bin            (initial_filesystem + every in-repo
+                                  community app preloaded into
                                   /apps/<id>/)
 
 End-user recovery (no source checkout, no PlatformIO):
@@ -129,8 +129,7 @@ def stage_community_apps(repo: Path) -> int:
     Skips `manifest.toml` (contributor metadata, not runtime) and any
     dotfile / __pycache__ noise. Existing `data/apps/<id>/` from a
     previous run is replaced — the directory belongs to this script
-    while it's running, and `upload_doom_wad.py` already wipes the
-    whole `data/` tree on `buildfs` anyway."""
+    while it's running."""
     community = repo / "community_apps"
     data_apps = repo / "firmware" / "data" / "apps"
     if not community.is_dir():
@@ -176,7 +175,6 @@ def build_fatfs(firmware_dir: Path, env: str) -> Path:
         cwd=str(firmware_dir),
         env={
             **os.environ,
-            "BADGE_ALLOW_MISSING_DOOM_WAD": "1",
             "BADGE_STAGE_COMMUNITY_APPS": "1",
         },
     )

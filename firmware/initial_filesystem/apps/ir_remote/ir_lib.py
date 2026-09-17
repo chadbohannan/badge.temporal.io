@@ -80,7 +80,7 @@ ACTIVITY_HOLD_MS = 120
 #     Matches the native UIFonts::kText so the chrome text aligns
 #     with everything else the badge draws.
 #   - BODY_FONT (6x10) for sub-app body text. Slightly larger than
-#     Smallsimple but still tight; same font breaksnake / flappy use.
+#     Smallsimple but still tight; same font breaksnake uses.
 #   - HERO_FONT (9x15) for the one big readout per screen (RTT,
 #     captured hex, AC mode).
 #

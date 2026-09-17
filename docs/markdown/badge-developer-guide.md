@@ -275,7 +275,7 @@ import time
 import gc
 ```
 
-This pattern is used by BreakSnake, Flappy Asteroids, and Synth. The
+This pattern is used by BreakSnake and Synth. The
 `sys.path.insert` lets Python find sibling modules in the app directory.
 
 ### Showing Up on the Main Menu
@@ -483,7 +483,7 @@ with open("/cache/last_query.json", "w") as f:
 
 > **Why this matters**: as of firmware v0.2, only `/lib` and
 > `/matrixApps` are baked into the firmware image. Everything else
-> (your app, docs, images, the DOOM WAD) ships via factory
+> (your app, docs, images, large downloadable assets) ships via factory
 > `fatfs.bin` flash and can be re-pushed via Community Apps or
 > JumperIDE. State you care about belongs in NVS so it can't get
 > wiped by a reflash. See
@@ -1228,7 +1228,7 @@ ir_stop()
 ## 9. Firmware Updates & Community Apps
 
 The badge can update its own firmware over WiFi from GitHub Releases,
-and can fetch installable apps + user files (like the DOOM WAD) from
+and can fetch installable apps + user files from
 a configurable Community Apps registry. Both systems are user-driven —
 the badge checks once a day in the background, but never installs
 anything without an explicit Confirm.
@@ -1240,7 +1240,7 @@ Three storage tiers; one rule: **state in NVS, code on FATFS**.
 | Tier | Holds | Survives a... |
 |------|-------|---------------|
 | NVS | badge ID, WiFi creds, contacts, badgeInfo, `badge.kv` saves | every flash type |
-| FATFS | Python source, docs, images, doom1.wad, user uploads | firmware-only flash; **wiped** by `fatfs.bin` reflash + `--clear-extras` sync |
+| FATFS | Python source, docs, images, large downloadable assets, user uploads | firmware-only flash; **wiped** by `fatfs.bin` reflash + `--clear-extras` sync |
 | app0 | C++ binary + survival floor (`/lib`, `/matrixApps`) | replaced only by a firmware flash |
 
 Putting game saves in `badge.kv` (see § 4 Saving Data) means a
@@ -1303,11 +1303,6 @@ filesystem `dest_path` (or `dest_dir` for multi-file apps). The badge
 streams each file into a `.tmp`, verifies the hash if present, then
 atomically renames into place.
 
-The DOOM tile uses this transparently: if `/doom1.wad` is missing on
-the filesystem, **DOOM → Confirm** routes you to the Community Apps
-detail page for the WAD with a one-tap **Install** button. No need
-to sideload via `uploadfs`.
-
 ### Pushing files via JumperIDE
 
 JumperIDE (`ide.jumperless.org`) is the easiest non-WiFi path for
@@ -1330,8 +1325,8 @@ first (the badge port is single-owner). See
 
 ### Re-flashing the FATFS partition
 
-Two ways to repopulate everything (apps, docs, images, the DOOM WAD)
-without touching firmware:
+Two ways to repopulate everything (apps, docs, images, large downloadable
+assets) without touching firmware:
 
 ```bash
 cd firmware
@@ -1342,9 +1337,9 @@ cd firmware
 
 This builds `fatfs.bin` from `firmware/data/` (mirror of
 `firmware/initial_filesystem/`) and writes it directly to the badge's
-ffat partition. Includes `/doom1.wad` (4 MB) which is otherwise
-downloaded over WiFi via Community Apps. NVS state (game saves,
-contacts, badge identity) is untouched.
+ffat partition, including any large committed assets that would
+otherwise be downloaded over WiFi via Community Apps. NVS state (game
+saves, contacts, badge identity) is untouched.
 
 If you see `ModuleNotFoundError: No module named 'platformio'`, that's
 the system `pio` shim issue — call the bundled binary by absolute
@@ -1373,14 +1368,14 @@ Two entry kinds: single files and multi-file app bundles.
   "schema_version": 2,
   "assets": [
     {
-      "id": "doom1-shareware",
+      "id": "example-large-asset",
       "kind": "file",
-      "name": "DOOM 1 Shareware WAD",
-      "version": "1.9",
-      "url": "https://...doom1.wad",
+      "name": "Example Large Asset",
+      "version": "1.0",
+      "url": "https://.../example-asset.bin",
       "sha256": "<64 hex>",
       "size": 4196020,
-      "dest_path": "/doom1.wad",
+      "dest_path": "/example-asset.bin",
       "min_free_bytes": 4500000,
       "description": "..."
     },
@@ -1524,7 +1519,7 @@ bring your own keys.
   the only thing that can leave the badge in a bad state — and even
   then the bootloader will roll back on the next reset.
 - **Asset downloads can take several minutes** on slow conference
-  WiFi (the DOOM WAD is 4 MB). The progress screen shows live KB
+  WiFi for multi-megabyte assets. The progress screen shows live KB
   counts; if it stalls for more than 30 s, cancel and retry.
 
 ---

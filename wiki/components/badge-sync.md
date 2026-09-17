@@ -4,7 +4,7 @@
 
 ## How it decides what to push
 
-It lists every file already on the badge's `/` with size and an FNV-1a hash via a small walker script (an extension of `viperide_reinit.py`), then diffs that against two manifests generated alongside `StartupFilesData.h`: `firmware/data/manifest.json` (the byte-mirror consumed by `pio -t uploadfs`) and `firmware/initial_filesystem/manifest.json` (the hand-edited source of truth). Missing or stale files are pushed as base64-chunked writes over the raw REPL. Clearing files on the badge that aren't in either manifest — i.e. deleting user uploads and extras — is off by default and only happens with `--clear-extras`, which matters because [the storage model](storage-model.md) treats FATFS extras (like a manually-copied `doom1.wad` or a user's own uploaded file) as things a normal sync should preserve, not wipe.
+It lists every file already on the badge's `/` with size and an FNV-1a hash via a small walker script (an extension of `viperide_reinit.py`), then diffs that against two manifests generated alongside `StartupFilesData.h`: `firmware/data/manifest.json` (the byte-mirror consumed by `pio -t uploadfs`) and `firmware/initial_filesystem/manifest.json` (the hand-edited source of truth). Missing or stale files are pushed as base64-chunked writes over the raw REPL. Clearing files on the badge that aren't in either manifest — i.e. deleting user uploads and extras — is off by default and only happens with `--clear-extras`, which matters because [the storage model](storage-model.md) treats FATFS extras (a manually-copied asset, or a user's own uploaded file) as things a normal sync should preserve, not wipe.
 
 ## When to reach for it
 

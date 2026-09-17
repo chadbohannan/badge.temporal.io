@@ -132,7 +132,7 @@ void AssetLibraryScreen::onEnter(GUIManager& gui) {
     doRefresh(/*ignoreCooldown=*/true);
   }
 
-  // Honor a pending selectAssetById() from the DOOM no-WAD redirect.
+  // Honor a pending selectAssetById() from a missing-app redirect.
   // Asset rows live at index (registry_idx + 1) because of the
   // synthetic "Download all" row at row 0.
   if (sQueuedSelectId[0]) {

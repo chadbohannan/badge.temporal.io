@@ -49,9 +49,7 @@ enum ScreenId : uint8_t {
   kScreenUpdateFirmware,
   kScreenAssetLibrary,
   kScreenAssetDetail,
-#ifdef BADGE_HAS_DOOM
-  kScreenDoom,
-#endif
+  kScreenHelgrind,
 };
 
 enum class ScreenAccess : uint8_t {

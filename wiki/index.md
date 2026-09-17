@@ -17,7 +17,7 @@ The structured routing layer for the wiki. Each entry links to a page with a one
 - [Badge App Authoring Model](components/badge-apps.md) — the folder-app convention, `badge_app.py`/`badge_ui.py` shared helpers, the dev force-refresh iteration loop, and stale `-e echo` build commands in several app-facing docs
 - [Boops: IR Contact Exchange](components/badge-boops.md) — the four-file split (journal/protocol/handlers/feedback) behind badge-to-badge IR contact exchange, its Core 0 IR transport, its v2 manifest-driven wire protocol, and where its identity card actually lives (corrected from an earlier version of this page)
 - [NEC IR Protocol Layer](components/nec-ir-protocol.md) — the lowest-level RMT/NEC codecs shared by Boops and the consumer-remote "IR Playground," and two past silent-data-loss regressions in its frame-size ceilings
-- [Doom Port](components/doom.md) — the DoomGeneric-based app mode that takes over badge resources outright, its render/dither pipeline, and its shared-pin sound/haptics conflict
+- [Doom Port (removed)](components/doom.md) — history of the DoomGeneric-based app mode (unplayable on the 1bpp OLED) and its 2026-09-16/17 removal, replaced by a "HELGRIND" placeholder
 - [BLE Room Presence (disabled in public builds)](components/ble-proximity.md) — the fully-implemented but source-filtered-out venue beacon system, its HMAC rotating-UUID scheme, and why it can't coexist with WiFi
 - [OTA and Asset Registry](components/ota-and-assets.md) — GitHub-Releases firmware OTA, in-place partition-layout migration, and the generic registry.json fetcher that also backs Community Apps
 - [The Cooperative Scheduler](components/scheduler.md) — the `IService`/priority-divisor backbone that lets native subsystems share Core 1 without their own FreeRTOS tasks
@@ -36,7 +36,7 @@ The structured routing layer for the wiki. Each entry links to a page with a one
 
 - [Offline-First Runtime](concepts/offline-first-runtime.md) — why the badge has no pairing gate or background polling, which features still need WiFi, and the "no background badge-owned API polling" rule
 - [The Public/Private Scope Boundary](concepts/public-repo-scope-boundary.md) — how `AGENTS.md`'s public/private split shapes naming, docs practice, and this wiki's own scope, plus a concrete instance of the boundary being violated today
-- [Third-Party Licensing Inside an MIT Repo](concepts/third-party-licensing.md) — where GPL (Doom), proprietary game data (the shareware WAD), and Apache-2.0 (two imported Community Apps) carve out exceptions to the repo's default MIT license
+- [Third-Party Licensing Inside an MIT Repo](concepts/third-party-licensing.md) — Apache-2.0 (two imported Community Apps) carves out the live exception to the repo's default MIT license; GPL (Doom) and proprietary WAD game data were a historical exception, removed 2026-09-17
 - [Internal-DRAM Contention](concepts/internal-dram-contention.md) — the shared constraint behind TlsGate, BLE's memory anchor, and OTA's pre-install heap prep: contiguous internal DRAM, not total RAM, is what actually runs out
 
 ## Runbooks

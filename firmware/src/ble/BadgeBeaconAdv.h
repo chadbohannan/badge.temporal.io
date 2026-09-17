@@ -32,8 +32,8 @@ namespace BadgeBeaconAdv {
 void begin();
 
 // Foreground apps that need predictable internal heap (MicroPython games,
-// Doom launch screens, etc.) can pause background badge advertising without
-// changing IR ownership state.
+// exclusive-takeover launch screens, etc.) can pause background badge
+// advertising without changing IR ownership state.
 void setPausedForForeground(bool paused);
 
 // Boop/IR needs first claim on RMT DMA/internal heap. The Boop screen raises

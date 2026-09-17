@@ -47,8 +47,6 @@ This is the public Replay 2026 Badge repository.
 - Avoid exposing old prototype target names as user-facing concepts.
 - Keep hardware docs aligned with `hardware/README.md`; CAD and fabrication
   files are now part of the public repository.
-- Mention that the bundled Doom WAD and any Doom engine code have separate
-  terms from the MIT-licensed repository content.
 - Keep public docs current-only. Do not keep migration notes, stale TODOs, or
   historical implementation writeups unless they describe behavior that still
   exists and are clearly useful to contributors.

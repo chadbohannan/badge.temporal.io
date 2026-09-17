@@ -62,9 +62,9 @@ volatile bool  s_scanArmed   = false;   // startScan latched (true ⇒ status ic
 bool           s_scanActive  = false;
 BLEScan*       s_scan        = nullptr;
 // Set true after shutdownForExclusiveApp() — BLE is gone for the rest
-// of this boot. begin*() paths short-circuit so doom-exit doesn't try
-// to bring the controller back up (re-init has known use-after-free
-// hazards we deliberately avoid).
+// of this boot. begin*() paths short-circuit so an exclusive-takeover
+// app's exit doesn't try to bring the controller back up (re-init has
+// known use-after-free hazards we deliberately avoid).
 volatile bool  s_permanentlyDead = false;
 
 // Memory anchor — see header. BT controller's largest single allocation
@@ -670,7 +670,8 @@ static void shutdownForExclusiveAppCore0() {
   // memory regions still in use by the system and corrupted the
   // MicroPython heap, which crashed the GC inside the next Python
   // app launch. When BLE was never up, simply releasing the
-  // memory anchor below recovers the headroom we want for doom.
+  // memory anchor below recovers the headroom an exclusive-takeover
+  // app wants.
   if (wasInitialised) {
     BLEDevice::deinit(/*release_memory=*/true);
     esp_bt_controller_disable();
@@ -726,8 +727,8 @@ void shutdownForExclusiveApp() {
   // same core as the BT host task. Doing this from the loop task
   // (Core 1) is exactly the LoadProhibited/priority-inheritance
   // hazard the existing endSession code goes out of its way to
-  // avoid. We block until the helper finishes — doom is going
-  // to take over anyway, no benefit to async here.
+  // avoid. We block until the helper finishes — the exclusive-takeover
+  // app is going to take over anyway, no benefit to async here.
   ShutdownCookie cookie = { false };
   BaseType_t ok = xTaskCreatePinnedToCore(
       shutdownTaskTramp, "ble_shut", 8192, &cookie, 2, nullptr, 0);

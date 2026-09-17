@@ -13,7 +13,7 @@
 #
 # What this destroys:
 #   - Everything on the badge: contacts, nametag, settings.txt,
-#     downloaded assets (DOOM WAD, etc.), saved WiFi credentials.
+#     downloaded assets, saved WiFi credentials.
 #   The badge will boot fresh from the embedded initial filesystem
 #   (provisionStartupFiles re-creates the standard files on first boot).
 #
@@ -42,7 +42,7 @@ echo "  ║  with the bigger OTA slots (4.5 MB) and ffat (6.875 MB).   ║"
 echo "  ║                                                            ║"
 echo "  ║  All on-badge data will be lost:                           ║"
 echo "  ║    - contacts, nametags, settings.txt                      ║"
-echo "  ║    - downloaded assets (e.g. doom1.wad)                    ║"
+echo "  ║    - downloaded assets                                     ║"
 echo "  ║    - saved WiFi credentials                                ║"
 echo "  ║                                                            ║"
 echo "  ║  WiFi can be re-entered after first boot via               ║"
