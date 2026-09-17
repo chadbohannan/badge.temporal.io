@@ -41,7 +41,6 @@ enum ScreenId : uint8_t {
   kScreenDraw,
   kScreenDrawStickerPicker,
   kScreenDrawScalePicker,
-  kScreenAboutSponsors,
   kScreenAboutCredits,
   kScreenMenuOrder,
   kScreenHelp,
@@ -50,6 +49,7 @@ enum ScreenId : uint8_t {
   kScreenAssetLibrary,
   kScreenAssetDetail,
   kScreenHelgrind,
+  kScreenVectortank,
 };
 
 enum class ScreenAccess : uint8_t {

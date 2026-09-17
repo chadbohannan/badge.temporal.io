@@ -398,9 +398,6 @@ static const IconRegistryEntry kIconRegistry[] = {
     {"docs",       AppIcons::docs,           AppIcons::kW, AppIcons::kH},
     {"schedule",   AppIcons::schedule,       AppIcons::kW, AppIcons::kH},
     {"directory",  AppIcons::directory,      AppIcons::kW, AppIcons::kH},
-    {"synth",      AppIcons::synth,          AppIcons::kW, AppIcons::kH},
-    {"ir_play",    AppIcons::irPlayground,   AppIcons::kW, AppIcons::kH},
-    {"ir_block",   AppIcons::irBlockBattle,  AppIcons::kW, AppIcons::kH},
 };
 
 bool resolveIcon(const char *name, const uint8_t **out, uint8_t *w, uint8_t *h)

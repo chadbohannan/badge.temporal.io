@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "AboutSponsors.h"
 #include "BoothSponsors.h"
 #include "MapData.h"
 #include "ScheduleData.h"
@@ -1825,14 +1824,11 @@ void wrapAndCentreBody(oled& d, const char* text,
 }
 
 // Sponsor-booth marquee — vertically-centred 26-px row scrolling
-// right→left, mirroring AboutSponsorsScreen's scroll feel but
-// constrained to the modal body region. Uses the BoothSponsors set
-// (rendered to 26 px by scripts/gen_sponsor_xbms.py) so multiple logos
-// fit inside the modal chrome with vertical breathing room. Same wrap
-// trick (draw twice at base and base+totalW) keeps the strip seamless
-// across the edge. Sponsor index space is the same as AboutSponsors —
-// the two arrays are generated from the same SPONSORS list in alphabetic
-// order so booth.sponsor_indices remains valid against either set.
+// right→left, constrained to the modal body region. Uses the
+// BoothSponsors set (rendered to 26 px by scripts/gen_sponsor_xbms.py)
+// so multiple logos fit inside the modal chrome with vertical
+// breathing room. Same wrap trick (draw twice at base and
+// base+totalW) keeps the strip seamless across the edge.
 void drawSponsorBoothBody(oled& d, const OLEDLayout::ModalChrome& chrome,
                           const MapData::SponsorBooth& booth,
                           uint32_t openedMs) {
@@ -1897,8 +1893,7 @@ const char* SectionModalScreen::title() const {
 void SectionModalScreen::drawBody(oled& d,
                                   const OLEDLayout::ModalChrome& chrome) {
   // Sponsor booth sections render their member logos as a single
-  // horizontally scrolling marquee — same vibe as AboutSponsorsScreen
-  // but constrained to the modal body band.
+  // horizontally scrolling marquee constrained to the modal body band.
   const MapData::SponsorBooth* booth =
       MapData::findSponsorBooth(s_modal_floor, s_modal_section);
   if (booth && booth->count > 0) {

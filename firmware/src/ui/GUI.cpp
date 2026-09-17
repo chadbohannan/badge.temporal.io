@@ -1,6 +1,5 @@
 #include "GUI.h"
 #include "screens/AboutCreditsScreen.h"
-#include "screens/AboutSponsorsScreen.h"
 #include "screens/MenuOrderScreen.h"
 #include "screens/AnimTestScreen.h"
 #include "screens/AppsScreen.h"
@@ -19,6 +18,7 @@
 #include "screens/UpdateFirmwareScreen.h"
 #include "screens/HapticsTestScreen.h"
 #include "screens/HelgrindScreen.h"
+#include "screens/VectortankScreen.h"
 #include "screens/InputTestScreen.h"
 #include "screens/LEDScreen.h"
 #include "screens/MapScreens.h"
@@ -208,38 +208,6 @@ static void launchPythonApp(GUIManager& gui, const char* path,
   gui.requestRender();
 }
 
-static void launchSynth(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/synth/main.py", "Synth");
-}
-
-static void launchIRBlockBattle(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/ir_block_battle/main.py", "IR Block Battle");
-}
-
-static void launchIRPlayground(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/ir_remote/main.py", "IR Playground");
-}
-
-static void launchBreakSnake(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/breaksnake/main.py", "BreakSnake");
-}
-
-static void launchTardigotchi(GUIManager& gui) {
-  launchPythonApp(gui, "/apps/tardigotchi/main.py", "Tardigotchi");
-}
-
-// `main.py` paths for Python apps that already have curated grid tiles
-// (`launchSynth`, `launchIRBlockBattle`, ...). Must match those strings —
-// AppRegistry discovers the same slugs under /apps/ and would add a second
-// icon without the dedupe in rebuildMainMenuFromRegistry().
-static const char* const kCuratedPythonDuplicateEntryPaths[] = {
-    "/apps/synth/main.py",
-    "/apps/ir_block_battle/main.py",
-    "/apps/ir_remote/main.py",
-    "/apps/breaksnake/main.py",
-    "/apps/tardigotchi/main.py",
-};
-
 // CREDITS dispatcher. Two backends exist:
 //   * native AboutCreditsScreen (drawXBM out of AboutCredits.h)
 //   * MicroPython /apps/credits.py (set_pixel walk on the editable FS)
@@ -280,20 +248,6 @@ static bool assetLibraryVisible() {
   return true;
 }
 
-// ── Compile-time hide-missing-apps visibility gates ───────────────────────
-// When BADGE_HIDE_MISSING_APPS is defined, curated Python-app tiles whose
-// scripts aren't on the filesystem are hidden from the grid. The apps are
-// still launchable via `run:<slug>` and will redirect to the download flow
-// if launched when missing; this just declutters the menu for badges that
-// haven't installed certain apps yet.
-#ifdef BADGE_HIDE_MISSING_APPS
-static bool synthVisible()           { return Filesystem::fileExists("/apps/synth/main.py"); }
-static bool irBlockBattleVisible()   { return Filesystem::fileExists("/apps/ir_block_battle/main.py"); }
-static bool irPlaygroundVisible()    { return Filesystem::fileExists("/apps/ir_remote/main.py"); }
-static bool breakSnakeVisible()      { return Filesystem::fileExists("/apps/breaksnake/main.py"); }
-static bool tardigotchiVisible()     { return Filesystem::fileExists("/apps/tardigotchi/main.py"); }
-#endif
-
 // ── Curated C++ menu items ────────────────────────────────────────────────
 // These are the always-on items the firmware ships with. Dynamic Python
 // apps discovered by AppRegistry are appended after this list when the
@@ -313,49 +267,11 @@ static const GridMenuItem kCuratedMenuItems[] = {
     {"DRAW", "Draw frames and animations with stickers and pixels",
      DrawIcons::menuDraw, kScreenDrawPicker, nullptr, nullptr, nullptr},
 
-    {"IR BLOCK", "Clear lines and send garbage over IR",
-     AppIcons::irBlockBattle, kScreenNone, launchIRBlockBattle,
-#ifdef BADGE_HIDE_MISSING_APPS
-     irBlockBattleVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-    {"IR PLAY", "Universal remote, sniffer, TV-B-Gone, and IR mini-games",
-     AppIcons::irPlayground, kScreenNone, launchIRPlayground,
-#ifdef BADGE_HIDE_MISSING_APPS
-     irPlaygroundVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-    {"BREAKSNAKE",  "Play Breakout and Snake together",
-     AppIcons::breaksnake, kScreenNone, launchBreakSnake,
-#ifdef BADGE_HIDE_MISSING_APPS
-     breakSnakeVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-    {"SYNTH", "Play joystick tones, loops, and loadable sounds",
-     AppIcons::synth, kScreenNone, launchSynth,
-#ifdef BADGE_HIDE_MISSING_APPS
-     synthVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-    {"TARDIGOTCHI", "Hatch and care for a tiny tardigrade",
-     AppIcons::tardigotchi, kScreenNone, launchTardigotchi,
-#ifdef BADGE_HIDE_MISSING_APPS
-     tardigotchiVisible,
-#else
-     nullptr,
-#endif
-     nullptr},
-
     {"HELGRIND",    "A badge game, coming soon",
      AppIcons::games,     kScreenHelgrind,    nullptr, nullptr, nullptr},
+
+    {"VECTOR",      "Wireframe vector tank demo (native C++)",
+     AppIcons::games,     kScreenVectortank,  nullptr, nullptr, nullptr},
 
     {"APPS",        "Run MicroPython apps stored on the badge",
      AppIcons::apps,      kScreenApps,        nullptr, nullptr, nullptr},
@@ -381,8 +297,6 @@ static const GridMenuItem kCuratedMenuItems[] = {
      AppIcons::settings,  kScreenSettings, nullptr, nullptr, nullptr},
      {"HELP", "Tips, button shortcuts, and links to the developer docs",
       AppIcons::docs,      kScreenHelp,         nullptr, nullptr, nullptr},
-     {"SPONSORS", "Thank you to our sponsors!",
-      AppIcons::about,     kScreenAboutSponsors, nullptr, nullptr, nullptr},
       {"DIAGNOSTICS", "Inspect runtime state, tasks, battery, and memory",
         AppIcons::about,     kScreenDiagnostics, nullptr, nullptr, nullptr},
 };
@@ -544,7 +458,6 @@ static InputTestScreen sInputTest;
 #endif
 TextInputScreen sTextInput;
 static BadgeInfoViewScreen sBadgeInfoView;
-static AboutSponsorsScreen sAboutSponsors;
 static AboutCreditsScreen sAboutCredits;
 static HelpScreen sHelp;
 static MenuOrderScreen sMenuOrder;
@@ -553,6 +466,7 @@ static UpdateFirmwareScreen sUpdateFirmware;
 static AssetLibraryScreen sAssetLibrary;
 static AssetDetailScreen sAssetDetail;
 static HelgrindScreen sHelgrind;
+static VectortankScreen sVectortank;
 
 // Default sort key offsets:
 //   Curated items: 10 * array index, leaving room (1, 2, ..., 9) for
@@ -581,7 +495,6 @@ static constexpr int16_t kWifiAlwaysLastOrder           = 30100;
 static constexpr int16_t kFwUpdateAlwaysLastOrder       = 30200;
 static constexpr int16_t kHelpAlwaysLastOrder           = 30300;
 static constexpr int16_t kCommunityAppsAlwaysLastOrder  = 30400;
-static constexpr int16_t kSponsorsAlwaysLastOrder       = 30500;
 
 // Effective order = NVS override → manifest hint → fallback.
 static int16_t resolveItemOrder(const char* label, int16_t fallback) {
@@ -608,14 +521,11 @@ extern "C" void rebuildMainMenuFromRegistry(void) {
     GridMenuItem& slot = sMenuItems[cursor];
     slot = kCuratedMenuItems[i];
     // System tiles all pin to the tail in a fixed order
-    // (SETTINGS → WIFI → FW UPDATE → HELP → COMMUNITY APPS →
-    // SPONSORS), unless the user has explicitly reordered any of them
-    // via MenuOrderScreen. Sponsors lands at the very end so the
-    // thank-you tail doesn't get buried mid-grid.
+    // (SETTINGS → WIFI → FW UPDATE → HELP → COMMUNITY APPS),
+    // unless the user has explicitly reordered any of them
+    // via MenuOrderScreen.
     int16_t fallback;
-    if (slot.label && strcmp(slot.label, "SPONSORS") == 0) {
-      fallback = kSponsorsAlwaysLastOrder;
-    } else if (slot.label && strcmp(slot.label, "COMMUNITY APPS") == 0) {
+    if (slot.label && strcmp(slot.label, "COMMUNITY APPS") == 0) {
       fallback = kCommunityAppsAlwaysLastOrder;
     } else if (slot.label && strcmp(slot.label, "HELP") == 0) {
       fallback = kHelpAlwaysLastOrder;
@@ -650,25 +560,17 @@ extern "C" void rebuildMainMenuFromRegistry(void) {
     // browser when that happens.
     if (app->slug && strcmp(app->slug, "crash_log") == 0) continue;
 
-    // Dedupe against curated tiles. If a curated entry already
-    // launches the same /apps/<slug>/main.py (SYNTH, IR BLOCK, …),
-    // skip the AppRegistry duplicate so users don't see two icons.
+    // Dedupe against curated tiles. No curated entry currently launches
+    // a /apps/<slug>/main.py Python app directly, so this only guards
+    // against a dynamic app's title colliding with a curated label.
     bool isCuratedDuplicate = false;
-    for (const char* path : kCuratedPythonDuplicateEntryPaths) {
-      if (path && strcasecmp(app->entryPath, path) == 0) {
+    for (size_t c = 0; c < kCuratedMenuItemCount; c++) {
+      const char* curLabel = kCuratedMenuItems[c].label;
+      if (!curLabel) continue;
+      // Title from __title__ sometimes matches grid label verbatim.
+      if (strcasecmp(curLabel, app->title) == 0) {
         isCuratedDuplicate = true;
         break;
-      }
-    }
-    if (!isCuratedDuplicate) {
-      for (size_t c = 0; c < kCuratedMenuItemCount; c++) {
-        const char* curLabel = kCuratedMenuItems[c].label;
-        if (!curLabel) continue;
-        // Title from __title__ sometimes matches grid label verbatim.
-        if (strcasecmp(curLabel, app->title) == 0) {
-          isCuratedDuplicate = true;
-          break;
-        }
       }
     }
     if (isCuratedDuplicate) continue;
@@ -785,7 +687,6 @@ void GUIManager::begin(oled* display, Inputs* inputs) {
   registerScreen(&sDrawScreen);
   registerScreen(&sStickerPicker);
   registerScreen(&sScalePicker);
-  registerScreen(&sAboutSponsors);
   registerScreen(&sAboutCredits);
   registerScreen(&sHelp);
   registerScreen(&sMenuOrder);
@@ -794,6 +695,7 @@ void GUIManager::begin(oled* display, Inputs* inputs) {
   registerScreen(&sAssetLibrary);
   registerScreen(&sAssetDetail);
   registerScreen(&sHelgrind);
+  registerScreen(&sVectortank);
 
   // Populate the main-menu grid with curated items + AppRegistry-discovered
   // dynamic Python apps before the first render. Safe to call again later

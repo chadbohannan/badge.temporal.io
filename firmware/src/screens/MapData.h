@@ -128,14 +128,14 @@ extern const PixelFloorLayout* PIXEL_LAYOUTS[kFloorCount];
 // ── Sponsor booths ─────────────────────────────────────────────────
 // Some sections (the lobby Sponsors A/B/C trio) are booths populated by
 // a fixed list of sponsors whose 32-px logos live in
-// firmware/src/screens/AboutSponsors.h. The section modal swaps its
+// firmware/src/screens/BoothSponsors.h. The section modal swaps its
 // description body for a scrolling marquee of those logos when one of
 // these mappings matches the (floor, section) being shown.
 
 struct SponsorBooth {
   int8_t        floor_idx;
   int8_t        section_idx;
-  const uint8_t* sponsor_indices;  // indices into AboutSponsors::kSponsors
+  const uint8_t* sponsor_indices;  // indices into BoothSponsors::kSponsors
   uint8_t        count;
 };
 
