@@ -275,7 +275,7 @@ import time
 import gc
 ```
 
-This pattern is used by BreakSnake and Synth. The
+This pattern is used by BreakSnake. The
 `sys.path.insert` lets Python find sibling modules in the app directory.
 
 ### Showing Up on the Main Menu
@@ -452,9 +452,9 @@ factory reflashes, and Community Apps installs.
 import badge
 
 # Read with a default; write any str/int/float/bytes value.
-hi = badge.kv_get("hi_breaksnake", 0)
+hi = badge.kv_get("hi_myapp", 0)
 hi += 1
-badge.kv_put("hi_breaksnake", hi)
+badge.kv_put("hi_myapp", hi)
 ```
 
 Or via the friendlier wrapper baked into `/lib/badge_kv.py`:
@@ -462,7 +462,7 @@ Or via the friendlier wrapper baked into `/lib/badge_kv.py`:
 ```jython
 from badge_kv import kv
 
-kv.put("hi_breaksnake", kv.get("hi_breaksnake", 0) + 1)
+kv.put("hi_myapp", kv.get("hi_myapp", 0) + 1)
 ```
 
 Limits: 15 chars per key, 1 KB per value, 64 keys per badge.

@@ -422,7 +422,7 @@ exits still return directly to the host runtime after cleanup runs.
 For apps with hardware state to release, pass a cleanup callback:
 
 ```python
-run_app("Synth", run, cleanup)
+run_app("My App", run, cleanup)
 ```
 
 ### `with_led_override(callback, *args)`

@@ -18,6 +18,6 @@ cd firmware
   --out ../docs/assets/screenshots/my-screen.png
 ```
 
-`--scale 4` or `--scale 6` controls output PNG size. `--screen synth-live` or `--screen synth-sounds` render built-in app fixtures directly, without manually navigating the badge UI to the right screen first.
+`--scale 4` or `--scale 6` controls output PNG size.
 
 Only one process can own the badge's USB serial port — close JumperIDE, any serial monitor, and Ignition before capturing, the same constraint documented for the [diff-sync engine](../components/badge-sync.md).

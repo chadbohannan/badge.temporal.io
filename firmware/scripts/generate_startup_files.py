@@ -56,21 +56,20 @@ from pathlib import Path
 
 # Files under these paths are baked into app0 and provisioned to FATFS at
 # boot when missing. Entries may be a top-level dir (`lib`) or a nested
-# prefix (`apps/synth`) — a file bakes if its relative path equals an entry
-# or sits under `entry + '/'`. The selected `apps/*` games are baked so the
-# badge ships them even on an OTA update (firmware.bin carries app0 but not
-# the factory fatfs.bin). Everything else under initial_filesystem (other
-# apps, docs, micropython_tests, loose helper scripts) ships via fatfs.bin
+# prefix (`apps/foo`) — a file bakes if its relative path equals an entry
+# or sits under `entry + '/'`. Everything else under initial_filesystem
+# (apps, docs, micropython_tests, loose helper scripts) ships via fatfs.bin
 # (factory flash) or Community Apps / JumperIDE sync, and never bakes.
 # Optional community-only apps live in community_apps/ and are downloaded.
-BAKE_DIRS = {'lib', 'matrixApps', 'apps/synth', 'apps/breaksnake', 'apps/ir_block_battle', 'apps/ir_remote'}
+BAKE_DIRS = {'lib', 'matrixApps'}
 
 
 def _matches_bake_dir(rel_str: str) -> bool:
     """True if `rel_str` (posix path, no leading slash) is covered by a
     BAKE_DIRS entry. An entry matches an exact path or any descendant
     (`entry` or `entry/...`), so both top-level dirs (`lib`) and nested
-    prefixes (`apps/synth`) work without false `apps/synthXYZ` matches."""
+    prefixes (`apps/foo`) work without false `apps/fooXYZ`
+    matches."""
     for entry in BAKE_DIRS:
         if rel_str == entry or rel_str.startswith(entry + '/'):
             return True

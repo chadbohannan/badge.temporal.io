@@ -22,9 +22,9 @@ Example::
 
     from badge_kv import kv
 
-    score = kv.get("hi_breaksnake", 0)
+    score = kv.get("hi_myapp", 0)
     score += 1
-    kv.put("hi_breaksnake", score)
+    kv.put("hi_myapp", score)
 """
 
 import badge as _badge

@@ -181,7 +181,7 @@ it on boot. Two coordinated knobs:
    `expected primary-expression before '/' token`.
 
    ```ini
-   '-DBADGE_DEV_FORCE_REFRESH="/apps/ir_remote/,/lib/badge_ui.py"'
+   '-DBADGE_DEV_FORCE_REFRESH="/apps/my_app/,/lib/badge_ui.py"'
    ```
 
    This single flag does **two** things automatically:
@@ -210,9 +210,9 @@ it on boot. Two coordinated knobs:
 Boot log:
 
 ```text
-[startup] dev force-refresh (build): /apps/ir_remote/,/lib/badge_ui.py
-[startup] Dev force-refreshed /apps/ir_remote/main.py
-[startup] Dev force-refreshed /apps/ir_remote/ir_lib.py
+[startup] dev force-refresh (build): /apps/my_app/,/lib/badge_ui.py
+[startup] Dev force-refreshed /apps/my_app/main.py
+[startup] Dev force-refreshed /lib/badge_ui.py
 ...
 [startup] Provisioned: 0 created, 0 updated, 13 dev-forced, 5 unchanged
 ```
@@ -228,11 +228,10 @@ pio run -e echo-dev -t upload --upload-port /dev/cu.usbmodemXXXX
 ```
 
 Dev firmware also exposes `badge.dev("fb")` for framebuffer captures. To render
-a MicroPython app screen from the badge into a PNG, use:
+whatever's currently on the badge screen into a PNG, use:
 
 ```sh
-python3 scripts/capture_oled_fb.py --port /dev/cu.usbmodemXXXX --screen synth-live --out /tmp/synth-live.png
-python3 scripts/capture_oled_fb.py --port /dev/cu.usbmodemXXXX --screen synth-sounds --out /tmp/synth-sounds.png
+python3 scripts/capture_oled_fb.py --port /dev/cu.usbmodemXXXX --out /tmp/screen.png
 ```
 
 Use normal `echo` builds for attendee-facing smoke tests:
@@ -428,7 +427,6 @@ handle this in your app.
 | `api_test.py` | Interactive test menu for all badge API functions |
 | `input_test.py` | All inputs: buttons, joystick, IMU |
 | `mouse_demo.py` | Mouse overlay cursor with absolute/relative modes |
-| `synth/` | Joystick synthesizer with loop recorder and loadable sounds |
 | `tilt_ball.py` | IMU tilt → LED matrix dot position |
 | `font_demo.py` | Cycle through available OLED fonts |
 | `ir_test.py` | IR receive — display incoming NEC frames |

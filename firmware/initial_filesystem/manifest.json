@@ -5,9 +5,9 @@
   "files": [
     {
       "path": "/apps/README.md",
-      "size": 16810,
-      "sha256": "2e5c97a6550861fc33728c0235c3be216c0209e46ccf1c6fb0246d0d0f0a10f2",
-      "fnv1a32": "0xE8CD0724",
+      "size": 16581,
+      "sha256": "752491737ec8fa1a473b4246a4c4f1404dd0cd2c9fb97d28d6196e403671e59c",
+      "fnv1a32": "0x767E01B1",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/README.md",
       "baked": false
     },
@@ -18,46 +18,6 @@
       "fnv1a32": "0x48CB9116",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/api_test.py",
       "baked": false
-    },
-    {
-      "path": "/apps/breaksnake/bs_data.py",
-      "size": 2708,
-      "sha256": "bc79dbd0041ecae32514f1964b05ee03af5cbeb213017070d7bd6ed719fa2ef0",
-      "fnv1a32": "0x12A77BD1",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/breaksnake/bs_data.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/breaksnake/bs_engine.py",
-      "size": 7838,
-      "sha256": "5482acb8842f146206c1660c87491587cb438581de9123e3fef0f1eec5b764f7",
-      "fnv1a32": "0x92DED705",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/breaksnake/bs_engine.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/breaksnake/bs_screens.py",
-      "size": 4249,
-      "sha256": "42a5a6b23a223660b0c77dcd13ab426e19bbc17c6855d1ad694315501e7dc6d6",
-      "fnv1a32": "0xFD00C2AF",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/breaksnake/bs_screens.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/breaksnake/icon.py",
-      "size": 372,
-      "sha256": "dbbdc8aace0dcec4d49df92f0079806f1a7380e4068adc88cecdcbfad613ccfa",
-      "fnv1a32": "0x28389B86",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/breaksnake/icon.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/breaksnake/main.py",
-      "size": 224,
-      "sha256": "3bd9cf9e776128b1111c88948ffef24d1369e78caecfab2029290c35e6a3e006",
-      "fnv1a32": "0x86EAD3FE",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/breaksnake/main.py",
-      "baked": true
     },
     {
       "path": "/apps/diagnostics/README.md",
@@ -140,180 +100,12 @@
       "baked": false
     },
     {
-      "path": "/apps/ir_block_battle/ibb_data.py",
-      "size": 4922,
-      "sha256": "3f55d97143defdacd9e87ea880c2b9851af1bd364770b4c111c1d80763425f65",
-      "fnv1a32": "0xEB0B32C7",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/ibb_data.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/ibb_engine.py",
-      "size": 13717,
-      "sha256": "e4bb28ebdbb59ca9281be2bf59cc74ac7823a5c3ab105a8178b011928192b45c",
-      "fnv1a32": "0x49D6E9EF",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/ibb_engine.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/ibb_net.py",
-      "size": 9117,
-      "sha256": "00fadb884a900ec23e757b504ef725e52d9cfe094f90393ae2e7c8dad43504b5",
-      "fnv1a32": "0x6A897EE9",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/ibb_net.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/ibb_screens.py",
-      "size": 10300,
-      "sha256": "6009a8856abe051981c554bba96f47e3919ad32b67c268f56fd521f8ddedf90d",
-      "fnv1a32": "0x96643D5C",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/ibb_screens.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/ibb_serial.py",
-      "size": 2221,
-      "sha256": "bf8ee63f006e36cb2754a882f975c8ae1a71016f89472a2ff54e76a861a5e1b9",
-      "fnv1a32": "0x749DE433",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/ibb_serial.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/icon.py",
-      "size": 380,
-      "sha256": "4f98210e03bc1ee45c9652f7b1a766fbd4f83f229bade17c4e2ccbbe6e3d9bfd",
-      "fnv1a32": "0x72B80AD7",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/icon.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_block_battle/main.py",
-      "size": 240,
-      "sha256": "28212bd160bd9fb98464f02cf07dcace5127cf36bad1f0bd82fa9f0e8d0937d2",
-      "fnv1a32": "0x85C0D5EF",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_block_battle/main.py",
-      "baked": true
-    },
-    {
       "path": "/apps/ir_loopback_test.py",
       "size": 6196,
       "sha256": "7779d7073df10754e57654385994208cd7df30f05a76831b85b226e929f0cee2",
       "fnv1a32": "0xC05E4F48",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_loopback_test.py",
       "baked": false
-    },
-    {
-      "path": "/apps/ir_remote/data/__init__.py",
-      "size": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "fnv1a32": "0x811C9DC5",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/__init__.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/data/ac_codes.py",
-      "size": 3972,
-      "sha256": "d71c2e17b5732d32df3982ef3b56370e00d4f94bba231c0656ab544906fd5b53",
-      "fnv1a32": "0xD72544B9",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/ac_codes.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/data/audio_codes.py",
-      "size": 1973,
-      "sha256": "ea32e0c6cf80f7934a8c85111a5c14b1be5fa4fe85a13159570ffd16cc97adbb",
-      "fnv1a32": "0xD2435BDE",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/audio_codes.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/data/projector_codes.py",
-      "size": 1100,
-      "sha256": "33ed1eec75730161c1ca3971666482fe9381fa485118750a75ceb30080ae0ac5",
-      "fnv1a32": "0x571C1269",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/projector_codes.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/data/tv_codes.py",
-      "size": 3229,
-      "sha256": "9d5836a9ce24757191856f70031ec42d732a83130e5363e9e7a3ec71fe14d256",
-      "fnv1a32": "0x8120B2DA",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/tv_codes.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/data/tvbgone_codes.py",
-      "size": 1229,
-      "sha256": "37a38525c19432bbddddd444acf1912a001b0ed2e20a2c4c22164761effd0bc5",
-      "fnv1a32": "0x1BEFA4E2",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/data/tvbgone_codes.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/games.py",
-      "size": 10045,
-      "sha256": "927b8d34d56d50214eaf52739c6d42b8ae8544e97db7bb8b534908698fda7dbc",
-      "fnv1a32": "0x10E44C66",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/games.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/icon.py",
-      "size": 871,
-      "sha256": "5374a1deda6fab991de5d623e4bdbcb386a601adaed1ffb1210cd9af7baf967f",
-      "fnv1a32": "0x164FD5E7",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/icon.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/ir_lib.py",
-      "size": 28285,
-      "sha256": "487b6611a5ba5931527c3fa5b37910ee1c363adbd665a666ed55a3c5679cc65a",
-      "fnv1a32": "0x0C279ACB",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/ir_lib.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/main.py",
-      "size": 1865,
-      "sha256": "d9470e1f468df4c663fb6a1805922a820e2eb8a8759221a01dd4bce402465b8f",
-      "fnv1a32": "0x1DA2AD71",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/main.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/range.py",
-      "size": 9821,
-      "sha256": "b9af3bade68f6872d2d5464c5b1fd4ab0b29171b4d974e787cde27fda8982f72",
-      "fnv1a32": "0x4FDAE668",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/range.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/remote.py",
-      "size": 20163,
-      "sha256": "6d62ff3bbf3ff0007c01ece5d0804903d8b852908c31ba53389517bffbc2baeb",
-      "fnv1a32": "0x1272A275",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/remote.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/ir_remote/scan.py",
-      "size": 8672,
-      "sha256": "a8b83489c7de759973dcbd5c40b4f141e767168fef82d59c290e10d13ccb11bf",
-      "fnv1a32": "0xA593016E",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/ir_remote/scan.py",
-      "baked": true
-    },
-    {
-      "path": "/apps/synth/main.py",
-      "size": 15000,
-      "sha256": "2cd0dbc4113253704cc01113a466c9cc53c0bf381b66dde1962283250c4e6da9",
-      "fnv1a32": "0xA6620D0C",
-      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/apps/synth/main.py",
-      "baked": true
     },
     {
       "path": "/apps/tilt_ball.py",
@@ -645,17 +437,17 @@
     },
     {
       "path": "/docs/API_REFERENCE.md",
-      "size": 41119,
-      "sha256": "d7ff22933c6e8d7e1db8ba2483230ce8644eff3e4b1acbfd9234d0bdf907af45",
-      "fnv1a32": "0x61CBB774",
+      "size": 41120,
+      "sha256": "3ed9f2374ca30d9eb76e64f0c79c4b3a7119c725cab95b8db1155cadc07f4f2c",
+      "fnv1a32": "0x40CC8367",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/docs/API_REFERENCE.md",
       "baked": false
     },
     {
       "path": "/docs/MicroPythonDeveloperGuide.md",
-      "size": 29408,
-      "sha256": "eadf42c8890a53e7a0d9298e6fe1f9f363d80153dad555fb33aa2332004cc9ca",
-      "fnv1a32": "0x0F624FC7",
+      "size": 29398,
+      "sha256": "14c59f7434ccb7ec39320c9d4b5e463095198b378f0b13d4f96c0117362bec63",
+      "fnv1a32": "0x0781CCA6",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/docs/MicroPythonDeveloperGuide.md",
       "baked": false
     },
@@ -677,9 +469,9 @@
     },
     {
       "path": "/lib/badge_kv.py",
-      "size": 1822,
-      "sha256": "6eb5fe94bc6d575b3d96382a67d47703501aa79c601c1b051d996148a869fc50",
-      "fnv1a32": "0x7F52F883",
+      "size": 1812,
+      "sha256": "d7b8cb7b7d659831f4e109205513765aa0b65b8184e8e2fbc3e28c50da3a5922",
+      "fnv1a32": "0x701E86F9",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/lib/badge_kv.py",
       "baked": true
     },

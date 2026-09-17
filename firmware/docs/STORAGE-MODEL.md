@@ -117,9 +117,9 @@ identity, regardless of which flash path the badge goes through.
 ```python
 import badge
 
-score = badge.kv_get("hi_breaksnake", 0)
+score = badge.kv_get("hi_myapp", 0)
 score += 1
-badge.kv_put("hi_breaksnake", score)
+badge.kv_put("hi_myapp", score)
 ```
 
 Or via the friendlier wrapper that ships in `/lib/badge_kv.py`:
@@ -127,7 +127,7 @@ Or via the friendlier wrapper that ships in `/lib/badge_kv.py`:
 ```python
 from badge_kv import kv
 
-kv.put("hi_breaksnake", kv.get("hi_breaksnake", 0) + 1)
+kv.put("hi_myapp", kv.get("hi_myapp", 0) + 1)
 ```
 
 Limits:
