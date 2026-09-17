@@ -160,6 +160,12 @@ extern "C" void temporalbadge_runtime_oled_draw_box(int x, int y, int w, int h)
     badgeDisplay.drawBox(x, y, w, h);
 }
 
+extern "C" void temporalbadge_runtime_oled_draw_line(int x0, int y0, int x1, int y1)
+{
+    mpy_oled_note_activity();
+    badgeDisplay.drawLine(x0, y0, x1, y1);
+}
+
 extern "C" void temporalbadge_runtime_oled_set_draw_color(int color)
 {
     badgeDisplay.setDrawColor((uint8_t)(color & 3));

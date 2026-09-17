@@ -172,6 +172,19 @@ static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(temporalbadge_oled_draw_box_obj,
                                             4, 4,
                                             temporalbadge_oled_draw_box);
 
+static mp_obj_t temporalbadge_oled_draw_line(size_t n_args,
+                                              const mp_obj_t *args) {
+    int x0 = mp_obj_get_int(args[0]);
+    int y0 = mp_obj_get_int(args[1]);
+    int x1 = mp_obj_get_int(args[2]);
+    int y1 = mp_obj_get_int(args[3]);
+    temporalbadge_hal_oled_draw_line(x0, y0, x1, y1);
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(temporalbadge_oled_draw_line_obj,
+                                            4, 4,
+                                            temporalbadge_oled_draw_line);
+
 static mp_obj_t temporalbadge_oled_set_draw_color(mp_obj_t color_obj) {
     int color = mp_obj_get_int(color_obj);
     temporalbadge_hal_oled_set_draw_color(color);
@@ -1946,6 +1959,7 @@ static const mp_rom_map_elem_t temporalbadge_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_oled_set_pixel),           MP_ROM_PTR(&temporalbadge_oled_set_pixel_obj) },
     { MP_ROM_QSTR(MP_QSTR_oled_get_pixel),           MP_ROM_PTR(&temporalbadge_oled_get_pixel_obj) },
     { MP_ROM_QSTR(MP_QSTR_oled_draw_box),            MP_ROM_PTR(&temporalbadge_oled_draw_box_obj) },
+    { MP_ROM_QSTR(MP_QSTR_oled_draw_line),           MP_ROM_PTR(&temporalbadge_oled_draw_line_obj) },
     { MP_ROM_QSTR(MP_QSTR_oled_set_draw_color),      MP_ROM_PTR(&temporalbadge_oled_set_draw_color_obj) },
     { MP_ROM_QSTR(MP_QSTR_oled_get_framebuffer),      MP_ROM_PTR(&temporalbadge_oled_get_framebuffer_obj) },
     { MP_ROM_QSTR(MP_QSTR_oled_set_framebuffer),      MP_ROM_PTR(&temporalbadge_oled_set_framebuffer_obj) },

@@ -77,6 +77,10 @@ void temporalbadge_hal_oled_draw_box(int x, int y, int w, int h) {
     temporalbadge_runtime_oled_draw_box(x, y, w, h);
 }
 
+void temporalbadge_hal_oled_draw_line(int x0, int y0, int x1, int y1) {
+    temporalbadge_runtime_oled_draw_line(x0, y0, x1, y1);
+}
+
 void temporalbadge_hal_oled_set_draw_color(int color) {
     temporalbadge_runtime_oled_set_draw_color(color);
 }

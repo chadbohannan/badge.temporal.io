@@ -33,6 +33,7 @@ const char *temporalbadge_hal_oled_get_current_font(void);
 int temporalbadge_hal_oled_set_pixel(int x, int y, int color);
 int temporalbadge_hal_oled_get_pixel(int x, int y);
 void temporalbadge_hal_oled_draw_box(int x, int y, int w, int h);
+void temporalbadge_hal_oled_draw_line(int x0, int y0, int x1, int y1);
 void temporalbadge_hal_oled_set_draw_color(int color);
 const uint8_t *temporalbadge_hal_oled_get_framebuffer(int *w, int *h, int *buf_size);
 int temporalbadge_hal_oled_set_framebuffer(const uint8_t *data, size_t len);

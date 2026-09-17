@@ -1096,8 +1096,51 @@ void oled::drawVLine(int x, int y, int h) {
   u8g2_.drawVLine(x, y, h);
 }
 
+namespace {
+// u8g2_DrawLine() takes u8g2_uint_t (uint16_t on 32-bit targets, always —
+// U8G2_16BIT is unconditionally defined for them). A negative endpoint
+// passed straight through silently wraps to a huge unsigned value (e.g.
+// -50 -> 65486), turning what should be an offscreen no-op into a Bresenham
+// walk of thousands of steps. Clip to the screen rect first (Liang-Barsky)
+// so every coordinate u8g2 ever sees is a small non-negative pixel index.
+bool clipLineToScreen(int &x0, int &y0, int &x1, int &y1) {
+  const float xmin = 0.0f, ymin = 0.0f;
+  const float xmax = OLED_WIDTH - 1;
+  const float ymax = OLED_HEIGHT - 1;
+  const float dx = static_cast<float>(x1 - x0);
+  const float dy = static_cast<float>(y1 - y0);
+  const float p[4] = {-dx, dx, -dy, dy};
+  const float q[4] = {x0 - xmin, xmax - x0, y0 - ymin, ymax - y0};
+  float t0 = 0.0f, t1 = 1.0f;
+  for (int i = 0; i < 4; i++) {
+    if (p[i] == 0.0f) {
+      if (q[i] < 0.0f) return false;  // parallel to this edge, outside it
+      continue;
+    }
+    float r = q[i] / p[i];
+    if (p[i] < 0.0f) {
+      if (r > t1) return false;
+      if (r > t0) t0 = r;
+    } else {
+      if (r < t0) return false;
+      if (r < t1) t1 = r;
+    }
+  }
+  int nx0 = x0 + static_cast<int>(t0 * dx);
+  int ny0 = y0 + static_cast<int>(t0 * dy);
+  int nx1 = x0 + static_cast<int>(t1 * dx);
+  int ny1 = y0 + static_cast<int>(t1 * dy);
+  x0 = nx0;
+  y0 = ny0;
+  x1 = nx1;
+  y1 = ny1;
+  return true;
+}
+}  // namespace
+
 void oled::drawLine(int x0, int y0, int x1, int y1) {
   if (!initialized_) return;
+  if (!clipLineToScreen(x0, y0, x1, y1)) return;
   u8g2_.drawLine(x0, y0, x1, y1);
 }
 
