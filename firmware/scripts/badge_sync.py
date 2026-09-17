@@ -312,20 +312,30 @@ class RawRepl:
             chunk = self.ser.read(256) or b""
             if not chunk:
                 continue
-            for byte in chunk:
+            for i, byte in enumerate(chunk):
                 if byte == 0x04:
                     if buf:
                         line_cb(bytes(buf))
                         buf.clear()
-                    # fall through to read stderr
-                    err = self._read_until(b"\x04", deadline)
-                    err = err.rstrip(b"\x04")
-                    # The closing prompt is sometimes consumed already;
-                    # try to swallow a trailing '>' but don't insist.
-                    try:
-                        self.ser.read(1)
-                    except Exception:
-                        pass
+                    # For a fast/small response, the stderr payload, its
+                    # terminating \x04, and the closing '>' prompt can all
+                    # already be sitting in the tail of THIS chunk (one
+                    # read(256) call can return more than just "up to the
+                    # first \x04"). Reading fresh from the wire in that
+                    # case would hang forever waiting for bytes that
+                    # already arrived and were consumed into `chunk`.
+                    rest = bytes(chunk[i + 1:])
+                    if b"\x04" in rest:
+                        err, _, _trailing = rest.partition(b"\x04")
+                    else:
+                        err = rest + self._read_until(b"\x04", deadline)
+                        err = err.rstrip(b"\x04")
+                        # The closing prompt is sometimes consumed already;
+                        # try to swallow a trailing '>' but don't insist.
+                        try:
+                            self.ser.read(1)
+                        except Exception:
+                            pass
                     if err.strip():
                         raise RuntimeError(
                             f"badge raised:\n{err.decode('utf-8', 'replace')}")
