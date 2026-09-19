@@ -214,6 +214,22 @@ class LEDmatrix : public IService {
   void drawMaskHardware(const uint8_t mask[LED_MATRIX_HEIGHT], uint8_t onBrightness,
                         uint8_t offBrightness = 0);
 
+  // Batches a whole-panel redraw so the viewer never sees a torn/partial
+  // frame. The IS31FL3731 has two independent hardware frame buffers and a
+  // separate "which frame is displayed" register, but every draw call here
+  // normally writes straight to whichever frame is currently on-screen — so
+  // a multi-call redraw (e.g. clear() followed by drawMask()) is visible
+  // mid-progress, which reads as flicker at any redraw cadence a human can
+  // perceive. Between beginFrameBatch()/endFrameBatch(), writes instead
+  // land on the *other* (hidden) frame; endFrameBatch() flips the chip's
+  // display-frame register once, atomically, so the whole redraw appears
+  // in a single step. Skip this for a single incremental setPixel() call
+  // (e.g. a live one-pixel brightness preview) — those still go straight
+  // to the visible frame, same as before batching existed. Calls don't
+  // nest; a beginFrameBatch() while already batching is a no-op.
+  void beginFrameBatch();
+  void endFrameBatch();
+
   // Persistent full-frame update: each pixel goes through setPixel() so
   // framebuffer_ tracks the visible pattern.  Use this for matrix apps,
   // MicroPython led_set_frame, etc.  drawMaskHardware skips framebuffer_
@@ -243,6 +259,11 @@ class LEDmatrix : public IService {
   bool micropythonMode_ = false;
   bool flipped_ = false;
   uint32_t lastServiceMs_ = 0;
+
+  // Double-buffering state — see beginFrameBatch()/endFrameBatch() above.
+  uint8_t displayFrame_ = 0;  // which of the chip's frames is on-screen
+  uint8_t batchFrame_ = 0;    // hidden frame writes land on while batching
+  bool batching_ = false;
 
   uint8_t  brightnessFadeFrom_  = 0;
   uint8_t  brightnessFadeTarget_ = 0;
@@ -290,6 +311,8 @@ class LEDmatrix : public IService {
   uint8_t getPixel(uint8_t, uint8_t) const { return 0; }
   bool snapshotFramebufferDisplay(uint8_t[8][8]) { return false; }
   bool drawMask(const uint8_t*, uint8_t, uint8_t = 0) { return false; }
+  void beginFrameBatch() {}
+  void endFrameBatch() {}
   bool showImageById(const char*, ImageSource = ImageSource::Auto, uint8_t = 0) { return false; }
   bool showImageById(const char*, ImageSource, uint8_t, uint8_t) { return false; }
   bool startAnimation(DefaultAnimation, uint16_t = 120) { return false; }

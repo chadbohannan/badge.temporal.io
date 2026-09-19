@@ -8,3 +8,5 @@
 **Left deliberately untouched**: `firmware/platformio.ini`'s `board_build.partitions = partitions_replay_16MB_doom.csv`, the CSV itself, and `firmware/src/ota/BadgeOTA.cpp/.h`'s `_doom`/`_ver2` partition-layout naming and migration logic (`kNvsLastLayout`). `_doom` is a historical partition-layout name baked into already-flashed badges' NVS state — unrelated to whether the game code exists, and a separate, higher-risk change if ever revisited.
 
 Nothing else in this codebase references the removed engine; a full case-insensitive repo grep (excluding `wiki/` and `.git/`) confirms the only remaining `doom` hits are the partition-layout name above.
+
+The "HELGRIND" tile from step 1 is still a placeholder — the game that actually shipped into that menu slot's neighbor is [Vectortank](vectortank.md), a native C++ Battlezone-style demo added as a separate "VECTOR" tile rather than a replacement for Helgrind.

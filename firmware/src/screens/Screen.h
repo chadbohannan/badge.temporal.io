@@ -82,6 +82,13 @@ class Screen {
   // QR pairing screen, where re-encoding the bitmap each frame is
   // expensive and the bits change rarely.
   virtual bool needsRender() { return true; }
+
+  // Default false: SleepService's force-deep-sleep long-press (hold UP
+  // 5s, see Power.cpp) fires regardless of the active screen. Override
+  // to true for a screen where that global capture would fight a
+  // screen-local use of the same button (e.g. a game that reads raw
+  // button edges for its own controls).
+  virtual bool suppressesForceSleep() const { return false; }
 };
 
 // ─── Scrollable list menu (base for settings, haptics, nav menus, etc.) ─────

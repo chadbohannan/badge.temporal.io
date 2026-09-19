@@ -102,6 +102,7 @@ class Inputs;
 class IMU;
 class LEDmatrix;
 class oled;
+class GUIManager;
 
 #ifdef BADGE_HAS_SLEEP_SERVICE
 
@@ -110,6 +111,11 @@ class SleepService : public IService {
   volatile bool caffeine = false;
 
   void bindInputs(Inputs* inputs);
+  // Optional: lets the force-deep-sleep long-press (kForceDeepSleepHoldMs
+  // below) check Screen::suppressesForceSleep() on the active screen before
+  // firing. Not required — service() treats an unbound gui_ as "never
+  // suppressed", same as today.
+  void bindGUI(GUIManager* gui) { gui_ = gui; }
   void begin(IMU* imu, LEDmatrix* matrix, oled* display, uint8_t wakePin = INT_GP_PIN,
              uint32_t lightSleepAfterNoMotionMs = Power::Policy::kLightSleepAfterNoMotionMs,
              uint32_t deepSleepAfterNoMotionMs = Power::Policy::kDeepSleepAfterNoMotionMs);
@@ -128,6 +134,7 @@ class SleepService : public IService {
   IMU* imu_ = nullptr;
   LEDmatrix* matrix_ = nullptr;
   oled* display_ = nullptr;
+  GUIManager* gui_ = nullptr;
   uint8_t wakePin_ = INT_GP_PIN;
   uint32_t lightSleepAfterNoMotionMs_ = Power::Policy::kLightSleepAfterNoMotionMs;
   uint32_t deepSleepAfterNoMotionMs_ = Power::Policy::kDeepSleepAfterNoMotionMs;
@@ -144,6 +151,7 @@ class SleepService : public IService {
  public:
   volatile bool caffeine = false;  // Set by UI code to defer sleep; no-op here
   void bindInputs(Inputs*) {}
+  void bindGUI(GUIManager*) {}
   void begin(IMU*, LEDmatrix*, oled*, uint8_t = 0xFF,
              uint32_t = 0, uint32_t = 0) {}
   void processDeferredWake() {}

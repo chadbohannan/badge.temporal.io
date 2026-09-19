@@ -441,6 +441,7 @@ extern "C" void initDeferredPeripherals() {
         scheduler.registerService( &sleepService, ServicePriority::kLow );
 #ifdef BADGE_HAS_SLEEP_SERVICE
         sleepService.bindInputs( &inputs );
+        sleepService.bindGUI( &guiManager );
 #endif
         badgeDisplay.bindAccel( &imu );
 

@@ -856,6 +856,18 @@ int LEDmatrix::init(uint8_t address) {
   initialized_ = true;
   brightness_ = kGlobalDefaultBrightness;
   animator_.reset();
+
+  // driver_.begin() already zeroed frame 0's PWM registers (its own
+  // clear()) and left _frame/the display register pointed at frame 0. Zero
+  // frame 1's PWM registers too — beginFrameBatch() below hands writers
+  // that frame as the hidden back buffer, and it should start blank rather
+  // than whatever was left in chip memory at power-on.
+  driver_.setFrame(1);
+  driver_.clear();
+  driver_.setFrame(0);
+  displayFrame_ = 0;
+  batching_ = false;
+
   clear(0);
   return 0;
 }
@@ -1179,6 +1191,24 @@ bool LEDmatrix::loadFilesystemImageMask(const char *imageId, uint8_t outMask[LED
   (void)imageId;
   (void)outMask;
   return false;
+}
+
+void LEDmatrix::beginFrameBatch() {
+  if (!initialized_ || batching_) return;
+  batchFrame_ = displayFrame_ == 0 ? 1 : 0;
+  driver_.setFrame(batchFrame_);
+  batching_ = true;
+}
+
+void LEDmatrix::endFrameBatch() {
+  if (!initialized_ || !batching_) return;
+  driver_.displayFrame(batchFrame_);
+  displayFrame_ = batchFrame_;
+  // Point the driver back at the now-visible frame so any subsequent
+  // non-batched call (a single incremental setPixel(), for instance)
+  // writes straight to what's on-screen, same as it always has.
+  driver_.setFrame(displayFrame_);
+  batching_ = false;
 }
 
 bool LEDmatrix::drawMask(const uint8_t mask[LED_MATRIX_HEIGHT], uint8_t onBrightness, uint8_t offBrightness) {

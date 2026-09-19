@@ -364,14 +364,14 @@ void drawGridFooter(oled& d, const char* description) {
 
 void GridMenuScreen::drawHeader(oled& d) const {
   const char* title = title_;
-  // Personalised "Hi <first>" greeting: shown whenever the badge is
+  // Personalised first-name greeting: shown whenever the badge is
   // activated (paired OR offline) — being temporarily out of WiFi range
   // shouldn't drop the user back to the generic "MENU" title.
   if (badgeIsActivated(badgeState)) {
     char first[20] = {};
     firstNameFromBadgeName(first, sizeof(first));
     if (first[0]) {
-      std::snprintf(dynamicTitle_, sizeof(dynamicTitle_), "Hi %s", first);
+      std::snprintf(dynamicTitle_, sizeof(dynamicTitle_), "%s", first);
       title = dynamicTitle_;
     }
   }

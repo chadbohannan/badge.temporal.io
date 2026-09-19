@@ -9,6 +9,7 @@
 #include "Inputs.h"
 #include "LEDmatrix.h"
 #include "../BadgeGlobals.h"
+#include "../ui/GUI.h"
 #endif
 #include "driver/gpio.h"
 #include "driver/rtc_io.h"
@@ -315,8 +316,13 @@ void SleepService::service() {
     caffeine = true;
   }
 
-  // Force deep sleep: hold UP for 5 seconds (skip if USB connected for dev safety)
-  if (inputs_ && inputs_->heldMs(0) >= Power::Policy::kForceDeepSleepHoldMs) {
+  // Force deep sleep: hold UP for 5 seconds (skip if USB connected for dev
+  // safety, or if the active screen opts out via suppressesForceSleep() —
+  // e.g. a game reading raw button edges for its own controls).
+  Screen* activeScreen = gui_ ? gui_->currentScreen() : nullptr;
+  bool sleepSuppressed = activeScreen && activeScreen->suppressesForceSleep();
+  if (!sleepSuppressed && inputs_ &&
+      inputs_->heldMs(0) >= Power::Policy::kForceDeepSleepHoldMs) {
     ESP_LOGI("POWER","Force deep sleep (UP held 5s)\n");
     enterDeepSleep();
     return;
