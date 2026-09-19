@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <Preferences.h>
 
 #include "../hardware/Inputs.h"
 #include "../hardware/LEDmatrix.h"
@@ -66,6 +67,7 @@ constexpr float kNear = 0.5f;
 constexpr float kFar = 60.0f;
 constexpr int kScreenW = 128;
 constexpr int kScreenH = 64;
+constexpr float kPi = 3.14159265f;
 
 bool project(const Vec3& c, float& sx, float& sy) {
   if (c.z < kNear || c.z > kFar) return false;
@@ -102,8 +104,9 @@ void boxVerts(float cx, float cz, float half, float height, Vec3 out[8]) {
 constexpr int kMaxArtifacts = 128;
 // Particles are explosion debris only now (no ambient dust), so the pool
 // just needs enough headroom for a few bursts in flight at once — see
-// kExplosionParticleCount below.
-constexpr int kMaxParticles = 64;
+// kExplosionParticleCount below. Bumped from 64 alongside a bigger
+// per-explosion burst count (see the "more spectacular" note there).
+constexpr int kMaxParticles = 96;
 
 struct Artifact {
   Vec3 verts[8];
@@ -116,6 +119,11 @@ struct Particle {
   float vx, vy, vz;
   float age, lifetime;
   bool active;
+  // Previous frame's position, so drawScene() can draw a short streak
+  // (prev -> current) instead of a single pixel — see the particle-draw
+  // comment in drawScene() for why that reads as much more of an
+  // "explosion" than a static dot cloud at this speed/frame-rate.
+  float px, py, pz;
 };
 
 // Small seeded LCG — reproducible scene layouts without pulling in <random>,
@@ -132,12 +140,51 @@ float randUnit() {
 
 float randRange(float lo, float hi) { return lo + randUnit() * (hi - lo); }
 
-constexpr int kExplosionParticleCount = 14;
-constexpr float kExplosionSpeedMin = 1.8f;
-constexpr float kExplosionSpeedMax = 3.5f;
+// ── High score: a single persisted best-kill-count, no identity attached ──
+//
+// One scalar in its own NVS namespace, following this codebase's existing
+// per-feature-namespace convention (see e.g. BadgeConfig's "badge_cfg",
+// BadgeInfo's "badge_info") rather than piggybacking on a shared settings
+// store. "vectortank"/"highscore" both stay well under the 15-character
+// NVS key-length limit that trips up longer names elsewhere in this
+// firmware. Opened and closed per call rather than held open, matching
+// every other Preferences user in this codebase — this only writes on an
+// actual new best, so call frequency is not a wear concern. Declared this
+// early (well before stepOpponents() below, which is the first caller) so
+// there's no forward-reference ordering issue.
+int gKillCount = 0;
+uint32_t gHighScore = 0;
+constexpr const char* kNvsNamespace = "vectortank";
+constexpr const char* kHighScoreKey = "highscore";
+
+uint32_t loadHighScore() {
+  Preferences prefs;
+  if (!prefs.begin(kNvsNamespace, /*readOnly=*/true)) return 0;
+  uint32_t v = prefs.getUInt(kHighScoreKey, 0);
+  prefs.end();
+  return v;
+}
+
+void saveHighScoreIfBetter(uint32_t kills) {
+  if (kills <= gHighScore) return;
+  gHighScore = kills;
+  Preferences prefs;
+  if (!prefs.begin(kNvsNamespace, /*readOnly=*/false)) return;
+  prefs.putUInt(kHighScoreKey, gHighScore);
+  prefs.end();
+}
+
+// Bigger, faster, longer-lived bursts than the original tuning — after
+// on-device testing the original 14-particle/short-lifetime burst read as
+// a small dust puff rather than an explosion. Paired with the streak-draw
+// trail below (instead of a single pixel per particle), this is the
+// "more spectacular" pass.
+constexpr int kExplosionParticleCount = 26;
+constexpr float kExplosionSpeedMin = 2.5f;
+constexpr float kExplosionSpeedMax = 5.5f;
 constexpr float kExplosionGravity = 4.0f;
-constexpr float kExplosionLifetimeMin = 0.25f;
-constexpr float kExplosionLifetimeMax = 0.55f;
+constexpr float kExplosionLifetimeMin = 0.35f;
+constexpr float kExplosionLifetimeMax = 0.8f;
 
 // Activates up to kExplosionParticleCount inactive slots in the pool,
 // scattering them outward from (cx, cy, cz) — this is the only way
@@ -157,6 +204,9 @@ void spawnExplosion(Particle particles[], int maxCount, float cx, float cy,
     p.x = cx;
     p.y = cy;
     p.z = cz;
+    p.px = cx;
+    p.py = cy;
+    p.pz = cz;
     p.vx = vx / len * speed;
     p.vy = vy / len * speed;
     p.vz = vz / len * speed;
@@ -169,6 +219,9 @@ void spawnExplosion(Particle particles[], int maxCount, float cx, float cy,
 
 void stepParticle(Particle& p, float dtS) {
   if (!p.active) return;
+  p.px = p.x;
+  p.py = p.y;
+  p.pz = p.z;
   p.vy -= kExplosionGravity * dtS;
   p.x += p.vx * dtS;
   p.y += p.vy * dtS;
@@ -177,15 +230,17 @@ void stepParticle(Particle& p, float dtS) {
   if (p.age >= p.lifetime || p.y < 0.0f) p.active = false;
 }
 
-int makeArtifacts(int count, Artifact out[], const Camera& /*cam*/,
-                   float spread = 40.0f, float minDist = 6.0f) {
+int makeArtifacts(int count, Artifact out[], const Camera& cam,
+                   float spread = 80.0f, float minDist = 6.0f) {
   count = count > kMaxArtifacts ? kMaxArtifacts : count;
   for (int i = 0; i < count; i++) {
-    float cx, cz;
+    float dx, dz;
     do {
-      cx = randRange(-spread, spread);
-      cz = randRange(minDist, spread);
-    } while (cx * cx + cz * cz < minDist * minDist);
+      dx = randRange(-spread, spread);
+      dz = randRange(-spread, spread);
+    } while (dx * dx + dz * dz < minDist * minDist);
+    float cx = cam.x + dx;
+    float cz = cam.z + dz;
     float half = randRange(0.8f, 1.8f);
     float height = randRange(1.5f, 4.0f);
     boxVerts(cx, cz, half, height, out[i].verts);
@@ -196,6 +251,156 @@ int makeArtifacts(int count, Artifact out[], const Camera& /*cam*/,
     out[i].alive = true;
   }
   return count;
+}
+
+// ── Solid-obstacle collision ────────────────────────────────────────────────
+//
+// Artifacts are durable obstacles now (a shot still explodes against one's
+// bounding box — see the removed `a.alive = false` in stepProjectiles below
+// — but no longer destroys it), so both the player and opponents need to be
+// physically blocked by that same box rather than walking through it. This
+// runs as position correction *after* a mover's desired x/z is computed,
+// rather than a pre-move velocity clip: push the point straight out along
+// whichever of the box's 4 sides it penetrated least, which is cheap (one
+// AABB overlap test, expanded by the mover's own radius, per artifact) and
+// good enough at this scale — it doesn't handle a mover embedded past a
+// box's center, but neither player nor opponent movement is fast enough
+// relative to typical box half-widths (0.8-1.8) to tunnel that deep in one
+// frame.
+void resolveArtifactCollision(float& x, float& z, float radius,
+                              const Artifact artifacts[], int count) {
+  for (int i = 0; i < count; i++) {
+    const Artifact& a = artifacts[i];
+    if (!a.alive) continue;
+    float minX = a.cx - a.half - radius;
+    float maxX = a.cx + a.half + radius;
+    float minZ = a.cz - a.half - radius;
+    float maxZ = a.cz + a.half + radius;
+    if (x <= minX || x >= maxX || z <= minZ || z >= maxZ) continue;
+
+    float penLeft = x - minX;
+    float penRight = maxX - x;
+    float penBottom = z - minZ;
+    float penTop = maxZ - z;
+    float minPen = fminf(fminf(penLeft, penRight), fminf(penBottom, penTop));
+    if (minPen == penLeft) {
+      x = minX;
+    } else if (minPen == penRight) {
+      x = maxX;
+    } else if (minPen == penBottom) {
+      z = minZ;
+    } else {
+      z = maxZ;
+    }
+  }
+}
+
+// ── Opponents: billboard stick figures ─────────────────────────────────────
+//
+// Unlike artifacts, opponents don't get real 3D geometry — they're drawn as
+// a fixed local 2D stick-figure pose (head/spine/arms/legs), always facing
+// the camera regardless of their own movement, scaled by 1/depth like the
+// projectile shrink-with-altitude trick already does. That keeps per-
+// opponent cost to one toCameraSpace()/project() call (same as a particle)
+// instead of the 8-vertex-per-object cost artifacts pay, and sidesteps
+// needing a convex-hull silhouette for a non-convex figure. See
+// components/vectortank.md's opponent-scoping notes for why a billboard was
+// chosen over a fully-3D skeleton.
+
+// kMaxOpponents is the pool ceiling, not the starting count — the spawner
+// (see stepSpawner()/spawnOneOpponent() near the bottom of this file) fills
+// it in gradually as the player racks up kills, so this needs real headroom
+// beyond kActiveOpponentCount's easier initial wave.
+constexpr int kMaxOpponents = 14;
+constexpr int kActiveOpponentCount = 4;
+// Vertical hit-test bound, deliberately NOT tied to the opponent's visual
+// height (kOppHeadY etc. below): a shot launches at kShotSpawnHeight=1.0
+// and arcs up to kShotApexHeight~1.85 before falling — tying this to the
+// (much shorter) visual figure height made opponents nearly unhittable,
+// since the shot spent almost no time below it. This stays generous enough
+// to cover the whole arc regardless of how tall the figure is drawn.
+constexpr float kOpponentHitHeight = 2.0f;
+constexpr float kOpponentHitHalfWidth = 0.45f;  // shot hit-test footprint
+constexpr float kOpponentMeleeRange = 2.0f;    // player-damage contact range
+constexpr float kOpponentSpeed = 2.0f;         // world units/sec, walking
+constexpr float kOpponentSpawnMinDist = 20.0f;
+constexpr float kOpponentSpawnMaxDist = 60.0f;
+constexpr float kOpponentMaxHealth = 30.0f;
+constexpr float kOpponentShotDamage = 10.0f;
+constexpr float kOpponentContactDamagePerSec = 25.0f;
+constexpr float kOpponentWalkPhaseSpeed = 5.0f;      // rad/s while walking
+constexpr float kOpponentIdlePhaseSpeed = 5.0f * 0.2f;  // slow sway in melee range
+constexpr float kOpponentCollisionRadius = 0.4f;         // blocked by artifact boxes
+constexpr float kOpponentHitFlashS = 0.15f;
+constexpr float kOpponentDeathDurationS = 0.3f;
+
+struct Opponent {
+  float x, z;
+  float health;
+  float walkPhase;
+  float hitFlashS;
+  float deathT;  // < 0 while alive-and-not-dying; counts up once dying
+  bool alive;
+};
+
+// Spawned in a ring around the camera rather than makeArtifacts()'s scatter,
+// since an opponent's whole point is to walk in from a distance — a uniform
+// scatter (some of which could land right next to the player) wouldn't read
+// as an approach.
+int makeOpponents(int count, Opponent out[], const Camera& cam) {
+  count = count > kMaxOpponents ? kMaxOpponents : count;
+  for (int i = 0; i < count; i++) {
+    float angle = randRange(0.0f, 2.0f * kPi);
+    float dist = randRange(kOpponentSpawnMinDist, kOpponentSpawnMaxDist);
+    out[i].x = cam.x + dist * sinf(angle);
+    out[i].z = cam.z + dist * cosf(angle);
+    out[i].health = kOpponentMaxHealth;
+    // Staggered so opponents don't all step in lockstep.
+    out[i].walkPhase = randRange(0.0f, 2.0f * kPi);
+    out[i].hitFlashS = 0.0f;
+    out[i].deathT = -1.0f;
+    out[i].alive = true;
+  }
+  return count;
+}
+
+// Walks each opponent toward the camera; once within melee range it stops
+// advancing (idle sway instead) and drains playerHealth every tick it stays
+// there, clamped at 0 — there's no death/game-over state for the player yet,
+// matching the existing "no win condition, scene just stays empty" precedent
+// this file already has for artifacts.
+void stepOpponents(Opponent opponents[], int count, float dtS, const Camera& cam,
+                   float& playerHealth, const Artifact artifacts[], int artifactCount) {
+  for (int i = 0; i < count; i++) {
+    Opponent& o = opponents[i];
+    if (!o.alive) continue;
+    if (o.deathT >= 0.0f) {
+      o.deathT += dtS;
+      if (o.deathT >= kOpponentDeathDurationS) {
+        o.alive = false;
+        gKillCount++;
+        saveHighScoreIfBetter(static_cast<uint32_t>(gKillCount));
+      }
+      continue;
+    }
+    if (o.hitFlashS > 0.0f) o.hitFlashS -= dtS;
+
+    float dx = cam.x - o.x;
+    float dz = cam.z - o.z;
+    float distSq = dx * dx + dz * dz;
+    if (distSq > kOpponentMeleeRange * kOpponentMeleeRange) {
+      float dist = sqrtf(distSq);
+      float invDist = dist > 1e-4f ? 1.0f / dist : 0.0f;
+      o.x += dx * invDist * kOpponentSpeed * dtS;
+      o.z += dz * invDist * kOpponentSpeed * dtS;
+      resolveArtifactCollision(o.x, o.z, kOpponentCollisionRadius, artifacts, artifactCount);
+      o.walkPhase += kOpponentWalkPhaseSpeed * dtS;
+    } else {
+      o.walkPhase += kOpponentIdlePhaseSpeed * dtS;
+      playerHealth -= kOpponentContactDamagePerSec * dtS;
+      if (playerHealth < 0.0f) playerHealth = 0.0f;
+    }
+  }
 }
 
 // sz[8] carries each vertex's camera-space depth alongside its screen
@@ -461,6 +666,96 @@ bool occludedByArtifact(const ArtifactRenderState states[], const bool alive[],
   return false;
 }
 
+// ── Opponent billboard rendering ────────────────────────────────────────────
+//
+// Local billboard-space proportions, in world units (feet at y=0). Applied
+// as screen-space offsets scaled by kFovScale/depth — the same perspective
+// scale project() itself uses for a world-space vertical delta — so the
+// figure shrinks with distance exactly like everything else in the scene.
+// Scaled to 75% of the original proportions (which stood about 1.8 world
+// units tall) after on-device testing: full size read as too large next to
+// the artifacts, but halving it (37.5%) went too far the other way.
+constexpr float kOppHeadY = 1.275f;
+constexpr float kOppShoulderY = 1.05f;
+constexpr float kOppHipY = 0.675f;
+constexpr float kOppStanceX = 0.135f;
+constexpr float kOppShoulderX = 0.165f;
+constexpr float kOppArmDrop = 0.375f;
+constexpr float kOppLegSwingAmp = 0.21f;
+constexpr float kOppArmSwingAmp = 0.165f;
+constexpr float kOppBobAmp = 0.0375f;
+constexpr float kOppHeadRadiusWorld = 0.15f;
+constexpr int kOppHeadRadiusMinPx = 1;
+constexpr int kOppHeadRadiusMaxPx = 5;
+
+void drawOpponentBillboard(oled& d, const Camera& cam, const Opponent& o,
+                           const ArtifactRenderState states[], const bool artifactAlive[],
+                           int artifactCount) {
+  Vec3 c = cam.toCameraSpace({o.x, 0.0f, o.z});
+  float sx, sy;
+  if (!project(c, sx, sy)) return;
+  if (occludedByArtifact(states, artifactAlive, artifactCount, sx, sy, c.z)) return;
+
+  const float scale = kFovScale / c.z;  // screen px per world unit at this depth
+
+  // deathK crumples the figure toward the ground: 1 = standing, 0 = fully
+  // collapsed. Feet stay put; head/shoulder/hip heights shrink toward them.
+  const float deathK = (o.deathT < 0.0f)
+      ? 1.0f
+      : 1.0f - (o.deathT / kOpponentDeathDurationS);
+
+  const float legSwing = sinf(o.walkPhase) * kOppLegSwingAmp;
+  const float armSwing = sinf(o.walkPhase + kPi) * kOppArmSwingAmp;
+  const float bob = fabsf(sinf(o.walkPhase)) * kOppBobAmp * deathK;
+
+  auto toScreen = [&](float lx, float ly) -> Vec2 {
+    return {sx + lx * scale, sy - ly * deathK * scale};
+  };
+
+  Vec2 head = toScreen(0.0f, kOppHeadY + bob);
+  Vec2 shoulder = toScreen(0.0f, kOppShoulderY + bob);
+  Vec2 hip = toScreen(0.0f, kOppHipY + bob);
+  Vec2 handL = toScreen(-kOppShoulderX - armSwing, kOppShoulderY - kOppArmDrop + bob);
+  Vec2 handR = toScreen(kOppShoulderX + armSwing, kOppShoulderY - kOppArmDrop + bob);
+  Vec2 footL = toScreen(-kOppStanceX - legSwing, 0.0f);
+  Vec2 footR = toScreen(kOppStanceX + legSwing, 0.0f);
+
+  auto line = [&](const Vec2& a, const Vec2& b) {
+    d.drawLine(static_cast<int>(a.x), static_cast<int>(a.y),
+              static_cast<int>(b.x), static_cast<int>(b.y));
+  };
+  line(shoulder, head);
+  line(shoulder, hip);
+  line(shoulder, handL);
+  line(shoulder, handR);
+  line(hip, footL);
+  line(hip, footR);
+
+  // Head is a small filled rounded box rather than the neck line's bare
+  // endpoint — a square with corner radius == half its side reads as a
+  // circle at this resolution (oled has no dedicated circle primitive).
+  // Sized in screen pixels from the same distance scale as everything
+  // else, clamped so it never vanishes to 0px up close or balloons at
+  // point-blank range.
+  int headRadiusPx = static_cast<int>(lroundf(scale * kOppHeadRadiusWorld * deathK));
+  if (headRadiusPx < kOppHeadRadiusMinPx) headRadiusPx = kOppHeadRadiusMinPx;
+  if (headRadiusPx > kOppHeadRadiusMaxPx) headRadiusPx = kOppHeadRadiusMaxPx;
+  int headDiameter = headRadiusPx * 2 + 1;
+  d.drawRBox(static_cast<int>(head.x) - headRadiusPx,
+            static_cast<int>(head.y) - headRadiusPx, headDiameter, headDiameter,
+            headRadiusPx);
+
+  // Hit-flash: a couple of extra pixels beside the head, cheap on a 1-bit
+  // display where inverting a region would need an explicit clear-then-
+  // redraw pass.
+  if (o.hitFlashS > 0.0f) {
+    d.drawPixel(static_cast<int>(head.x) - headRadiusPx - 2,
+               static_cast<int>(head.y) - headRadiusPx);
+    d.drawPixel(static_cast<int>(head.x) + headRadiusPx + 2,
+               static_cast<int>(head.y) - headRadiusPx);
+  }
+}
+
 // ── Background: horizon + distant mountain range. Both are drawn before
 // the artifact silhouette-fill/edge loop below, so a nearer box's fill
 // (which clears in the background color) correctly erases the background
@@ -596,7 +891,22 @@ bool worldToRadarCell(const Camera& cam, float cosY, float sinY, float wx,
   return gx >= 0 && gx <= 7 && gy >= 0 && gy <= 7;
 }
 
-void drawRadar(const Camera& cam, const Artifact artifacts[], int artifactCount) {
+constexpr uint8_t kRadarOpponentBrightness = 220;  // brighter than a static
+                                                    // artifact blip, dimmer
+                                                    // than an explosion flash
+
+void drawRadar(const Camera& cam, const Artifact artifacts[], int artifactCount,
+               const Opponent opponents[], int opponentCount) {
+  // Artifacts (durable obstacles) are deliberately NOT drawn on the radar —
+  // now that they're permanent level geometry rather than something to
+  // clear out, showing every one of them would clutter the 8x8 grid with
+  // static clutter the player can't act on. `artifacts`/`artifactCount`
+  // stay in the signature for symmetry with drawScene()'s call shape and
+  // in case a future feature (e.g. only revealing a nearby obstacle) wants
+  // them again.
+  (void)artifacts;
+  (void)artifactCount;
+
   uint32_t now = millis();
   if (strobeActive(now)) {
     drawStrobe(now);
@@ -606,15 +916,6 @@ void drawRadar(const Camera& cam, const Artifact artifacts[], int artifactCount)
   uint8_t mask[LEDAppRuntime::kFrameRows] = {};
   float cosY = cosf(cam.yaw);
   float sinY = sinf(cam.yaw);
-  for (int i = 0; i < artifactCount; i++) {
-    if (!artifacts[i].alive) continue;
-    int gx, gy;
-    if (!worldToRadarCell(cam, cosY, sinY, artifacts[i].cx, artifacts[i].cz,
-                          gx, gy)) {
-      continue;
-    }
-    mask[gy] |= static_cast<uint8_t>(0x80u >> gx);
-  }
   // clear() + drawMask() + the marker setPixel() calls below are all
   // separate loops of individual I2C writes; without batching, the panel
   // would visibly blank-then-repaint every ~100ms (see
@@ -624,6 +925,19 @@ void drawRadar(const Camera& cam, const Artifact artifacts[], int artifactCount)
   badgeMatrix.beginFrameBatch();
   badgeMatrix.clear(0);
   badgeMatrix.drawMask(mask, kRadarBlipBrightness, 0);
+
+  // Opponent blips, like explosion markers below, are individual setPixel()
+  // writes rather than folded into the mask above — they need a distinct
+  // (brighter) brightness than a static artifact blip, which a single-
+  // brightness drawMask() call can't express.
+  for (int i = 0; i < opponentCount; i++) {
+    if (!opponents[i].alive) continue;
+    int gx, gy;
+    if (!worldToRadarCell(cam, cosY, sinY, opponents[i].x, opponents[i].z, gx, gy)) {
+      continue;
+    }
+    badgeMatrix.setPixel(gx, gy, kRadarOpponentBrightness);
+  }
 
   // Explosion markers draw last, as individual pixel writes rather than a
   // second mask — see the comment above markExplosionForRadar(). This only
@@ -657,8 +971,6 @@ void drawRadar(const Camera& cam, const Artifact artifacts[], int artifactCount)
 // style comment. None of the existing styles fit (they're all built around
 // a button-glyph chip or a single text string), so this draws its own rule
 // + three columns directly rather than forcing a mismatched helper.
-
-constexpr float kPi = 3.14159265f;
 
 // The compass is bearing-locked exactly like the mountain skyline and radar
 // above: forward always sits at the fixed center pixel, and turning the
@@ -703,17 +1015,35 @@ void drawCompass(oled& d, const Camera& cam) {
   d.drawVLine(kCompassCenterX, OLEDLayout::kFooterTopY + 1, 3);
 }
 
-// FPS is smoothed (exponential moving average) rather than shown raw:
-// render() is called once per GUIManager tick, so an unsmoothed 1/dt
-// reading jitters wildly frame to frame on a display refresh loop that
-// isn't perfectly metronomic.
-float gFpsSmoothed = 60.0f;
+// FPS is a trailing 1-second moving average rather than shown raw: render()
+// is called once per GUIManager tick, so an unsmoothed 1/dt reading jitters
+// wildly frame to frame on a display refresh loop that isn't perfectly
+// metronomic. A ring buffer of recent frame timestamps makes "frames seen
+// in the last 1000ms" trivial to compute, and that count *is* the average
+// fps over that window.
+constexpr uint32_t kFpsWindowMs = 1000;
+constexpr int kFpsSampleCap = 240;  // generous headroom above realistic fps
+uint32_t gFpsSampleTimes[kFpsSampleCap];
+int gFpsSampleHead = 0;
+int gFpsSampleCount = 0;
 
-void drawVectortankFooter(oled& d, const Camera& cam, float dtS) {
-  if (dtS > 0.0f) {
-    float instFps = 1.0f / dtS;
-    gFpsSmoothed = gFpsSmoothed * 0.9f + instFps * 0.1f;
+int recordFrameAndGetFps(uint32_t nowMs) {
+  gFpsSampleTimes[gFpsSampleHead] = nowMs;
+  gFpsSampleHead = (gFpsSampleHead + 1) % kFpsSampleCap;
+  if (gFpsSampleCount < kFpsSampleCap) gFpsSampleCount++;
+
+  int counted = 0;
+  for (int i = 0; i < gFpsSampleCount; i++) {
+    int pos = (gFpsSampleHead - 1 - i + kFpsSampleCap) % kFpsSampleCap;
+    if (nowMs - gFpsSampleTimes[pos] > kFpsWindowMs) break;
+    counted++;
   }
+  return counted;
+}
+
+void drawVectortankFooter(oled& d, const Camera& cam, float dtS, float playerHealth) {
+  (void)dtS;
+  int fps = recordFrameAndGetFps(millis());
 
   // The 3D scene draws all the way to the bottom row (near boxes/ground
   // edges can reach this band), unlike the header's clear top-of-screen
@@ -726,15 +1056,14 @@ void drawVectortankFooter(oled& d, const Camera& cam, float dtS) {
   d.setFontPreset(FONT_TINY);
 
   char fpsBuf[12];
-  std::snprintf(fpsBuf, sizeof(fpsBuf), "%d fps",
-               static_cast<int>(lroundf(gFpsSmoothed)));
+  std::snprintf(fpsBuf, sizeof(fpsBuf), "%d fps", fps);
   d.drawStr(2, OLEDLayout::kFooterTextBaseY, fpsBuf);
 
   drawCompass(d, cam);
 
-  // Stubbed: no damage/health model exists yet, just a fixed readout so the
-  // footer's layout and the eventual wiring are settled ahead of that work.
-  const char* hpBuf = "HP 100%";
+  char hpBuf[10];
+  std::snprintf(hpBuf, sizeof(hpBuf), "HP %d",
+               static_cast<int>(lroundf(playerHealth)));
   int hpW = d.getStrWidth(hpBuf);
   d.drawStr(kScreenW - 2 - hpW, OLEDLayout::kFooterTextBaseY, hpBuf);
 }
@@ -745,27 +1074,76 @@ void drawVectortankFooter(oled& d, const Camera& cam, float dtS) {
 // overlay instead so a stray back-press mid-game doesn't lose the run.
 // The overlay draws on top of a frozen frame of the scene rather than its
 // own screen, matching how a pause menu should read ("the game is still
-// here, just paused"). Only one item exists today (Exit), but it's drawn
-// as a list so a future item doesn't need a redesign.
+// here, just paused"). Doubles as the game-over screen (gameOver == true)
+// once player health hits 0 — same layout, just a different title and with
+// "resume" (back) disabled, since there's nothing to resume to at 0 HP.
 
-constexpr int kPauseMenuX = 24;
-constexpr int kPauseMenuY = 18;
-constexpr int kPauseMenuW = 80;
-constexpr int kPauseMenuH = 28;
+constexpr int kPauseMenuX = 20;
+constexpr int kPauseMenuY = 10;
+constexpr int kPauseMenuW = 88;
+constexpr int kPauseMenuH = 44;
+constexpr uint8_t kPauseItemResume = 0;
+constexpr uint8_t kPauseItemNewGame = 1;
+constexpr uint8_t kPauseItemExit = 2;
+constexpr uint8_t kPauseCursorNewGame = kPauseItemNewGame;
+constexpr uint8_t kPauseMenuItemCount = 3;  // Resume, New Game, Exit
+constexpr int kPauseRowH = 8;
 
-void drawPauseMenu(oled& d) {
+// Cycles the cursor to the next/previous item (dir = +1/-1), skipping
+// Resume when there's nothing to resume to (gameOver).
+uint8_t nextPauseItem(uint8_t current, bool gameOver, int8_t dir) {
+  uint8_t next = current;
+  do {
+    next = static_cast<uint8_t>(
+        (next + dir + kPauseMenuItemCount) % kPauseMenuItemCount);
+  } while (gameOver && next == kPauseItemResume);
+  return next;
+}
+
+void drawPauseMenu(oled& d, bool gameOver, uint8_t cursor, int killCount,
+                   uint32_t highScore) {
   d.setDrawColor(0);
   d.drawBox(kPauseMenuX, kPauseMenuY, kPauseMenuW, kPauseMenuH);
   d.setDrawColor(1);
   d.drawRFrame(kPauseMenuX, kPauseMenuY, kPauseMenuW, kPauseMenuH, 0);
-  d.drawStr(kPauseMenuX + 8, kPauseMenuY + 11, "PAUSED");
-  d.drawStr(kPauseMenuX + 8, kPauseMenuY + 23, "> Exit");
+  d.setFontPreset(FONT_TINY);
+
+  const char* title = gameOver ? "GAME OVER" : "PAUSED";
+  d.drawStr(kPauseMenuX + 8, kPauseMenuY + 9, title);
+  char scoreBuf[8];
+  std::snprintf(scoreBuf, sizeof(scoreBuf), "%d", killCount);
+  int scoreW = d.getStrWidth(scoreBuf);
+  d.drawStr(kPauseMenuX + kPauseMenuW - 8 - scoreW, kPauseMenuY + 9, scoreBuf);
+
+  d.drawStr(kPauseMenuX + 8, kPauseMenuY + 17, "HIGH SCORE");
+  char highBuf[12];
+  std::snprintf(highBuf, sizeof(highBuf), "%lu",
+               static_cast<unsigned long>(highScore));
+  int highW = d.getStrWidth(highBuf);
+  d.drawStr(kPauseMenuX + kPauseMenuW - 8 - highW, kPauseMenuY + 17, highBuf);
+
+  uint8_t items[kPauseMenuItemCount];
+  uint8_t itemCount = 0;
+  if (!gameOver) items[itemCount++] = kPauseItemResume;
+  items[itemCount++] = kPauseItemNewGame;
+  items[itemCount++] = kPauseItemExit;
+
+  for (uint8_t i = 0; i < itemCount; i++) {
+    const char* label = items[i] == kPauseItemResume   ? "Resume"
+                        : items[i] == kPauseItemNewGame ? "New Game"
+                                                        : "Exit";
+    char buf[16];
+    std::snprintf(buf, sizeof(buf), "%s%s", items[i] == cursor ? "> " : "  ",
+                 label);
+    d.drawStr(kPauseMenuX + 8, kPauseMenuY + 25 + i * kPauseRowH, buf);
+  }
 }
 
 void drawScene(oled& d, const Camera& cam, const Artifact artifacts[],
                int artifactCount, const Particle particles[],
                int particlePoolSize, const Projectile projectiles[],
-               int projectileCount) {
+               int projectileCount, const Opponent opponents[],
+               int opponentCount) {
   drawHorizon(d);
   drawMountains(d, cam);
 
@@ -823,6 +1201,15 @@ void drawScene(oled& d, const Camera& cam, const Artifact artifacts[],
     drawArtifactEdges(d, st.sx, st.sy, st.visible, faceVisible);
   }
 
+  // Opponents draw after every artifact's silhouette fill (same reasoning
+  // as particles/projectiles below: they're occlusion-tested against the
+  // artifacts, not depth-sorted against them, so they need the artifacts'
+  // fills already settled first).
+  for (int i = 0; i < opponentCount; i++) {
+    if (!opponents[i].alive) continue;
+    drawOpponentBillboard(d, cam, opponents[i], states, alive, artifactCount);
+  }
+
   // Particles/projectiles draw last (they're small, foreground-ish effects)
   // but still need occlusion-testing against artifacts — otherwise a shot
   // or explosion behind a box kept showing through it.
@@ -833,7 +1220,21 @@ void drawScene(oled& d, const Camera& cam, const Artifact artifacts[],
     float sx, sy;
     if (!project(c, sx, sy)) continue;
     if (occludedByArtifact(states, alive, artifactCount, sx, sy, c.z)) continue;
-    d.drawPixel(static_cast<int>(sx), static_cast<int>(sy));
+    // A streak from the previous frame's position to this one reads as a
+    // much more energetic burst than a cloud of static single pixels at
+    // this particle count/speed — same projection, just drawn as a short
+    // drawLine() instead of drawPixel(). Falls back to a single-pixel dot
+    // on the particle's very first frame (px/py/pz == spawn position, so
+    // the "streak" has zero length) or if the previous position doesn't
+    // project (e.g. just crossed behind the near clip plane).
+    Vec3 pc = cam.toCameraSpace({p.px, p.py, p.pz});
+    float psx, psy;
+    if (project(pc, psx, psy)) {
+      d.drawLine(static_cast<int>(psx), static_cast<int>(psy),
+                static_cast<int>(sx), static_cast<int>(sy));
+    } else {
+      d.drawPixel(static_cast<int>(sx), static_cast<int>(sy));
+    }
   }
 
   for (int i = 0; i < projectileCount; i++) {
@@ -893,10 +1294,49 @@ void fireProjectile(Projectile out[], int count, const Camera& cam) {
   }
 }
 
+// ── Splash damage ────────────────────────────────────────────────────────
+//
+// Every explosion (ground miss, artifact hit, or opponent hit) now also
+// damages anything within kSplashRadius of it, falling off linearly to 0 at
+// the edge — the player included, so standing too close to your own shot
+// costs health. This is on top of a projectile's own direct hit-test above
+// (kOpponentShotDamage), not a replacement for it: a directly-hit opponent
+// is almost always inside its own explosion's splash radius too, so it
+// takes the fixed direct-hit damage plus a near-full-strength splash tick,
+// which reads as "the direct hit mattered" rather than making direct
+// precision pointless.
+constexpr float kSplashRadius = 3.0f;
+constexpr float kSplashMaxDamage = 20.0f;  // at the explosion's exact center
+
+void applySplashDamage(float ex, float ez, const Camera& cam, float& playerHealth,
+                       Opponent opponents[], int opponentCount) {
+  {
+    float dx = cam.x - ex;
+    float dz = cam.z - ez;
+    float dist = sqrtf(dx * dx + dz * dz);
+    if (dist < kSplashRadius) {
+      playerHealth -= kSplashMaxDamage * (1.0f - dist / kSplashRadius);
+      if (playerHealth < 0.0f) playerHealth = 0.0f;
+    }
+  }
+  for (int i = 0; i < opponentCount; i++) {
+    Opponent& o = opponents[i];
+    if (!o.alive || o.deathT >= 0.0f) continue;
+    float dx = o.x - ex;
+    float dz = o.z - ez;
+    float dist = sqrtf(dx * dx + dz * dz);
+    if (dist >= kSplashRadius) continue;
+    o.health -= kSplashMaxDamage * (1.0f - dist / kSplashRadius);
+    o.hitFlashS = kOpponentHitFlashS;
+    if (o.health <= 0.0f) o.deathT = 0.0f;
+  }
+}
+
 void stepProjectiles(Projectile projectiles[], int count, float dtS,
                      Artifact artifacts[], int artifactCount,
                      Particle particles[], int particlePoolSize,
-                     const Camera& cam) {
+                     const Camera& cam, Opponent opponents[],
+                     int opponentCount, float& playerHealth) {
   for (int i = 0; i < count; i++) {
     Projectile& p = projectiles[i];
     if (!p.alive) continue;
@@ -910,20 +1350,46 @@ void stepProjectiles(Projectile projectiles[], int count, float dtS,
       spawnExplosion(particles, particlePoolSize, p.x, 0.0f, p.z);
       maybeStrobeFromExplosion(cam, p.x, p.z);
       markExplosionForRadar(p.x, p.z);
+      applySplashDamage(p.x, p.z, cam, playerHealth, opponents, opponentCount);
       continue;
     }
     for (int j = 0; j < artifactCount; j++) {
+      // Artifacts are durable obstacles: a shot still explodes right at the
+      // box's surface (the hit-test itself is unchanged), but no longer
+      // destroys it — `a.alive` stays true, so it keeps blocking movement
+      // (resolveArtifactCollision) and drawing exactly as before.
       Artifact& a = artifacts[j];
       if (!a.alive) continue;
       if (p.y > a.height) continue;
       float dx = p.x - a.cx;
       float dz = p.z - a.cz;
       if (dx > -a.half && dx < a.half && dz > -a.half && dz < a.half) {
-        a.alive = false;
         p.alive = false;
         spawnExplosion(particles, particlePoolSize, p.x, p.y, p.z);
         maybeStrobeFromExplosion(cam, p.x, p.z);
         markExplosionForRadar(p.x, p.z);
+        applySplashDamage(p.x, p.z, cam, playerHealth, opponents, opponentCount);
+        break;
+      }
+    }
+    if (!p.alive) continue;
+
+    for (int j = 0; j < opponentCount; j++) {
+      Opponent& o = opponents[j];
+      if (!o.alive || o.deathT >= 0.0f) continue;
+      if (p.y > kOpponentHitHeight) continue;
+      float dx = p.x - o.x;
+      float dz = p.z - o.z;
+      if (dx > -kOpponentHitHalfWidth && dx < kOpponentHitHalfWidth &&
+          dz > -kOpponentHitHalfWidth && dz < kOpponentHitHalfWidth) {
+        o.health -= kOpponentShotDamage;
+        o.hitFlashS = kOpponentHitFlashS;
+        if (o.health <= 0.0f) o.deathT = 0.0f;
+        p.alive = false;
+        spawnExplosion(particles, particlePoolSize, p.x, p.y, p.z);
+        maybeStrobeFromExplosion(cam, p.x, p.z);
+        markExplosionForRadar(p.x, p.z);
+        applySplashDamage(p.x, p.z, cam, playerHealth, opponents, opponentCount);
         break;
       }
     }
@@ -939,22 +1405,87 @@ Artifact gArtifacts[kMaxArtifacts];
 int gArtifactCount = 0;
 Particle gParticles[kMaxParticles];
 Projectile gProjectiles[kMaxProjectiles];
+Opponent gOpponents[kMaxOpponents];
+int gOpponentCount = 0;
+float gPlayerHealth = 100.0f;
+float gSpawnTimerS = 0.0f;
 
 constexpr int kPlayArtifactCount = 12;
+constexpr float kPlayerMaxHealth = 100.0f;
+constexpr float kPlayerCollisionRadius = 0.4f;  // blocked by artifact boxes
+
+// ── Escalating opponent spawner ─────────────────────────────────────────
+//
+// kActiveOpponentCount's initial wave is deliberately small (an easier
+// start); stepSpawner() then tops the pool up over time, with the interval
+// between spawns shrinking as gKillCount rises — the run gets harder the
+// better the player is doing, floored at kSpawnMinIntervalS so it never
+// becomes an unplayable firehose.
+constexpr float kSpawnBaseIntervalS = 8.0f;
+constexpr float kSpawnMinIntervalS = 2.0f;
+constexpr float kSpawnIntervalStepPerKillS = 0.25f;
+
+// Reuses makeOpponents()'s ring-spawn/init logic for a single slot rather
+// than duplicating it — spawns into the first dead slot within the active
+// range, or grows gOpponentCount into unused pool capacity if every active
+// slot is currently alive. No-ops once the pool (kMaxOpponents) is full.
+void spawnOneOpponent() {
+  int slot = -1;
+  for (int i = 0; i < gOpponentCount; i++) {
+    if (!gOpponents[i].alive) {
+      slot = i;
+      break;
+    }
+  }
+  if (slot < 0) {
+    if (gOpponentCount >= kMaxOpponents) return;
+    slot = gOpponentCount++;
+  }
+  Opponent single[1];
+  makeOpponents(1, single, gCam);
+  gOpponents[slot] = single[0];
+}
+
+void stepSpawner(float dtS) {
+  gSpawnTimerS -= dtS;
+  if (gSpawnTimerS > 0.0f) return;
+  float interval = kSpawnBaseIntervalS -
+                   kSpawnIntervalStepPerKillS * static_cast<float>(gKillCount);
+  if (interval < kSpawnMinIntervalS) interval = kSpawnMinIntervalS;
+  gSpawnTimerS = interval;
+  spawnOneOpponent();
+}
+
+// Resets all module-level game-world state — shared by onEnter() and the
+// pause menu's "New Game" action so a fresh run doesn't need its own
+// separately-maintained copy of what onEnter() already does. Screen-owned
+// timing/UI members (lastFireMs_, paused_, etc.) are reset at each call
+// site instead, since resetGame() only ever touches the free-function
+// globals above.
+void resetGame() {
+  seedRng(millis());
+  gCam = Camera();
+  gArtifactCount = makeArtifacts(kPlayArtifactCount, gArtifacts, gCam);
+  for (int i = 0; i < kMaxParticles; i++) gParticles[i].active = false;
+  for (int i = 0; i < kMaxProjectiles; i++) gProjectiles[i].alive = false;
+  gOpponentCount = makeOpponents(kActiveOpponentCount, gOpponents, gCam);
+  gPlayerHealth = kPlayerMaxHealth;
+  gKillCount = 0;
+  gSpawnTimerS = kSpawnBaseIntervalS;
+}
 
 }  // namespace
 
 void VectortankScreen::onEnter(GUIManager& gui) {
   (void)gui;
-  seedRng(1);
-  gCam = Camera();
-  gArtifactCount = makeArtifacts(kPlayArtifactCount, gArtifacts, gCam);
-  for (int i = 0; i < kMaxParticles; i++) gParticles[i].active = false;
-  for (int i = 0; i < kMaxProjectiles; i++) gProjectiles[i].alive = false;
+  resetGame();
+  gHighScore = loadHighScore();
   lastFrameMs_ = millis();
   lastFireMs_ = 0;
   lastRadarMs_ = 0;
   paused_ = false;
+  gameOver_ = false;
+  pauseCursor_ = kPauseItemResume;
   // Claim the ambient LED matrix for the duration of play — refcounted, so
   // this nests safely with any other beginOverride() caller (e.g. Settings'
   // LED-brightness preview), and endOverride() in onExit() hands the matrix
@@ -980,16 +1511,18 @@ void VectortankScreen::render(oled& d, GUIManager& gui) {
   uint32_t ledInterval = strobeActive(now) ? kStrobeIntervalMs : kRadarIntervalMs;
   if (now - lastRadarMs_ >= ledInterval) {
     lastRadarMs_ = now;
-    drawRadar(gCam, gArtifacts, gArtifactCount);
+    drawRadar(gCam, gArtifacts, gArtifactCount, gOpponents, gOpponentCount);
   }
 
   d.setDrawColor(1);
   drawScene(d, gCam, gArtifacts, gArtifactCount, gParticles, kMaxParticles,
-            gProjectiles, kMaxProjectiles);
+            gProjectiles, kMaxProjectiles, gOpponents, gOpponentCount);
 
-  drawVectortankFooter(d, gCam, dtS);
+  drawVectortankFooter(d, gCam, dtS, gPlayerHealth);
 
-  if (paused_) drawPauseMenu(d);
+  if (paused_) {
+    drawPauseMenu(d, gameOver_, pauseCursor_, gKillCount, gHighScore);
+  }
 }
 
 void VectortankScreen::handleInput(const Inputs& inp, int16_t cursorX,
@@ -998,16 +1531,46 @@ void VectortankScreen::handleInput(const Inputs& inp, int16_t cursorX,
   (void)cursorY;
 
   if (paused_) {
-    // The game itself is frozen while this overlay is up, so right/b is
-    // free to mean what it means everywhere else on the badge (device
-    // "B" selection button) instead of strafe; down still closes the
-    // menu and resumes play.
-    if (inp.edges().downPressed) {
-      paused_ = false;
-      return;
+    // The game itself is frozen while this overlay is up, so left/right no
+    // longer need to dodge a strafe conflict: left (raw edge, "x") cycles
+    // the cursor forward through the items, and the stick's Y axis does the
+    // same (up = previous, down = next) since a paused menu has no other
+    // use for it. Right/b (device "B" selection button, same binding the
+    // rest of the badge uses for confirm) activates whichever is
+    // highlighted — Resume unpauses, New Game restarts, Exit leaves. At 0
+    // HP there's no Resume item (nothing to resume to), so navigation
+    // skips it and only New Game/Exit can get the player out of this state.
+    constexpr float kStickHi = 0.5f;
+    constexpr float kStickLo = 0.2f;
+    float yDir = (static_cast<float>(inp.joyY()) - 2047.0f) / 2047.0f;
+    int8_t stickDir = 0;
+    if (yDir < -kStickHi) {
+      stickDir = -1;
+    } else if (yDir > kStickHi) {
+      stickDir = 1;
+    }
+    if (stickDir != 0 && pauseStickDir_ == 0) {
+      pauseCursor_ = nextPauseItem(pauseCursor_, gameOver_, stickDir);
+    }
+    if (fabsf(yDir) < kStickLo) {
+      pauseStickDir_ = 0;
+    } else if (stickDir != 0) {
+      pauseStickDir_ = stickDir;
+    }
+
+    if (inp.edges().leftPressed) {
+      pauseCursor_ = nextPauseItem(pauseCursor_, gameOver_, 1);
     }
     if (inp.edges().rightPressed) {
-      gui.popScreen();
+      if (pauseCursor_ == kPauseItemResume) {
+        paused_ = false;
+      } else if (pauseCursor_ == kPauseItemNewGame) {
+        resetGame();
+        paused_ = false;
+        gameOver_ = false;
+      } else {
+        gui.popScreen();
+      }
     }
     return;
   }
@@ -1020,6 +1583,8 @@ void VectortankScreen::handleInput(const Inputs& inp, int16_t cursorX,
     // Back now opens this pause overlay instead of exiting immediately —
     // see the "Pause menu overlay" comment block above drawPauseMenu().
     paused_ = true;
+    pauseCursor_ = kPauseItemResume;
+    pauseStickDir_ = 0;
     return;
   }
 
@@ -1030,14 +1595,29 @@ void VectortankScreen::handleInput(const Inputs& inp, int16_t cursorX,
   gCam.move(xDir, yDir, dtS);
   if (inp.buttons().left) gCam.strafe(-1.0f, dtS);
   if (inp.buttons().right) gCam.strafe(1.0f, dtS);
+  resolveArtifactCollision(gCam.x, gCam.z, kPlayerCollisionRadius, gArtifacts,
+                           gArtifactCount);
   for (int i = 0; i < kMaxParticles; i++) {
     stepParticle(gParticles[i], dtS);
   }
+  stepOpponents(gOpponents, gOpponentCount, dtS, gCam, gPlayerHealth, gArtifacts,
+               gArtifactCount);
   stepProjectiles(gProjectiles, kMaxProjectiles, dtS, gArtifacts,
-                  gArtifactCount, gParticles, kMaxParticles, gCam);
+                  gArtifactCount, gParticles, kMaxParticles, gCam,
+                  gOpponents, gOpponentCount, gPlayerHealth);
+  stepSpawner(dtS);
 
   if (inp.edges().upPressed && now - lastFireMs_ >= kFireCooldownMs) {
     fireProjectile(gProjectiles, kMaxProjectiles, gCam);
     lastFireMs_ = now;
+  }
+
+  // Permanent (until New Game/Exit) pause on death — there's no "resume"
+  // from 0 HP, so this reuses the pause overlay's own frozen-scene
+  // rendering rather than a separate game-over screen.
+  if (gPlayerHealth <= 0.0f && !gameOver_) {
+    gameOver_ = true;
+    paused_ = true;
+    pauseCursor_ = kPauseCursorNewGame;
   }
 }

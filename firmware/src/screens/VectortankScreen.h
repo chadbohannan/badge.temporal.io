@@ -51,4 +51,13 @@ class VectortankScreen : public Screen {
   uint32_t lastFireMs_ = 0;
   uint32_t lastRadarMs_ = 0;
   bool paused_ = false;
+  // True once the player's health has hit 0 — a permanent variant of
+  // paused_ that back can't dismiss (there's no "resume" from 0 HP), only
+  // the pause menu's New Game/Exit items. See the pause-menu overlay
+  // comment block in VectortankScreen.cpp.
+  bool gameOver_ = false;
+  uint8_t pauseCursor_ = 0;
+  // Latches the stick's last nav direction while paused so a held tilt
+  // doesn't repeat-fire every frame; 0 once the stick returns to neutral.
+  int8_t pauseStickDir_ = 0;
 };
