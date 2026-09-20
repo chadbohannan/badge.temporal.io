@@ -267,10 +267,10 @@ static const GridMenuItem kCuratedMenuItems[] = {
     {"DRAW", "Draw frames and animations with stickers and pixels",
      DrawIcons::menuDraw, kScreenDrawPicker, nullptr, nullptr, nullptr},
 
-    {"HELGRIND",    "A badge game, coming soon",
+    {"HELGRIND",    "Norse action-RPG: seven artifacts, one gate",
      AppIcons::games,     kScreenHelgrind,    nullptr, nullptr, nullptr},
 
-    {"VECTOR",      "Wireframe vector tank demo (native C++)",
+    {"GRENADA",      "Wireframe vector tank demo (native C++)",
      AppIcons::games,     kScreenVectortank,  nullptr, nullptr, nullptr},
 
     {"APPS",        "Run MicroPython apps stored on the badge",

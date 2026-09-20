@@ -1,0 +1,37 @@
+# New game: dismiss the four intro pages, look at the village, then walk
+# east one room and north one to Woodsman's Rest (52) and take the axe.
+new
+snap intro
+press b
+press b
+press b
+press b
+assert mode=0 room=59
+snap village
+hold r
+until room=60 4000
+snap meadow
+# Doors are centred: cross to the north doorway (x 56..71) then go up.
+until x>=62 4000
+hold u
+until room=52 4000
+hold none
+snap rest
+assert enemies=2 arts=0
+# The axe sits on tile (12,2). Slip past the rune stone at column 7, go up
+# to row 2, then east along it. Two wolves live here; expect some bites.
+hold r
+until x>=68 3000
+hold u
+until y<=20 3000
+hold r
+until arts=1 4000
+hold none
+snap axe
+assert mode=1 weapon=0
+press b
+press b
+assert mode=0
+press x
+assert weapon=1
+snap armed

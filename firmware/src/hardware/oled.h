@@ -204,6 +204,12 @@ class oled : public IService {
 
   void applyHardwareFontState();
 
+  // The underlying u8g2 C object, for code that draws through u8g2's C
+  // API directly so it can also build on the host (see HelgrindGame).
+  // Valid only while the oled is initialized; drawing before then is a
+  // no-op on the wrapper but not through this pointer.
+  u8g2_t* raw() { return u8g2_.getU8g2(); }
+
  private:
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   bool initialized_;

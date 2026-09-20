@@ -61,6 +61,25 @@ Ignition wraps the build and flash path with device detection, verification,
 and retries. Use direct PlatformIO commands when you are already working inside
 the firmware project and need lower-level control.
 
+## Host Builds
+
+`host/` holds firmware code compiled for your development machine, for
+debugging without a badge. Nothing under it is part of the `replay2026`
+build. Today it contains `host/helgrind/`: the Helgrind game core built
+against u8g2 drawing into memory, playable in an SDL2 window or driven by
+scripts that write PNG frames and assert on game state.
+
+```bash
+cd host/helgrind
+make          # needs a C++17 compiler; SDL2 is optional (pkg-config)
+make play     # play in a window: arrows walk, Z/X/C/V are A/B/X/Y
+make test     # run scripts/*.txt, frames land in out/
+make check    # static checks on the hand-authored world data
+```
+
+It reuses the U8g2 sources under `.pio/libdeps/replay2026/`, so run
+`pio run -e replay2026` once first (or set `U8G2_DIR`).
+
 ## OLED Screenshots
 
 The firmware exposes a dev framebuffer dump through `badge.dev("fb")`. The

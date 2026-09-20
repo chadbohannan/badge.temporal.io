@@ -1,0 +1,25 @@
+# Pause menu, then resume from a save that holds all seven artifacts and
+# stands in Warden's Steps (6); walk east through the ruin into Helgrind.
+new
+press b
+press b
+press b
+press b
+press a
+assert mode=2
+snap paused
+press a
+assert mode=0
+load room=6 hp=16 arts=127 weapon=2 silver=30 ex=64 ey=28
+assert room=6 mode=0 enemies=2
+# Row 2 is the only way through the ruin's east end (8px corridor).
+hold u
+until y<=20 2000
+hold r
+until room=7 6000
+hold none
+assert enemies=1 mode=1
+snap gate
+press b
+assert mode=0
+snap hrafn

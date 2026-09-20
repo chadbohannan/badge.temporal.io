@@ -1,0 +1,12 @@
+# Reading a rune stone with Y, and Y falling through to the scroll message.
+# Woodsman's Rest: the rune stone is tile (7,2); stand just left of it.
+load room=52 hp=12 arts=0 weapon=0 ex=52 ey=20
+press y
+assert mode=1
+snap rune
+press b
+assert mode=0
+# Away from it, Y falls through to "no scrolls".
+load room=52 hp=12 arts=0 weapon=0 ex=20 ey=36
+press y
+snap noscroll

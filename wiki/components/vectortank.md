@@ -1,6 +1,6 @@
 # Vectortank: Native Wireframe Vector Game
 
-`firmware/src/screens/VectortankScreen.{h,cpp}` is a Battlezone-style wireframe demo — driving camera, box "artifacts," and a fixed-arc fire weapon — reachable from the main menu's "VECTOR" tile (`kScreenVectortank`), sitting alongside the still-placeholder "HELGRIND" tile from the [Doom removal](doom.md). Unlike most of the [screen stack](gui-screen-stack.md), it implements `render()`/`handleInput()` directly rather than subclassing `ListMenuScreen`/`ModalScreen`/`GridMenuScreen` — it's a real-time game loop (camera movement, projectile physics, particle simulation) with no list/modal/grid shape to inherit.
+`firmware/src/screens/VectortankScreen.{h,cpp}` is a Battlezone-style wireframe demo — driving camera, box "artifacts," and a fixed-arc fire weapon — reachable from the main menu's "VECTOR" tile (`kScreenVectortank`), sitting alongside the "HELGRIND" tile, which was a placeholder from the [Doom removal](doom.md) until [Helgrind](helgrind.md) started filling it on the `helgrind_game` branch (2026-09-20). Unlike most of the [screen stack](gui-screen-stack.md), it implements `render()`/`handleInput()` directly rather than subclassing `ListMenuScreen`/`ModalScreen`/`GridMenuScreen` — it's a real-time game loop (camera movement, projectile physics, particle simulation) with no list/modal/grid shape to inherit.
 
 ## It started as a MicroPython app, and that comparison found a real bug
 

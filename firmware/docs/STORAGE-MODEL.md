@@ -277,6 +277,8 @@ python3 firmware/scripts/badge_sync.py push /dev/cu.usbmodemXXXX /apps/foo.py
 | `badge_assets` | `AssetRegistry` (Community Apps) | per-asset installed version stamp, last-refresh epoch |
 | `badge_config` | `BadgeConfig` | settings.txt mirror, saved WiFi credential slots |
 | `badge_menu` | `AppRegistry` | persisted menu order |
+| `vectortank` | `VectortankScreen` | single best kill count (`highscore`) |
+| `badge_helgrind` | `HelgrindScreen` | Helgrind save: room, hp, silver, artifact bitmask, weapon, won flag, room entry point, looted-cache bitmask |
 
 Adding a new namespace? Pick one with the `badge_` prefix and document
 it here. Each namespace gets its own iterator scope, so collisions
