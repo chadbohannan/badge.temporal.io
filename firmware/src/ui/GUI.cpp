@@ -19,6 +19,7 @@
 #include "screens/HapticsTestScreen.h"
 #include "screens/HelgrindScreen.h"
 #include "screens/VectortankScreen.h"
+#include "screens/PackitScreen.h"
 #include "screens/InputTestScreen.h"
 #include "screens/LEDScreen.h"
 #include "screens/MapScreens.h"
@@ -224,22 +225,19 @@ void GUIManager::launchCredits() {
   }
 }
 
-// Firmware-update tile label flips between "Check Updates" and
-// "UPDATE" depending on what BadgeOTA has cached.
-static void firmwareUpdateLabel(char* buf, uint8_t bufSize) {
-  if (ota::updateAvailable()) {
-    std::snprintf(buf, bufSize, "UPDATE");
-  } else {
-    std::snprintf(buf, bufSize, "FW UPDATE");
-  }
-}
-
-// Pulse the badge dot on the Update tile when a newer release is
-// cached. The grid drawCell treats any non-zero count as "show
-// notification badge".
-static uint16_t firmwareUpdateBadge() {
-  return ota::updateAvailable() ? 1 : 0;
-}
+// Firmware-update tile label/badge -- unused while the FW UPDATE tile
+// below is hidden; kept (not deleted) so re-enabling the tile is a
+// one-line uncomment.
+// static void firmwareUpdateLabel(char* buf, uint8_t bufSize) {
+//   if (ota::updateAvailable()) {
+//     std::snprintf(buf, bufSize, "UPDATE");
+//   } else {
+//     std::snprintf(buf, bufSize, "FW UPDATE");
+//   }
+// }
+// static uint16_t firmwareUpdateBadge() {
+//   return ota::updateAvailable() ? 1 : 0;
+// }
 
 // COMMUNITY APPS tile is always visible on the home grid. The screen
 // itself surfaces "no community_apps_url configured" / "needs WiFi"
@@ -273,6 +271,9 @@ static const GridMenuItem kCuratedMenuItems[] = {
     {"GRENADA",      "Wireframe vector tank demo (native C++)",
      AppIcons::games,     kScreenVectortank,  nullptr, nullptr, nullptr},
 
+    {"PACKIT",      "3D block-packing game: pack trominoes into a shaft",
+     AppIcons::games,     kScreenPackit,      nullptr, nullptr, nullptr},
+
     {"APPS",        "Run MicroPython apps stored on the badge",
      AppIcons::apps,      kScreenApps,        nullptr, nullptr, nullptr},
      {"COMMUNITY APPS",
@@ -289,9 +290,9 @@ static const GridMenuItem kCuratedMenuItems[] = {
      AppIcons::animations, kScreenAnimTest,   nullptr, nullptr, nullptr},
     {"WIFI", "Manage saved networks and connect to the internet",
      AppIcons::wifi,      kScreenWifi,     nullptr, nullptr, nullptr},
-    {"FW UPDATE", "Check for and install firmware updates over WiFi",
-     AppIcons::firmwareUpdate, kScreenUpdateFirmware, nullptr, nullptr,
-     &firmwareUpdateLabel, &firmwareUpdateBadge},
+    // {"FW UPDATE", "Check for and install firmware updates over WiFi",
+    //  AppIcons::firmwareUpdate, kScreenUpdateFirmware, nullptr, nullptr,
+    //  &firmwareUpdateLabel, &firmwareUpdateBadge},
 
     {"SETTINGS", "Adjust display, input, power, and haptics",
      AppIcons::settings,  kScreenSettings, nullptr, nullptr, nullptr},
@@ -467,6 +468,7 @@ static AssetLibraryScreen sAssetLibrary;
 static AssetDetailScreen sAssetDetail;
 static HelgrindScreen sHelgrind;
 static VectortankScreen sVectortank;
+static PackitScreen sPackit;
 
 // Default sort key offsets:
 //   Curated items: 10 * array index, leaving room (1, 2, ..., 9) for
@@ -696,6 +698,7 @@ void GUIManager::begin(oled* display, Inputs* inputs) {
   registerScreen(&sAssetDetail);
   registerScreen(&sHelgrind);
   registerScreen(&sVectortank);
+  registerScreen(&sPackit);
 
   // Populate the main-menu grid with curated items + AppRegistry-discovered
   // dynamic Python apps before the first render. Safe to call again later

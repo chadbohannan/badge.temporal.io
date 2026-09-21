@@ -50,6 +50,7 @@ enum ScreenId : uint8_t {
   kScreenAssetDetail,
   kScreenHelgrind,
   kScreenVectortank,
+  kScreenPackit,
 };
 
 enum class ScreenAccess : uint8_t {
