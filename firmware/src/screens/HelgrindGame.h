@@ -10,7 +10,7 @@
 // chain, the message box, the pause/death/victory menus, and drawing —
 // with no firmware dependency beyond u8g2's C API. HelgrindScreen is a
 // thin shell that feeds this from the badge's Inputs/millis/oled/LED
-// matrix/NVS, and firmware/test/host/helgrind/ drives the same code on a
+// matrix/NVS, and firmware/host/helgrind/ drives the same code on a
 // host machine with a scripted clock and inputs, dumping frames as images.
 //
 // Drawing goes straight to a u8g2_t: on the badge that's the object inside

@@ -1,0 +1,12 @@
+# Opens the Matrix screen: the joystick moves the home grid, B selects. The OLED
+# shows the preview grid, and LEDAppRuntime drives the real LEDmatrix double buffer.
+wait 1000
+stick 0 1 400     # down: second page of the grid
+wait 500
+stick 1 0 300     # right: the MATRIX tile
+wait 600
+tap B             # select
+wait 1500
+snap matrix-screen
+expect oled host/scripts/golden/matrix-screen-oled.txt
+expect matrix host/scripts/golden/matrix-screen-matrix.txt

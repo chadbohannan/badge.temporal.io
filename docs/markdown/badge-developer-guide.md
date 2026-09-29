@@ -395,14 +395,57 @@ returns every tile to its default order.
 
 ### Persistent Matrix Apps
 
-Drop a `matrix.py` next to `main.py` and your app gets a slot in the
-**MATRIX APPS** picker (firmware menu → MATRIX APPS). Selecting it persists
-the choice in `/led_state.json` so the badge runs your matrix animation
-across reboots, **even when no foreground Python app is open**.
+The main menu's **MATRIX** tile opens a carousel of built-in ambient LED
+modes:
+
+| Mode | `modeId()` | Notes |
+|------|-----------|-------|
+| Temporal | `temporal` | Default badge idle animation |
+| Replay | `replay` | Replay-branded idle animation |
+| Sparkle | `sparkle` | Randomized twinkle |
+| Rain | `rain` | Falling-pixel effect |
+| Wave | `wave` | Scrolling wave |
+| Game of Life | `life` | Conway's Life seeded from a saved pattern |
+| Random Life | `life_random` | Game of Life reseeded randomly each cycle |
+| Custom | `custom` | A single user-drawn frame (Heart/Smiley presets, or hand-drawn) |
+| Off | `off` | Matrix stays dark |
+
+Each built-in mode is a small native (C++) frame generator, redrawn on
+every tick at the user's configured delay/brightness:
+
+* **Temporal** hands off to the LED matrix's own bitmap animator instead of
+  generating frames itself; the others recompute an 8-byte frame each tick.
+* **Replay** scrolls a fixed pixel-column table (the "REPLAY" wordmark) left
+  by one column per tick.
+* **Sparkle** ANDs two random bytes together per row for a sparse twinkle.
+* **Rain** tracks one falling drop per column, advancing it down
+  probabilistically and wrapping at the bottom.
+* **Wave** just cycles through 8 precomputed diagonal frames.
+* **Game of Life** / **Random Life** run a real Conway's Life simulation on
+  an 8×8 wraparound grid, seeded from a saved pattern or random noise; a
+  stale board (empty, still, or a period-2 oscillator) auto-reseeds after a
+  few ticks so it never visibly freezes.
+* **Custom** just redraws one static saved frame — no per-tick animation.
+* **Off** is always blank.
+
+These are fixed C++ implementations — you can't reconfigure or parameterize
+them from Python. If you want dynamic, code-driven matrix animation, write a
+`matrix.py` instead: your Python callback computes the frame every tick, so
+it can do anything the built-in modes do and more (react to sensors, saved
+state, elapsed time, etc.).
+
+Drop a `matrix.py` next to `main.py` and your app gets an extra slot at the
+end of that same carousel, labeled with `__matrix_title__`. Selecting it
+persists the choice in `/led_state.json` so the badge runs your matrix
+animation across reboots, **even when no foreground Python app is open**.
+Only one ambient mode — built-in or app-provided — can be active at a time;
+picking a new one always replaces whatever was running before.
 
 The script registers a tick callback with
 [`matrix_app_start`](badge-api-reference.md#matrix-app-host) and returns
-immediately:
+immediately — the callback itself is where your dynamic animation logic
+lives, computing a fresh frame from whatever state it wants (a phase
+counter, sensor reading, save-file contents, etc.) on every invocation:
 
 ```jython
 """Slow drifting dot."""
@@ -439,6 +482,14 @@ Switching to any built-in mode (Sparkle, Off, etc.) — or to a different
 matrix app — cleanly stops the previous callback. There is no need to call
 `matrix_app_stop()` from your script; the firmware tears it down for you on
 mode change.
+
+If your tick callback raises an exception, the firmware prints the
+traceback to serial, logs `[mh] matrix callback failed; stopping`, and
+unregisters the callback — the badge does not crash, but your ambient
+animation goes dark until the user reselects it (or reboots, which
+re-sources `matrix.py` and re-registers it). There's no automatic retry, so
+guard anything that can fail (missing save file, malformed JSON, etc.)
+inside the tick function itself.
 
 ### Saving Data
 

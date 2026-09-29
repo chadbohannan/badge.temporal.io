@@ -27,8 +27,10 @@ class LEDScreen : public Screen {
   void enterCarousel();
   void enterEditor(LEDAppRuntime::Mode mode);
   void enterPresets();
+  void editReplayText(GUIManager& gui);
   void cancelEditor();
   void saveEditor(GUIManager& gui);
+  static void onReplayTextDone(const char* text, void* user);
   void loadPreset(uint8_t index);
   void moveMode(int8_t dir);
   // Total carousel slots: built-in modes + discovered Python matrix apps.
@@ -62,4 +64,5 @@ class LEDScreen : public Screen {
   bool adjDelay_ = true;
   JoyRamp joyRamp_;
   uint32_t rng_ = 0xA341316C;
+  char replayDraftText_[LEDAppRuntime::kReplayTextCap] = {};
 };

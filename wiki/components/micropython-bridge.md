@@ -12,6 +12,20 @@ Adding a new `badge.<thing>` API touches four places in order: the `temporalbadg
 
 MicroPython apps run cooperatively on Core 1 alongside the GUI. `mpy_service_pump()` in `ReplayMicropythonAPI.cpp` is what runs during any Python-side sleep or poll call, servicing inputs, OLED/LED ownership, the mouse overlay, IMU, and haptics so a badge app that calls `time.sleep()` doesn't make the whole badge feel frozen. This is why native-backed UI helpers are structured as thin wrappers rather than long-running C++ calls: shared rendering logic belongs in `firmware/src/ui/OLEDLayout.{h,cpp}`, `ButtonGlyphs.{h,cpp}`, or `QRCodePlate.{h,cpp}` first, exposed through a small `temporalbadge_runtime_ui_*` wrapper, with `initial_filesystem/lib/badge_ui.py` calling that helper and falling back to a pure-Python implementation when it's absent.
 
+## The Python heap: a 2 MB floor and a 4 MB ceiling
+
+`mp_init_and_mount()` in `MicroPythonBridge.cpp` allocates the Python heap once at boot: `kMicroPythonHeapSize` (2 MB) through `ps_malloc`. The runtime then lives for the whole boot. `mp_soft_reboot()` would tear it down and rebuild it, but nothing calls it.
+
+The 2 MB is only the starting size. `firmware/lib/micropython_embed/src/mpconfigport.h` sets `MICROPY_GC_SPLIT_HEAP_AUTO`, so when an allocation fails even after a collection, `gc_try_add_heap()` in `py/gc.c` adds a new heap area. Each new area roughly doubles the total heap, clipped to whatever `gc_get_max_new_split()` returns.
+
+Until 2026-09-29 that function returned `heap_caps_get_largest_free_block(MALLOC_CAP_DEFAULT)`, and the area came from plain `malloc`. Nothing capped the heap: it could grow 2 → 4 → 8 MB into all free PSRAM and starve the firmware's own PSRAM buffers (`DataCache.cpp`, `EditorScreen.cpp`, the OTA partition-table buffers in `BadgeOTA.cpp`). With `heap_caps_malloc_extmem_enable(0)` in `configureBootHeapPolicy()` (`main.cpp`), a fragmented PSRAM could also put a new area into the internal DRAM that `TlsGate` and BLE compete for; see [internal-DRAM contention](../concepts/internal-dram-contention.md). Both were read from the code and never seen on a badge.
+
+The budget change replaces that. `mpconfigport.h` defines `REPLAY_MP_HEAP_BUDGET`, the size of the whole Python heap including the initial slab, and defines `MP_PLAT_ALLOC_HEAP(n)` as `replay_mp_alloc_heap(n)`. `embed_util.c` implements that as `heap_caps_malloc(n, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT)`, and `gc_get_max_new_split()` now returns the smaller of the budget left and the largest free PSRAM block. It sums each area's tables and pool over the `MP_STATE_MEM(area)` list on every call, so `gc_sweep_free_blocks()` releasing an empty area needs no bookkeeping. The vendored `py/gc.c` is unchanged. A Python area can no longer land in internal DRAM.
+
+Two things are still open. The value is a placeholder: 4 MB, the slab plus one doubling. It needs a `HeapDiag::printSummary` reading of PSRAM on a badge running a Python app beside WiFi, TLS, and `DataCache`. And the change alters badge behavior, since a Python app that used to reach 8 MB now gets `MemoryError` at 4 MB. It was built for the device (`pio run -e replay2026`) and exercised on the [host harness](../systems/host-test-harness.md), where a fixture that fills the heap with 100 KB blocks stops at 40 of them; it has not been run on a badge. `gc.mem_free()` reports the free space plus the room left to grow, so on a fresh boot it shows about 4.16 MB.
+
+`mp_soft_reboot()` also has a latent leak. It calls `gc_init()` on the 2 MB slab, and `gc_setup_area()` sets `next = NULL` without freeing the areas that were added. It is harmless only while the function stays unused.
+
 ## Ambient LED handoff
 
 The ambient LED matrix is owned by [`LEDAppRuntime`](led-app-runtime.md), not by whatever Python app happens to be running in the foreground. A MicroPython app that wants to draw to the LEDs must call `led_override_begin()`/`led_override_end()` (or `matrix_app_start()`), which is how the runtime knows to restore the saved ambient pattern when the app exits instead of leaving the matrix in whatever state the app last left it.

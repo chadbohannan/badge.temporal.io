@@ -4,14 +4,41 @@
 #include <cstring>
 
 #include "../hardware/LEDmatrix.h"
+#include "../hardware/oled.h"
 #include "../infra/Filesystem.h"
 
 extern "C" {
 #include "matrix_app_api.h"
 }
 
+extern oled badgeDisplay;
+
 namespace {
 constexpr const char* kStatePath = "/led_state.json";
+
+// Fixed shortlist of fonts that fit within the matrix's 8-row height,
+// picked out of FontCatalog.cpp by checking u8g2_fonts.c's max_char_height
+// header byte (see wiki/components/led-app-runtime.md). Index order must
+// match LEDAppRuntime::ReplayFont.
+struct ReplayFontEntry {
+  const uint8_t* font;
+  const char* id;
+  const char* label;
+};
+constexpr ReplayFontEntry kReplayFontTable[] = {
+    {u8g2_font_spleen5x8_mr, "spleen5x8", "Spleen 5x8"},
+    {u8g2_font_5x8_tr, "5x8", "5x8"},
+    {u8g2_font_5x7_tr, "5x7", "5x7"},
+    {u8g2_font_4x6_tr, "4x6", "4x6"},
+    {u8g2_font_u8glib_4_tr, "u8glib4", "Micro"},
+};
+constexpr uint8_t kReplayScrollFontCount =
+    sizeof(kReplayFontTable) / sizeof(kReplayFontTable[0]);
+
+const ReplayFontEntry& replayFontEntry(LEDAppRuntime::ReplayFont font) {
+  const uint8_t i = static_cast<uint8_t>(font);
+  return kReplayFontTable[i < kReplayScrollFontCount ? i : 0];
+}
 
 // All 8x8 LED-matrix bitmaps below are MSB-first (bit 7 = leftmost
 // pixel) so the binary literal reads as the visible dot pattern.
@@ -38,25 +65,6 @@ constexpr uint8_t kGlider[LEDAppRuntime::kFrameRows] = {
     0b00000000,
     0b00000000,
     0b00000000,
-};
-// "REPLAY" wordmark unrolled as columns scrolling right-to-left across
-// the matrix. Each byte is one column; bit 7 = top row.
-constexpr uint8_t kReplayColumns[] = {
-    0b00000000, 0b00000000, 0b00000000, 0b00000000,
-    0b00000000, 0b00000000, 0b00000000, 0b00000000,
-    0b11011111, 0b11011111, 0b11011000, 0b11011110,
-    0b11111111, 0b11111111, 0b01110001, 0b11111111,
-    0b11111111, 0b11011011, 0b11011011, 0b11011011,
-    0b11000011, 0b11000011, 0b11011111, 0b11011111,
-    0b11011000, 0b11011000, 0b11011000, 0b11111000,
-    0b11111000, 0b11111111, 0b11111111, 0b00000111,
-    0b00000011, 0b00000011, 0b00000011, 0b00000011,
-    0b11111111, 0b11111111, 0b11111000, 0b11011000,
-    0b11011000, 0b11111111, 0b11111111, 0b11111000,
-    0b11111000, 0b11111111, 0b00011111, 0b00011111,
-    0b11111000, 0b11111000,
-    0b00000000, 0b00000000, 0b00000000, 0b00000000,
-    0b00000000, 0b00000000, 0b00000000, 0b00000000,
 };
 constexpr uint8_t kWaveFrames[][LEDAppRuntime::kFrameRows] = {
     {0b10000000, 0b01000000, 0b00100000, 0b00010000,
@@ -125,13 +133,18 @@ void LEDAppRuntime::loadState() {
 
   char* buf = nullptr;
   size_t len = 0;
-  if (!Filesystem::readFileAlloc(kStatePath, &buf, &len, 512)) {
+  if (!Filesystem::readFileAlloc(kStatePath, &buf, &len, 768)) {
     return;
   }
 
-  StaticJsonDocument<384> doc;
+  // deserializeJson on a mutable char* keeps pointers into the buffer instead of
+  // copying strings, so it has to outlive every read from `doc`.
+  struct BufGuard {
+    char* p;
+    ~BufGuard() { free(p); }
+  } bufGuard{buf};
+  StaticJsonDocument<768> doc;
   DeserializationError err = deserializeJson(doc, buf, len);
-  free(buf);
   if (err) return;
 
   const char* mode = doc["mode"] | modeId(Mode::Temporal);
@@ -159,6 +172,20 @@ void LEDAppRuntime::loadState() {
   strncpy(state_.pythonAppSlug, pyslug, kPythonSlugCap - 1);
   state_.pythonAppSlug[kPythonSlugCap - 1] = '\0';
 
+  const char* rtext = doc["replay_text"] | state_.replayText;
+  strncpy(state_.replayText, rtext, kReplayTextCap - 1);
+  state_.replayText[kReplayTextCap - 1] = '\0';
+
+  const char* rfontId =
+      doc["replay_font"] | replayFontEntry(state_.replayFont).id;
+  state_.replayFont = ReplayFont::Spleen5x8;
+  for (uint8_t i = 0; i < kReplayScrollFontCount; i++) {
+    if (strcmp(rfontId, kReplayFontTable[i].id) == 0) {
+      state_.replayFont = static_cast<ReplayFont>(i);
+      break;
+    }
+  }
+
   JsonArray life = doc["life_seed"].as<JsonArray>();
   if (!life.isNull() && life.size() == kFrameRows) {
     for (uint8_t i = 0; i < kFrameRows; i++) state_.lifeSeed[i] = life[i] | 0;
@@ -170,19 +197,21 @@ void LEDAppRuntime::loadState() {
 }
 
 void LEDAppRuntime::saveState() {
-  StaticJsonDocument<384> doc;
+  StaticJsonDocument<768> doc;
   doc["mode"] = modeId(state_.mode);
   doc["delay"] = state_.delay;
   doc["brightness"] = state_.brightness;
   doc["life_randomize"] = state_.lifeRandomize;
   doc["matrix_app"] = state_.pythonAppSlug;
+  doc["replay_text"] = state_.replayText;
+  doc["replay_font"] = replayFontEntry(state_.replayFont).id;
   JsonArray life = doc.createNestedArray("life_seed");
   JsonArray custom = doc.createNestedArray("custom");
   for (uint8_t i = 0; i < kFrameRows; i++) {
     life.add(state_.lifeSeed[i]);
     custom.add(state_.custom[i]);
   }
-  char buf[384];
+  char buf[768];
   size_t len = serializeJson(doc, buf, sizeof(buf));
   if (len > 0 && len < sizeof(buf)) {
     Filesystem::writeFileAtomic(kStatePath, buf, len);
@@ -194,6 +223,7 @@ void LEDAppRuntime::restoreAmbient() {
   loadState();
   previewActive_ = false;
   previewHasDraft_ = false;
+  previewHasReplayDraft_ = false;
   runningValid_ = false;
   lastTickMs_ = 0;
 
@@ -216,6 +246,23 @@ void LEDAppRuntime::updatePreview(Mode mode, const uint8_t* draft) {
   previewMode_ = mode;
   previewHasDraft_ = draft != nullptr;
   if (draft) memcpy(previewDraft_, draft, kFrameRows);
+  // A generic updatePreview() call (carousel browsing) means "show the
+  // committed Replay text", not a leftover in-progress edit draft from a
+  // previous visit to the Replay editor.
+  previewHasReplayDraft_ = false;
+  runningValid_ = false;
+  lastTickMs_ = 0;
+}
+
+void LEDAppRuntime::previewReplay(const char* text, ReplayFont font) {
+  previewActive_ = true;
+  previewMode_ = Mode::Replay;
+  previewHasDraft_ = false;
+  if (!text) text = "";
+  strncpy(previewReplayText_, text, kReplayTextCap - 1);
+  previewReplayText_[kReplayTextCap - 1] = '\0';
+  previewReplayFont_ = font;
+  previewHasReplayDraft_ = true;
   runningValid_ = false;
   lastTickMs_ = 0;
 }
@@ -223,6 +270,7 @@ void LEDAppRuntime::updatePreview(Mode mode, const uint8_t* draft) {
 void LEDAppRuntime::endPreview() {
   previewActive_ = false;
   previewHasDraft_ = false;
+  previewHasReplayDraft_ = false;
   runningValid_ = false;
   lastTickMs_ = 0;
 }
@@ -260,6 +308,14 @@ void LEDAppRuntime::commitLife(const uint8_t* seed) {
 void LEDAppRuntime::commitCustom(const uint8_t* pattern) {
   copyFrame(state_.custom, pattern, kHeart);
   commitMode(Mode::Custom);
+}
+
+void LEDAppRuntime::commitReplay(const char* text, ReplayFont font) {
+  if (!text || !text[0]) text = "REPLAY";
+  strncpy(state_.replayText, text, kReplayTextCap - 1);
+  state_.replayText[kReplayTextCap - 1] = '\0';
+  state_.replayFont = font;
+  commitMode(Mode::Replay);
 }
 
 void LEDAppRuntime::commitMatrixApp(const char* slug) {
@@ -405,9 +461,14 @@ void LEDAppRuntime::copyFrame(uint8_t dst[kFrameRows], const uint8_t* src,
 
 void LEDAppRuntime::buildFrame(Mode mode, uint8_t out[kFrameRows]) {
   switch (mode) {
-    case Mode::Replay:
-      frameFromColumns(kReplayColumns, sizeof(kReplayColumns), frameIndex_, out);
+    case Mode::Replay: {
+      const char* text;
+      ReplayFont font;
+      effectiveReplay(&text, &font);
+      ensureReplayColumns(text, font);
+      frameFromColumns(replayColumns_, replayColumnCount_, frameIndex_, out);
       return;
+    }
     case Mode::Sparkle:
       for (uint8_t i = 0; i < kFrameRows; i++) out[i] = randomByte() & randomByte();
       return;
@@ -500,6 +561,82 @@ uint8_t LEDAppRuntime::randomByte() {
   return static_cast<uint8_t>((rng_ >> 16) & 0xFF);
 }
 
+void LEDAppRuntime::effectiveReplay(const char** text, ReplayFont* font) const {
+  if (previewActive_ && previewMode_ == Mode::Replay && previewHasReplayDraft_) {
+    *text = previewReplayText_;
+    *font = previewReplayFont_;
+  } else {
+    *text = state_.replayText;
+    *font = state_.replayFont;
+  }
+}
+
+void LEDAppRuntime::ensureReplayColumns(const char* text, ReplayFont font) {
+  if (replayColumnsBuilt_ && font == replayColumnsBuiltFont_ &&
+      strncmp(text, replayColumnsBuiltText_, kReplayTextCap) == 0) {
+    return;
+  }
+  rebuildReplayColumns(text, font);
+  strncpy(replayColumnsBuiltText_, text, kReplayTextCap - 1);
+  replayColumnsBuiltText_[kReplayTextCap - 1] = '\0';
+  replayColumnsBuiltFont_ = font;
+  replayColumnsBuilt_ = true;
+}
+
+void LEDAppRuntime::rebuildReplayColumns(const char* text, ReplayFont font) {
+  if (!text || !text[0]) text = "REPLAY";
+  const uint8_t* fontPtr = replayFontEntry(font).font;
+
+  // Rasterize via the OLED's own u8g2 font engine — sendBuffer() is never
+  // called, so nothing becomes visible on the physical panel. u8g2 silently
+  // clips any drawStr() past 128px, so wide strings are rendered in
+  // successive 128px-wide slices and stitched together column-by-column.
+  badgeDisplay.setFont(fontPtr);
+  int totalWidth = badgeDisplay.getStrWidth(text);
+  if (totalWidth < 1) totalWidth = 1;
+  const int maxTextCols = kReplayColumnCap - 2 * kReplayColumnPad;
+  if (totalWidth > maxTextCols) totalWidth = maxTextCols;
+  const int baselineY = badgeDisplay.getAscent();
+
+  memset(replayColumns_, 0, sizeof(replayColumns_));
+  int col = kReplayColumnPad;
+  for (int sliceStart = 0; sliceStart < totalWidth; sliceStart += 128) {
+    badgeDisplay.clearBuffer();
+    badgeDisplay.setDrawColor(1);
+    badgeDisplay.setFont(fontPtr);
+    badgeDisplay.drawStr(-sliceStart, baselineY, text);
+    const int sliceWidth =
+        (totalWidth - sliceStart) < 128 ? (totalWidth - sliceStart) : 128;
+    for (int x = 0; x < sliceWidth && col < kReplayColumnCap - kReplayColumnPad;
+         x++) {
+      uint8_t byte = 0;
+      for (int y = 0; y < kFrameRows; y++) {
+        if (badgeDisplay.getPixel(x, y)) byte |= static_cast<uint8_t>(0x80 >> y);
+      }
+      replayColumns_[col++] = byte;
+    }
+  }
+  col += kReplayColumnPad;
+  replayColumnCount_ =
+      static_cast<uint16_t>(col > kReplayColumnCap ? kReplayColumnCap : col);
+  badgeDisplay.clearBuffer();
+}
+
+uint8_t LEDAppRuntime::replayFontCount() { return kReplayScrollFontCount; }
+
+LEDAppRuntime::ReplayFont LEDAppRuntime::replayFontAt(uint8_t index) {
+  if (index >= kReplayScrollFontCount) return ReplayFont::Spleen5x8;
+  return static_cast<ReplayFont>(index);
+}
+
+const char* LEDAppRuntime::replayFontId(ReplayFont font) {
+  return replayFontEntry(font).id;
+}
+
+const char* LEDAppRuntime::replayFontLabel(ReplayFont font) {
+  return replayFontEntry(font).label;
+}
+
 const char* LEDAppRuntime::modeId(Mode mode) {
   switch (mode) {
     case Mode::Temporal: return "temporal";
@@ -547,14 +684,16 @@ uint8_t LEDAppRuntime::modeCount() {
   return static_cast<uint8_t>(Mode::Off) + 1;
 }
 
-void LEDAppRuntime::posterFrame(Mode mode, const uint8_t* lifeSeed,
-                                const uint8_t* custom, uint8_t out[kFrameRows]) {
+void LEDAppRuntime::posterFrame(Mode mode, uint8_t out[kFrameRows]) {
   switch (mode) {
     case Mode::Temporal:
       frameFrom32(kTemporalLogo32, 12, 12, out);
       return;
     case Mode::Replay:
-      frameFromColumns(kReplayColumns, sizeof(kReplayColumns), 8, out);
+      // Committed text/font only — the poster is a static carousel
+      // thumbnail, not the in-progress edit draft.
+      ensureReplayColumns(state_.replayText, state_.replayFont);
+      frameFromColumns(replayColumns_, replayColumnCount_, 8, out);
       return;
     case Mode::Sparkle: {
       const uint8_t f[kFrameRows] = {
@@ -576,14 +715,14 @@ void LEDAppRuntime::posterFrame(Mode mode, const uint8_t* lifeSeed,
       memcpy(out, kWaveFrames[0], kFrameRows);
       return;
     case Mode::Life:
-      memcpy(out, lifeSeed ? lifeSeed : kGlider, kFrameRows);
+      memcpy(out, state_.lifeSeed, kFrameRows);
       return;
     case Mode::LifeRandom:
       for (uint8_t i = 0; i < kFrameRows; i++)
         out[i] = static_cast<uint8_t>(random(256));
       return;
     case Mode::Custom:
-      memcpy(out, custom ? custom : kHeart, kFrameRows);
+      memcpy(out, state_.custom, kFrameRows);
       return;
     case Mode::PythonApp:
     case Mode::Off:

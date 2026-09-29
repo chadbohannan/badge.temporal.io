@@ -1,0 +1,5 @@
+# Boots the firmware and checks the home screen. Run from firmware/.
+# Scripts start when setup() returns, so the boot splash is already over.
+wait 1500
+snap smoke-home
+expect oled host/scripts/golden/smoke-home-oled.txt

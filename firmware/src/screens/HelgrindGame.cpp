@@ -14,7 +14,7 @@ namespace {
 // too. These mirror OLEDLayout so the footer lines up with the rest of
 // the firmware's screens; they're restated here to keep this file free
 // of firmware headers (it also builds on the host — see
-// firmware/test/host/helgrind/).
+// firmware/host/helgrind/).
 constexpr int kScreenW = 128;
 constexpr int kScreenH = 64;
 constexpr int kFooterTopY = 54;

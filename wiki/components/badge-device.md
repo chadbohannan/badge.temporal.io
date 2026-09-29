@@ -4,7 +4,7 @@ The Replay 2026 Badge is a card-sized ESP32-S3 wearable: a two-board assembly (s
 
 ## Compute and memory
 
-The MCU is an ESP32-S3-WROOM-1 16N8 module: dual-core Xtensa at 240 MHz (`board_build.f_cpu` in `firmware/platformio.ini`), 16 MB of flash, and 8 MB of PSRAM. The embedded MicroPython runtime described on the [MicroPython bridge](micropython-bridge.md) page draws a 2 MB Python heap from that PSRAM, leaving the rest for the C++ application, the embedded [data bundle](data-bundle.md), and framebuffers. Core 0 and Core 1 split IR and application work as described on the [firmware system page](../systems/replay2026-firmware.md).
+The MCU is an ESP32-S3-WROOM-1 16N8 module: dual-core Xtensa at 240 MHz (`board_build.f_cpu` in `firmware/platformio.ini`), 16 MB of flash, and 8 MB of PSRAM. The embedded MicroPython runtime described on the [MicroPython bridge](micropython-bridge.md) page starts with a 2 MB Python heap in that PSRAM. That heap can grow, up to a 4 MB ceiling (`REPLAY_MP_HEAP_BUDGET`), into the PSRAM, which the C++ application, the embedded [data bundle](data-bundle.md), and framebuffers also use; the bridge page explains the budget. Core 0 and Core 1 split IR and application work as described on the [firmware system page](../systems/replay2026-firmware.md).
 
 ## Display and LED matrix
 

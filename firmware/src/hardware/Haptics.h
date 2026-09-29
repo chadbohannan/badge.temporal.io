@@ -116,6 +116,8 @@ class Inputs;
 
 namespace Haptics {
   constexpr uint8_t kStrengthStep = 0;
+  // Same value as the real driver; DrawScreen resets the PWM frequency to it.
+  constexpr uint32_t kDefaultPwmFreqHz = 80;
   inline void begin() {}
   inline bool enabled() { return false; }
   inline void setEnabled(bool) {}

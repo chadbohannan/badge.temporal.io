@@ -1,0 +1,17 @@
+# The window's virtual controls follow the pins: a held stick lights its arrow and a
+# pressed button lights its key. Needs a display; windowCapture fails the run if the
+# panel disagrees with the pins. Run from firmware/.
+wait 800
+stick 1 0 0
+press B
+wait 100
+snap controls-right-b
+stick 0 -1 0
+release B
+press X
+wait 100
+snap controls-up-x
+stick 0 0 0
+release X
+wait 100
+snap controls-idle

@@ -1,0 +1,23 @@
+# Opens HELGRIND, pages through the intro, and walks. The goldens are the frames
+# HelgrindGame renders through the firmware's HelgrindScreen. Game logic is asserted by
+# host/helgrind's own scripts.
+wait 1000
+open helgrind
+wait 1500
+expect oled host/scripts/golden/helgrind-open-oled.txt
+tap B             # page through the intro
+wait 400
+tap B
+wait 400
+tap B
+wait 400
+tap B
+wait 800
+expect oled host/scripts/golden/helgrind-world-oled.txt
+stick 1 0 300     # walk east
+wait 800
+expect oled host/scripts/golden/helgrind-walk-oled.txt
+expect matrix host/scripts/golden/helgrind-walk-matrix.txt
+stick 0 1 300     # walk south
+wait 800
+expect oled host/scripts/golden/helgrind-south-oled.txt

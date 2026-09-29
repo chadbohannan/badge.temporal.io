@@ -1,0 +1,18 @@
+# Launches a Community App from the main menu, the way a badge does. The app's
+# files come from community-app.args.
+wait 1000
+stick 0 1 35       # down a row, three times: DIAGNOSTICS
+wait 500
+stick 0 1 35
+wait 500
+stick 0 1 35
+wait 500
+stick 1 0 35       # right: the app tile that follows it
+wait 500
+snap community-menu
+tap B              # select: runs /apps/starfield_nametag/main.py inside mpy_gui_exec_file
+wait 4000
+snap community-running
+wait 2000
+snap community-running2
+expect oled host/scripts/golden/community-app-oled.txt

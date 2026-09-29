@@ -2,6 +2,7 @@
 firmware/.pio/
 firmware/build/
 firmware/compile_commands.json
+firmware/src/idf_component.yml
 firmware/src/micropython/StartupFilesData.h
 firmware/src/ota/RegistryDownloadables.h
 firmware/src/infra/BuildWifiConfig.generated.h

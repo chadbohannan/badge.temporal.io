@@ -71,9 +71,14 @@ bool fbDimsFromInfoJson(const char* path, uint16_t* outW, uint16_t* outH) {
   char* buf = nullptr;
   size_t len = 0;
   if (!Filesystem::readFileAlloc(infoPath, &buf, &len, 32 * 1024)) return false;
+  // deserializeJson on a mutable char* keeps pointers into the buffer, so it has
+  // to outlive every read from `doc`.
+  struct BufGuard {
+    char* p;
+    ~BufGuard() { free(p); }
+  } bufGuard{buf};
   StaticJsonDocument<8192> doc;
   DeserializationError err = deserializeJson(doc, buf, len);
-  free(buf);
   if (err) return false;
   uint16_t w = doc["w"].as<uint16_t>();
   uint16_t h = doc["h"].as<uint16_t>();

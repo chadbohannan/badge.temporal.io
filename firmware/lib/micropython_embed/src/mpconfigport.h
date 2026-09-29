@@ -99,6 +99,20 @@ typedef long mp_off_t;
 #define MICROPY_GC_SPLIT_HEAP               (1)
 #define MICROPY_GC_SPLIT_HEAP_AUTO          (1)
 
+// Ceiling for the whole Python heap, initial slab included. gc_get_max_new_split()
+// in port/embed_util.c enforces it, and new areas come from PSRAM only. 4 MB (the
+// 2 MB slab plus one doubling) is a cautious placeholder: the real value needs a
+// HeapDiag reading of PSRAM on a badge running a Python app beside WiFi, TLS, and
+// DataCache. Override with -DREPLAY_MP_HEAP_BUDGET=<bytes>.
+#ifndef REPLAY_MP_HEAP_BUDGET
+#define REPLAY_MP_HEAP_BUDGET               (4u * 1024u * 1024u)
+#endif
+#ifndef __ASSEMBLER__
+#include <stddef.h>
+void* replay_mp_alloc_heap(size_t size);
+#endif
+#define MP_PLAT_ALLOC_HEAP(size)            replay_mp_alloc_heap(size)
+
 // ── Builtins ────────────────────────────────────────────────────────────────
 // MICROPY_PY_BUILTINS_FLOAT is set automatically by py/mpconfig.h when
 // MICROPY_FLOAT_IMPL != NONE, so do NOT define it here (causes -Wmacro-redefined).

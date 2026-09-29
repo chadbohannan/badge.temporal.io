@@ -1,6 +1,6 @@
 #pragma once
 // The game's observable state as named numeric fields, shared by the script
-// runner (status/assert/until) and the SDL window's status line.
+// runner (status/assert/until).
 #include <string>
 
 namespace status {

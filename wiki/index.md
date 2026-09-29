@@ -7,13 +7,14 @@ The structured routing layer for the wiki. Each entry links to a page with a one
 - [Replay 2026 Badge Firmware](systems/replay2026-firmware.md) — the `replay2026` PlatformIO environment (ESP32-S3), the C++/MicroPython split, the two-core threading model, and why Ignition is the authoritative build/flash gate rather than a bare `pio run`
 - [Ignition](systems/ignition.md) — the Temporal-orchestrated build-and-flash tool for one badge or a fleet: per-badge child workflows, the batch-boundary "Enter prompt," the `--expected-count` preflight, and why a workflow engine (not a script) drives bulk USB flashing
 - [Docs Site](systems/docs-site.md) — the zero-JS, zero-build-step static site at badge.temporal.io, the load-bearing CSS stylesheet order, and how its screenshots are captured from real hardware
+- [Host Test Harness](systems/host-test-harness.md) — Phase 1 built in `firmware/host/`: the real firmware over a platform shim, live SDL window or scripted headless runs with virtual-pin joystick/button input, goldens, and exit codes; Phases 2 (MicroPython, proposed `REPLAY_MP_HEAP_BUDGET` cap) and 3 (retire the per-game builds) are still a plan.
 
 ## Components
 
 - [The Badge Device](components/badge-device.md) — the physical device's compute, display, LED matrix, input, IMU, IR, haptics, battery/charging, connectors, flash-partition capacities, and form factor/accessories
 - [Storage Model: NVS, FATFS, app0](components/storage-model.md) — the three-tier persistence rule (state → NVS via `badge.kv`, code → FATFS), the app0 survival-floor bake set, and how every flash path maps onto which tier it touches
 - [badge_sync: The Diff-Sync Engine](components/badge-sync.md) — the single manifest-diffing implementation shared by raw shells, Ignition, and JumperIDE for pushing only changed files without a full reflash
-- [MicroPython Bridge](components/micropython-bridge.md) — how `badge.*` Python calls reach native drivers through `badge_mp_api/`, the cooperative `mpy_service_pump()` that keeps apps responsive without threads, and where app source actually lives
+- [MicroPython Bridge](components/micropython-bridge.md) — how `badge.*` Python calls reach native drivers through `badge_mp_api/`, the cooperative `mpy_service_pump()` that keeps apps responsive without threads, where app source actually lives, and the split-heap Python heap (2 MB start, `REPLAY_MP_HEAP_BUDGET` ceiling)
 - [Badge App Authoring Model](components/badge-apps.md) — the folder-app convention, `badge_app.py`/`badge_ui.py` shared helpers, the dev force-refresh iteration loop, and stale `-e echo` build commands in several app-facing docs
 - [Boops: IR Contact Exchange](components/badge-boops.md) — the four-file split (journal/protocol/handlers/feedback) behind badge-to-badge IR contact exchange, its Core 0 IR transport, its v2 manifest-driven wire protocol, and where its identity card actually lives (corrected from an earlier version of this page)
 - [NEC IR Protocol Layer](components/nec-ir-protocol.md) — the lowest-level RMT/NEC codecs shared by Boops and the consumer-remote "IR Playground," and two past silent-data-loss regressions in its frame-size ceilings

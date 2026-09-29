@@ -2,7 +2,6 @@
 // badge runs, built for this machine with u8g2 drawing into memory.
 //
 //   helgrind-host <script> [outdir]   run a script, write PNGs (script.h)
-//   helgrind-host --play [outdir]     play in an SDL2 window (window.h)
 //   helgrind-host --strwidth <s>...   print each string's width in the
 //                                     badge's text font (used by check-world.py)
 #include <cstdio>
@@ -12,11 +11,10 @@
 
 #include "display.h"
 #include "script.h"
-#include "window.h"
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    std::fprintf(stderr, "usage: %s <script> [outdir] | --play [outdir] | --strwidth <string>...\n", argv[0]);
+    std::fprintf(stderr, "usage: %s <script> [outdir] | --strwidth <string>...\n", argv[0]);
     return 2;
   }
   display::init();
@@ -36,8 +34,6 @@ int main(int argc, char** argv) {
     std::fprintf(stderr, "cannot create %s: %s\n", outDir.c_str(), ec.message().c_str());
     return 2;
   }
-
-  if (std::strcmp(argv[1], "--play") == 0) return window::play(outDir);
 
   std::ifstream f(argv[1]);
   if (!f) {

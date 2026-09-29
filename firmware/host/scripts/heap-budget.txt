@@ -1,0 +1,10 @@
+# Runs the heap-budget fixture from the main menu. It is the first tile
+# (__order__ = -5), but the menu rebuild that follows --fs-dir keeps the cursor on
+# BOOP, so step left first.
+wait 1000
+stick -1 0 35
+wait 500
+tap B
+wait 4000
+snap heap-budget
+expect oled host/scripts/golden/heap-budget-oled.txt

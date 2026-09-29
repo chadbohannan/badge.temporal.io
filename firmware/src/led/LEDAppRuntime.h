@@ -25,9 +25,28 @@ class LEDAppRuntime : public IService {
 
   static constexpr uint8_t kFrameRows = 8;
   static constexpr uint8_t kStaleGrace = 8;
-  static constexpr uint16_t kDefaultDelay = 120;
+  static constexpr uint16_t kDefaultDelay = 100;  // 10 fps
   static constexpr uint8_t kDefaultBrightness = 20;
   using Frame = uint8_t[kFrameRows];
+
+  // User-editable Replay wordmark. Text is rasterized at runtime into a
+  // scrolling column buffer via the OLED's u8g2 font engine (see
+  // rebuildReplayColumns in the .cpp) rather than stored as a fixed bitmap.
+  static constexpr uint8_t kReplayTextCap = 25;  // 24 chars + NUL
+  static constexpr uint16_t kReplayColumnPad = 8;
+  static constexpr uint16_t kReplayColumnCap = 224;
+
+  // Fixed shortlist of fonts confirmed to fit within the 8-row matrix
+  // height (see wiki/components/led-app-runtime.md for how these were
+  // picked out of FontCatalog). Values are stable indices persisted (by
+  // string id, not index) in /led_state.json.
+  enum class ReplayFont : uint8_t {
+    Spleen5x8 = 0,
+    Font5x8,
+    Font5x7,
+    Font4x6,
+    U8glib4,
+  };
 
   void begin(LEDmatrix* matrix);
   void service() override;
@@ -42,6 +61,12 @@ class LEDAppRuntime : public IService {
   void commitMode(Mode mode, uint16_t delay, uint8_t brightness);
   void commitLife(const uint8_t* seed);
   void commitCustom(const uint8_t* pattern);
+  void commitReplay(const char* text, ReplayFont font);
+
+  // Live-preview a candidate Replay text/font while the user is still
+  // editing, without touching the committed state or /led_state.json.
+  // Mirrors updatePreview()'s role for the Life/Custom byte-array drafts.
+  void previewReplay(const char* text, ReplayFont font);
 
   // Persist a Python-driven ambient matrix app. The slug names a folder
   // under /apps/ whose matrix.py registers a callback via
@@ -63,14 +88,22 @@ class LEDAppRuntime : public IService {
   void setBrightness(uint8_t b) { state_.brightness = b; }
   const uint8_t* lifeSeed() const { return state_.lifeSeed; }
   const uint8_t* customPattern() const { return state_.custom; }
+  const char* replayText() const { return state_.replayText; }
+  ReplayFont replayFont() const { return state_.replayFont; }
 
   static const char* modeId(Mode mode);
   static const char* modeName(Mode mode);
   static Mode modeAt(uint8_t index);
   static uint8_t modeIndex(Mode mode);
   static uint8_t modeCount();
-  static void posterFrame(Mode mode, const uint8_t* lifeSeed,
-                          const uint8_t* custom, uint8_t out[kFrameRows]);
+  // Not static: Replay's poster now depends on the instance's saved
+  // text/font, not just a fixed bitmap, so it needs state_ access.
+  void posterFrame(Mode mode, uint8_t out[kFrameRows]);
+
+  static uint8_t replayFontCount();
+  static ReplayFont replayFontAt(uint8_t index);
+  static const char* replayFontId(ReplayFont font);
+  static const char* replayFontLabel(ReplayFont font);
 
  private:
   struct State {
@@ -85,6 +118,8 @@ class LEDAppRuntime : public IService {
     };
     bool lifeRandomize = false;
     char pythonAppSlug[kPythonSlugCap] = {};
+    char replayText[kReplayTextCap] = "REPLAY";
+    ReplayFont replayFont = ReplayFont::Spleen5x8;
   };
 
   static bool isLifeMode(Mode m) {
@@ -105,6 +140,16 @@ class LEDAppRuntime : public IService {
   void buildLifeFrame(uint8_t out[kFrameRows]);
   uint8_t randomByte();
 
+  // Resolves which text/font should currently drive the Replay scroll:
+  // the in-progress preview draft while one is active, else the
+  // committed state.
+  void effectiveReplay(const char** text, ReplayFont* font) const;
+  // Rasterizes `text` in `font` into replayColumns_ via the OLED's u8g2
+  // engine, caching against the last-built text/font so repeated calls
+  // with unchanged input (e.g. every tick) are a no-op.
+  void ensureReplayColumns(const char* text, ReplayFont font);
+  void rebuildReplayColumns(const char* text, ReplayFont font);
+
   LEDmatrix* matrix_ = nullptr;
   State state_;
   bool loaded_ = false;
@@ -113,6 +158,18 @@ class LEDAppRuntime : public IService {
   Mode previewMode_ = Mode::Temporal;
   uint8_t previewDraft_[kFrameRows] = {};
   bool previewHasDraft_ = false;
+  char previewReplayText_[kReplayTextCap] = {};
+  ReplayFont previewReplayFont_ = ReplayFont::Spleen5x8;
+  bool previewHasReplayDraft_ = false;
+
+  // Cache of the last text/font rasterized into replayColumns_, so
+  // ensureReplayColumns() only re-rasterizes when the effective text or
+  // font actually changed.
+  char replayColumnsBuiltText_[kReplayTextCap] = {};
+  ReplayFont replayColumnsBuiltFont_ = ReplayFont::Spleen5x8;
+  bool replayColumnsBuilt_ = false;
+  uint8_t replayColumns_[kReplayColumnCap] = {};
+  uint16_t replayColumnCount_ = kReplayColumnCap;
 
   Mode runningMode_ = Mode::Off;
   bool runningValid_ = false;

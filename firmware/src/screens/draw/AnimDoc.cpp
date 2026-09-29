@@ -490,9 +490,14 @@ bool listAll(std::vector<AnimSummary>& out) {
         }
         buf[sz] = '\0';
 
+        // deserializeJson on a mutable char* keeps pointers into the buffer, so it
+        // has to outlive every read from `doc`.
+        struct BufGuard {
+            char* p;
+            ~BufGuard() { free(p); }
+        } bufGuard{buf};
         BadgeMemory::PsramJsonDocument doc(8 * 1024);
         DeserializationError err = deserializeJson(doc, buf, sz);
-        free(buf);
         if (err) continue;
 
         AnimSummary s{};

@@ -65,20 +65,23 @@ the firmware project and need lower-level control.
 
 `host/` holds firmware code compiled for your development machine, for
 debugging without a badge. Nothing under it is part of the `replay2026`
-build. Today it contains `host/helgrind/`: the Helgrind game core built
-against u8g2 drawing into memory, playable in an SDL2 window or driven by
-scripts that write PNG frames and assert on game state.
+build.
+
+The main path is the host harness: the real firmware, every screen included,
+running in an SDL window or driven by scripts. See
+[`host/README.md`](host/README.md).
 
 ```bash
-cd host/helgrind
-make          # needs a C++17 compiler; SDL2 is optional (pkg-config)
-make play     # play in a window: arrows walk, Z/X/C/V are A/B/X/Y
-make test     # run scripts/*.txt, frames land in out/
-make check    # static checks on the hand-authored world data
+pio run -e host          # build
+host/run-tests.sh        # run every host/scripts/*.txt against its goldens
+cd host && make play     # open the window
 ```
 
-It reuses the U8g2 sources under `.pio/libdeps/replay2026/`, so run
-`pio run -e replay2026` once first (or set `U8G2_DIR`).
+`host/helgrind/` and `host/packit/` are fast, SDL-free unit tests for the two
+game cores (`make test` in each). Helgrind also has `make check`, static
+checks on the hand-authored world data. They reuse the U8g2 sources under
+`.pio/libdeps/replay2026/`, so run `pio run -e replay2026` once first (or set
+`U8G2_DIR`).
 
 ## OLED Screenshots
 

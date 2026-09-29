@@ -10,6 +10,9 @@
 #include "../ui/ButtonGlyphs.h"
 #include "../ui/GUI.h"
 #include "../ui/OLEDLayout.h"
+#include "TextInputScreen.h"
+
+extern TextInputScreen sTextInput;
 
 extern "C" {
 #include "matrix_app_api.h"
@@ -100,17 +103,20 @@ void drawOutline(oled& d, int x, int y, int w, int h, uint8_t color = 1) {
   drawBox(d, x + w - 1, y, 1, h, color);
 }
 
-int16_t delayStep(uint16_t val) {
-  if (val >= 1000) return 250;
-  if (val >= 200) return 50;
-  if (val >= 50) return 10;
-  return 5;
+// The rate is shown and stepped in frames per second; the runtime and
+// /led_state.json keep the frame period in ms.
+constexpr int kMinFps = 1;
+constexpr int kMaxFps = 60;
+
+int fpsFromDelay(uint16_t delayMs) {
+  const int fps = delayMs ? (1000 + delayMs / 2) / delayMs : kMaxFps;
+  return fps < kMinFps ? kMinFps : (fps > kMaxFps ? kMaxFps : fps);
 }
 
-int16_t clampDelay(int32_t v) {
-  if (v < 5) return 5;
-  if (v > 10000) return 10000;
-  return static_cast<int16_t>(v);
+uint16_t delayFromFps(int fps) {
+  if (fps < kMinFps) fps = kMinFps;
+  if (fps > kMaxFps) fps = kMaxFps;
+  return static_cast<uint16_t>((1000 + fps / 2) / fps);
 }
 
 int16_t clampBrt(int16_t v) {
@@ -246,6 +252,30 @@ void LEDScreen::enterPresets() {
   presetIndex_ = 0;
 }
 
+// Y on Replay goes straight to the on-screen keyboard. "send" commits the text
+// with the current font and the keyboard pops back to the carousel; cancelling
+// the keyboard changes nothing.
+void LEDScreen::editReplayText(GUIManager& gui) {
+  strncpy(replayDraftText_, ledAppRuntime.replayText(),
+          sizeof(replayDraftText_) - 1);
+  replayDraftText_[sizeof(replayDraftText_) - 1] = '\0';
+  sTextInput.configure("Replay Text", replayDraftText_,
+                       sizeof(replayDraftText_), &LEDScreen::onReplayTextDone,
+                       this);
+  gui.pushScreen(kScreenTextInput);
+}
+
+void LEDScreen::onReplayTextDone(const char* /*text*/, void* user) {
+  auto* self = static_cast<LEDScreen*>(user);
+  if (!self) return;
+  // TextInputScreen edits replayDraftText_ in place (it was passed as the buffer).
+  ledAppRuntime.commitReplay(self->replayDraftText_, ledAppRuntime.replayFont());
+  Haptics::shortPulse();
+  // commitReplay() ends the carousel's preview (it re-applies the ambient
+  // state), so start it again for the slot the user is still on.
+  ledAppRuntime.beginPreview(self->selectedMode_);
+}
+
 void LEDScreen::cancelEditor() {
   view_ = View::Carousel;
   ledAppRuntime.updatePreview(selectedMode_);
@@ -345,14 +375,13 @@ void LEDScreen::drawCarousel(oled& d) {
     };
     std::memcpy(poster, kPyPoster, 8);
   } else {
-    LEDAppRuntime::posterFrame(selectedMode_, ledAppRuntime.lifeSeed(),
-                               ledAppRuntime.customPattern(), poster);
+    ledAppRuntime.posterFrame(selectedMode_, poster);
   }
   drawGrid(d, poster, -1, -1, kCarouselGridX, kCarouselGridY, false);
 
   char line[16];
-  std::snprintf(line, sizeof(line), "%c%ums", adjDelay_ ? '>' : ' ',
-                static_cast<unsigned>(delay_));
+  std::snprintf(line, sizeof(line), "%c%d fps", adjDelay_ ? '>' : ' ',
+                fpsFromDelay(delay_));
   d.drawStr(0, 26, line);
   std::snprintf(line, sizeof(line), "%cbrt %u", adjDelay_ ? ' ' : '>',
                 static_cast<unsigned>(brightness_));
@@ -363,9 +392,11 @@ void LEDScreen::drawCarousel(oled& d) {
     OLEDLayout::drawFooterActions(d, nullptr, nullptr, "back", "set");
   } else if (selectedMode_ == LEDAppRuntime::Mode::Life ||
              selectedMode_ == LEDAppRuntime::Mode::Custom) {
-    OLEDLayout::drawFooterActions(d, "spd/brt", "lab", "back", "save");
+    OLEDLayout::drawFooterActions(d, "rate", "lab", "back", "save");
+  } else if (selectedMode_ == LEDAppRuntime::Mode::Replay) {
+    OLEDLayout::drawFooterActions(d, "rate", "text", "back", "save");
   } else {
-    OLEDLayout::drawFooterActions(d, "spd/brt", nullptr, "back", "save");
+    OLEDLayout::drawFooterActions(d, "rate", nullptr, "back", "save");
   }
 }
 
@@ -420,8 +451,8 @@ void LEDScreen::handleInput(const Inputs& inputs, int16_t, int16_t,
       if (joyRamp_.tick(dir, millis())) {
         const int8_t sign = dir > 0 ? -1 : 1;
         if (adjDelay_) {
-          delay_ = static_cast<uint16_t>(
-              clampDelay(static_cast<int32_t>(delay_) + sign * delayStep(delay_)));
+          // sign is -1 for stick down, +1 for stick up: up raises the rate.
+          delay_ = delayFromFps(fpsFromDelay(delay_) + sign);
           ledAppRuntime.setDelay(delay_);
         } else {
           brightness_ = static_cast<uint8_t>(
@@ -443,6 +474,11 @@ void LEDScreen::handleInput(const Inputs& inputs, int16_t, int16_t,
         (selectedMode_ == LEDAppRuntime::Mode::Life ||
          selectedMode_ == LEDAppRuntime::Mode::Custom)) {
       enterEditor(selectedMode_);
+      return;
+    }
+    if (e.yPressed && !isPythonAppIndex(modeIndex_) &&
+        selectedMode_ == LEDAppRuntime::Mode::Replay) {
+      editReplayText(gui);
       return;
     }
     if (e.confirmPressed) {

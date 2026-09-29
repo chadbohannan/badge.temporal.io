@@ -96,8 +96,38 @@ void gc_collect( void ) {
 
 #if MICROPY_GC_SPLIT_HEAP_AUTO
 #include "esp_heap_caps.h"
+#include "py/mpstate.h"
+
+// The Python heap has an explicit ceiling, REPLAY_MP_HEAP_BUDGET (mpconfigport.h),
+// counted over every area including the initial slab. Both the size query below
+// and the allocation are PSRAM-only, so a Python area can no longer fall back to
+// the internal DRAM that TLS and BLE need, and the badge and the host harness stop
+// at the same allocation. vendored py/gc.c is unchanged.
+
+// Size the GC accounts to one area: its tables and pool. An area added at runtime
+// also holds its own mp_state_mem_area_t header, as gc_try_add_heap() assumes.
+static size_t replay_area_bytes( const mp_state_mem_area_t* area ) {
+    size_t bytes = (size_t)( area->gc_pool_end - area->gc_alloc_table_start );
+    if ( area != &MP_STATE_MEM( area ) ) {
+        bytes += sizeof( mp_state_mem_area_t );
+    }
+    return bytes;
+}
+
+// Recomputed on every call, so freeing an area (gc_sweep_free_blocks) needs no
+// bookkeeping here.
 size_t gc_get_max_new_split( void ) {
-    return heap_caps_get_largest_free_block( MALLOC_CAP_DEFAULT );
+    size_t used = 0;
+    for ( const mp_state_mem_area_t* area = &MP_STATE_MEM( area ); area != NULL; area = area->next ) {
+        used += replay_area_bytes( area );
+    }
+    const size_t left = used >= REPLAY_MP_HEAP_BUDGET ? 0 : REPLAY_MP_HEAP_BUDGET - used;
+    const size_t largest = heap_caps_get_largest_free_block( MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT );
+    return left < largest ? left : largest;
+}
+
+void* replay_mp_alloc_heap( size_t size ) {
+    return heap_caps_malloc( size, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT );
 }
 #endif
 

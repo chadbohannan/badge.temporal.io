@@ -1,0 +1,25 @@
+# Opens PACKIT, resumes, moves and lets a piece fall, then leaves through the pause menu.
+# The goldens are the frames PackitGame::gameDraw renders through the firmware's PackitScreen.
+wait 1000
+open packit
+wait 1500
+expect oled host/scripts/golden/packit-open-oled.txt
+tap A             # back out of the menu: Resume
+wait 500
+stick -1 0 150    # one step left
+wait 500
+expect oled host/scripts/golden/packit-left-oled.txt
+tap B             # rotate
+wait 500
+expect oled host/scripts/golden/packit-rotate-oled.txt
+wait 2500
+expect oled host/scripts/golden/packit-play-oled.txt
+tap A             # open the pause menu
+wait 500
+stick 0 1 250     # Resume -> New Game
+wait 500
+stick 0 1 250     # -> Exit
+wait 500
+tap B             # select Exit
+wait 1000
+expect oled host/scripts/golden/packit-exit-oled.txt

@@ -19,6 +19,8 @@ A running ledger of things found during ingestion that are real, compiled/shippe
 
 - **`firmware/scripts/upload_dual.py`** overrides PlatformIO's `UPLOADCMD` to flash every detected badge port in parallel via direct `esptool` calls — but it isn't referenced in any `platformio.ini` `extra_scripts` list, so `pio run -t upload` never invokes it. It duplicates, less robustly, what [Ignition's `FlashBadgesWorkflow`](../components/ignition-flash-workflow.md) already does with per-badge retry and verification, which is the likely reason it was superseded in place rather than deleted. See [build and dev scripts](../components/build-and-dev-scripts.md).
 
+- **`mp_soft_reboot()`** in `MicroPythonBridge.cpp` is defined but never called. If it is ever wired up, it leaks every heap area added after the initial 2 MB slab. See [MicroPython bridge](../components/micropython-bridge.md).
+
 ## Stale docs that would hand a contributor a broken command
 
 - **`pio run -e echo`/`echo-dev`** appears as a build example in 7 files (`firmware/initial_filesystem/apps/README.md`, both on-device API/dev-guide docs, `firmware/micropython/README.md` + its usermod README, both `docs/markdown/*` files) — none of those PlatformIO environments exist; only `replay2026`/`replay2026-expanded` do. (An eighth offender, `firmware/src/doom/README.md`, was deleted along with the rest of the Doom port on 2026-09-17, dropping the count from 8.) See [badge apps](../components/badge-apps.md) and [the public/private scope boundary](../concepts/public-repo-scope-boundary.md).
@@ -27,6 +29,13 @@ A running ledger of things found during ingestion that are real, compiled/shippe
 ## Silent data loss in a pipeline (no error, just missing output)
 
 - **`floors.md`'s `` `sponsors: ...` `` inline tags** are matched by `build-data.py`'s section regex (so parsing doesn't fail on them) but never captured into a named field — they never reach `floors.json` or the firmware. May be intentional (the booth's free-text description already conveys the same information) or may be an unfinished feature; not resolvable from the source alone. See [Data Bundle](../components/data-bundle.md).
+
+## Use-after-free bugs found by the host harness
+
+Found 2026-09-29 by AddressSanitizer in the [host harness](../systems/host-test-harness.md), and fixed. On a badge they most likely worked by luck, because freed heap memory usually still holds its old bytes.
+
+- **ArduinoJson reading a freed buffer.** `deserializeJson(doc, buf, len)` with a mutable `char*` keeps pointers into `buf` rather than copying strings, so `buf` has to outlive every read from `doc`. Three sites freed it right after parsing: `LEDAppRuntime::loadState()`, `AnimTestScreen.cpp` (`fbDimsFromInfoJson`, reading the object `id`), and `draw/AnimDoc.cpp` (`listAll()`, reading `anim_id` and `name`). Each now holds the buffer in a scope guard that frees it last. Passing `(const char*)buf` would copy the strings instead, at the cost of document capacity.
+- **Reach.** The last two are only reachable through the DRAW and FILES menu tiles, which are commented out in `GUI.cpp`'s curated list, so the public build does not run them. They were reproduced by enabling those tiles temporarily on the host; no test covers them, because the tiles are off.
 
 ## Past regressions, now fixed, but worth knowing about if touching the same code
 

@@ -1,0 +1,2 @@
+#pragma once
+#define MBEDTLS_VERSION_NUMBER 0x03000000

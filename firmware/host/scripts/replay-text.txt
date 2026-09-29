@@ -1,0 +1,46 @@
+# Matrix screen -> Replay mode -> Y opens the on-screen keyboard directly; "send"
+# saves the text and returns to the Replay carousel slot, and the LED matrix
+# scrolls it.
+# Run from firmware/.
+wait 1000
+stick 0 1 400
+wait 500
+stick 1 0 300
+wait 600
+tap B
+wait 1500
+stick 1 0 150     # carousel: Temporal -> Replay
+wait 600
+snap replay-a
+expect matrix host/scripts/golden/replay-text-replay-a-matrix.txt
+tap Y             # "text": straight to the keyboard
+wait 600
+snap keyboard
+expect oled host/scripts/golden/replay-text-keyboard-oled.txt
+tap X             # backspace x3: REPLAY -> REP
+wait 200
+tap X
+wait 200
+tap X
+wait 300
+stick 1 0 150     # selector: space -> del
+wait 300
+stick 1 0 150     # del -> send
+wait 300
+tap B             # send: saves and returns to the Replay carousel slot
+wait 1500
+snap saved
+expect oled host/scripts/golden/replay-text-saved-oled.txt
+expect matrix host/scripts/golden/replay-text-saved-matrix.txt
+stick 0 -1 100    # stick up: the rate goes up
+wait 400
+snap rate-up
+expect oled host/scripts/golden/replay-text-rate-up-oled.txt
+stick 0 1 250     # stick down: it comes back down
+wait 400
+snap rate-down
+expect oled host/scripts/golden/replay-text-rate-down-oled.txt
+stick 1 0 150     # the carousel still browses (and previews) after the save
+wait 600
+snap browse
+expect matrix host/scripts/golden/replay-text-browse-matrix.txt

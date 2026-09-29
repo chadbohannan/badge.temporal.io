@@ -781,6 +781,11 @@ def led_tick(now_ms):
 matrix_app_start(led_tick, 100, 40)
 ```
 
+If the callback raises, the firmware catches it, prints the traceback to
+serial, logs `[mh] matrix callback failed; stopping`, and unregisters the
+callback (equivalent to calling `matrix_app_stop()`). It does not retry or
+restart your app automatically.
+
 ### `matrix_app_set_speed(interval_ms)`
 
 Change the tick interval for the active callback.
@@ -807,9 +812,17 @@ Check if a background callback is currently registered.
 
 ### `matrix_app_info()`
 
-Return a diagnostic tuple with the current matrix app state.
+Return a diagnostic tuple with the current matrix app state:
+`(active, saved, interval_ms, brightness, overridden, invocations)`.
 
-* Returns `(active, saved, interval_ms, brightness, overridden, invocations)`.
+| Field | Type | Meaning |
+|-------|------|---------|
+| `active` | `bool` | A callback is currently registered via `matrix_app_start`. |
+| `saved` | `bool` | Reserved for future use — always `False` today, regardless of whether the app is persisted to `/led_state.json` via the MATRIX picker. |
+| `interval_ms` | `int` | Current tick interval, as last set by `matrix_app_start`/`matrix_app_set_speed`. |
+| `brightness` | `int` | Current brightness (0–255), as last set by `matrix_app_start`/`matrix_app_set_brightness`. |
+| `overridden` | `bool` | `True` while a foreground override (`led_override_begin()`, or drawing to the matrix directly without one) is suppressing the callback's ticks. |
+| `invocations` | `int` | Count of ticks actually delivered to the callback since it was registered; resets to 0 on the next `matrix_app_start`. |
 
 ---
 
@@ -923,8 +936,11 @@ badge.matrix_app_start(_tick, 250, 24)
 Same constraints as any other `matrix_app_start` callback: it runs from the
 firmware service pump, so keep ticks fast and don't block. The firmware
 tears down the previous callback for you when the user picks a different
-matrix app or any built-in mode (Sparkle, Off, etc.) — there's no need to
-call `matrix_app_stop()` from your script when switching modes.
+matrix app or any built-in mode (Temporal, Replay, Sparkle, Rain, Wave,
+Game of Life, Random Life, Custom, Off — see
+[Persistent Matrix Apps](badge-developer-guide.md#persistent-matrix-apps)
+for what each one does) — there's no need to call `matrix_app_stop()` from
+your script when switching modes.
 
 ### `rescan_apps()`
 
