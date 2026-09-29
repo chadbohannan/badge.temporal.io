@@ -107,14 +107,6 @@ void gameDraw(u8g2_t* u, uint32_t now);
 bool wellFilled(int col, int row);
 void pieceCellWorld(int i, int8_t& col, int8_t& row);
 
-constexpr int kMatrixCols = 8;
-constexpr int kMatrixRows = 8;
-
-// Fills the ambient 8x8 LED matrix (row-major, 0/255 brightness) with the
-// rows-cleared count as a 2-digit score in a tiny pixel font, clamped/
-// wrapped to 0-99 since the matrix has no room for a 3rd digit.
-void gameMatrix(uint8_t pixels[kMatrixCols * kMatrixRows]);
-
 // Test-support only: forces a settled cell on/off, bypassing normal piece
 // placement. Lets firmware/host/packit/ set up row-clear and top-out
 // scenarios directly instead of needing a specific RNG-dependent piece

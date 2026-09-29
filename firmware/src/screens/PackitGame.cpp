@@ -578,46 +578,4 @@ void debugSetWellCell(int col, int row, bool filled) {
   gState.well[row][col] = filled;
 }
 
-namespace {
-
-// 3x5 pixel digits (one row of 3 bits, MSB-first, per font row) for the
-// score shown on the ambient LED matrix -- there's no room for a real font
-// on an 8x8 grid, so this is hand-drawn rather than borrowed from u8g2.
-constexpr uint8_t kDigitFont[10][5] = {
-    {0b111, 0b101, 0b101, 0b101, 0b111},  // 0
-    {0b010, 0b110, 0b010, 0b010, 0b111},  // 1
-    {0b111, 0b001, 0b111, 0b100, 0b111},  // 2
-    {0b111, 0b001, 0b111, 0b001, 0b111},  // 3
-    {0b101, 0b101, 0b111, 0b001, 0b001},  // 4
-    {0b111, 0b100, 0b111, 0b001, 0b111},  // 5
-    {0b111, 0b100, 0b111, 0b101, 0b111},  // 6
-    {0b111, 0b001, 0b010, 0b010, 0b010},  // 7
-    {0b111, 0b101, 0b111, 0b101, 0b111},  // 8
-    {0b111, 0b101, 0b111, 0b001, 0b111},  // 9
-};
-
-// Stamps one 3x5 digit into `pixels` with its top-left corner at
-// (originX, 1) -- a 1px top margin centers the 5-row glyph in the 8-row
-// matrix (2px left at the bottom rather than exactly, but off-by-one here
-// doesn't matter for a readable digit).
-void drawDigit(uint8_t pixels[kMatrixCols * kMatrixRows], int digit, int originX) {
-  for (int row = 0; row < 5; row++) {
-    uint8_t bits = kDigitFont[digit][row];
-    for (int col = 0; col < 3; col++) {
-      if (bits & (1 << (2 - col))) {
-        pixels[(row + 1) * kMatrixCols + originX + col] = 255;
-      }
-    }
-  }
-}
-
-}  // namespace
-
-void gameMatrix(uint8_t pixels[kMatrixCols * kMatrixRows]) {
-  for (int i = 0; i < kMatrixCols * kMatrixRows; i++) pixels[i] = 0;
-  int score = gState.rowsCleared % 100;
-  drawDigit(pixels, score / 10, 0);
-  drawDigit(pixels, score % 10, 4);
-}
-
 }  // namespace packit

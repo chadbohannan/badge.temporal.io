@@ -96,3 +96,4 @@
 [2026-09-29] update | led-app-runtime.md — LED carousel footer "rate" (was "spd/brt"): frame rate in fps, 1-60; default period 100 ms (10 fps, was 120); brt still adjustable via X but unlabeled
 [2026-09-29] update | Host harness Phase 3: deleted the PACKIT and Helgrind SDL viewers and PACKIT's PNG code; added packit-screen and helgrind-screen scripts (goldens). Unit tests, Helgrind scripts and check-world.py stay. Updated host-test-harness, helgrind, packit, READMEs.
 [2026-09-29] update | Host harness follow-up: script `open <screen>` replaces stick-counting to reach games; run-tests.sh runs the PACKIT/Helgrind unit tests; Helgrind shares the harness PNG writer; PACKIT wiki pruned of the viewer. Found gameMatrix() now has no caller.
+[2026-09-29] update | Deleted unused PackitGame gameMatrix() and its digit font; packit.md updated.

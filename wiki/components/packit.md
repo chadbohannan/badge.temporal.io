@@ -184,12 +184,6 @@ Also found in the same playtest pass: topping out (a spawn that doesn't fit) use
 
 All 9 host tests and the full `pio run -e replay2026` build pass.
 
-## Host emulator gains an LED-matrix panel with the score (2026-09-21)
-
-`PackitGame` can render the ambient 8×8 matrix as the score: `rowsCleared`, clamped/wrapped to 2 digits (`% 100`). The only caller was the standalone host viewer, deleted in the host-harness Phase 3, so nothing calls it now; `PackitScreen` has no matrix override.
-
-`PackitGame.{h,cpp}` gained `gameMatrix(uint8_t pixels[64])`, filling a row-major 8×8 brightness grid (0/255) with the score in a hand-drawn 3×5 pixel font (`kDigitFont`, one 3-bit row per font row) — there's no room for a real font at this resolution. `drawDigit()` stamps each digit at a fixed column offset (0 and 4) with a 1px top margin to center the 5-row glyph vertically. This mirrors Helgrind's `gameMinimap()`/`fillMinimap()` core-side pattern but draws a fixed layout rather than per-room brightness.
-
 ## Dotted border rules flush against the board edges (2026-09-21)
 
 A cosmetic pass added a single-pixel-dotted vertical rule immediately outside each side of the board (`gameDraw()`, one line per side, `u8g2_DrawPixel` every other row) to visually mark the play-field boundary against the otherwise-blank side margins (`kBoardOffsetX` is 28px on a 9-column, 8px-cell board centered in 128px). The rules sit at `kBoardOffsetX - 1` and `kBoardOffsetX + kBoardW*kCellW` — flush against the board, zero margin, one column outside it rather than centered in the margin (a first pass centered them in the margin and was corrected after review to sit right at the edge instead).
@@ -211,5 +205,5 @@ A hardware playtest found the joystick's down push did nothing during play — o
 - **1-bit "opaque" texture**: settled cells currently draw as flat filled boxes; whether a depth cue beyond size alone (a dither pattern per layer, say) would help legibility on real hardware is untested.
 - **Piece preview**: whether the next piece is shown ahead of time (standard in modern Tetris, absent from the original) is undecided.
 - **HUD/footer**: whether PACKIT follows Helgrind/Vectortank's status-band footer convention (`OLEDLayout::kFooterTopY..kScreenH`) and what it would show, given there's no persistent score or HP to display.
-- **Firmware-side LED matrix**: `gameMatrix` produces the score but nothing calls it; `PackitScreen.cpp` has no matrix override, unlike [Vectortank's](vectortank.md) radar.
+- **LED matrix**: `PackitScreen.cpp` has no matrix override, so the ambient animation keeps running. A score display was prototyped for the old host viewer and removed as unused; [Vectortank's](vectortank.md) radar is the pattern if one is wanted.
 - **Spawn-rotation buffer**: whether the near-spawn rotation restriction found above is worth changing once the game is playable and this can be felt rather than reasoned about.
