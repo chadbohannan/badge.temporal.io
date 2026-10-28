@@ -30,6 +30,12 @@ Apache License, Version 2.0. The Apache-2.0 license text is included at
 `licenses/Apache-2.0.txt`. Preserve the Apache notices in those files when
 redistributing source or binaries.
 
+## SQLite
+
+`firmware/lib/sqlite3/` holds the SQLite amalgamation (version 3.53.4, from
+sqlite.org), which the TREEWALK reader uses. SQLite is in the public domain;
+its source carries a blessing in place of a license notice.
+
 ## Other Firmware Dependencies
 
 The public firmware tree may include or depend on additional third-party

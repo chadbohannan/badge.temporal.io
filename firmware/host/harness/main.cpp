@@ -70,7 +70,8 @@ void onAlarm(int) {
 void usage() {
   fprintf(stderr,
           "usage: badge-host [--script FILE] [--window] [--repl] [--fs-dir SRC[:/DEST]]... [--out DIR] [--state-dir DIR]\n"
-          "                  [--max-virtual-ms N] [--wall-timeout S]\n");
+          "                  [--max-virtual-ms N] [--wall-timeout S]\n"
+          "                  [--sqlite-check PATH]\n");
 }
 }  // namespace
 }  // namespace harness
@@ -97,6 +98,7 @@ int main(int argc, char** argv) {
     else if (a == "--window") gOptions.window = true;
     else if (a == "--repl") gOptions.repl = true;
     else if (a == "--fs-dir") gOptions.fsDirs.push_back(next("--fs-dir"));
+    else if (a == "--sqlite-check") gOptions.sqliteCheck = next("--sqlite-check");
     else if (a == "--out") gOptions.outDir = next("--out");
     else if (a == "--state-dir") gOptions.stateDir = next("--state-dir");
     else if (a == "--max-virtual-ms") gOptions.maxVirtualMs = (uint32_t)atol(next("--max-virtual-ms"));
@@ -145,6 +147,7 @@ int main(int argc, char** argv) {
 
   setup();
   if (!gOptions.fsDirs.empty() && !populateFilesystem(gOptions.fsDirs)) return kExitUsage;
+  if (!gOptions.sqliteCheck.empty()) host_exit(sqliteCheck(gOptions.sqliteCheck));
   gBooted = true;
   gScriptStartUs = host_clock_peek_us();
   for (;;) loop();

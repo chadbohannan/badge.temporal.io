@@ -1,13 +1,13 @@
 # Launches a Community App from the main menu, the way a badge does. The app's
 # files come from community-app.args.
 wait 1000
-stick 0 1 35       # down a row, three times: DIAGNOSTICS
+stick 0 1 35       # down a row, three times: MATRIX
 wait 500
 stick 0 1 35
 wait 500
 stick 0 1 35
 wait 500
-stick 1 0 35       # right: the app tile that follows it
+stick 0 1 35       # down: the app tile, below MATRIX
 wait 500
 snap community-menu
 tap B              # select: runs /apps/starfield_nametag/main.py inside mpy_gui_exec_file

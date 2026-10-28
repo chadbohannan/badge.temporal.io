@@ -62,6 +62,7 @@ const NamedScreen kScreens[] = {
     {"helgrind", kScreenHelgrind},
     {"vectortank", kScreenVectortank},
     {"packit", kScreenPackit},
+    {"treewalk", kScreenTreewalk},
     {"matrix", kScreenMatrixApps},
 };
 

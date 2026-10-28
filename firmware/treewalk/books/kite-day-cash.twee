@@ -1,0 +1,753 @@
+:: StoryTitle
+The Case of the Kite-Day Cash
+
+:: StoryData
+{
+  "ifid": "B497804C-F70E-41EE-91C5-BD3F573A57A8",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Gust at One O'Clock"
+}
+
+:: Gust at One O'Clock [agent] {"position":"0,0"}
+Every summer, on the last Saturday in July, the whole town of Gull Point carries its kites down to the beach. There are box kites and diamonds, dragons with thirty-foot tails, and a homemade octopus that has never once got off the ground. There are prizes for highest, prettiest and best homemade, and the entry fee is two dollars a kite, which goes to the prizes. By noon the sand below the dunes is crowded with blankets, coolers and people walking backward with their faces turned up to the sky.
+
+You are there as a flier, not a detective, for once. Around Gull Point you are known as the kid who finds things: Mrs. Hale's lost wedding ring, the library's missing returns cart, the truth about who really broke the bakery window. Today you have a red delta kite, two dollars of lunch money and no case at all.
+
+You built the delta last summer on the floor of Gil Nash's garage. Gil is fourteen and the best flier in Gull Point, and he did the hard parts, but he let you tie the last knot, and he talked to you the whole afternoon as if you were somebody worth talking to. This summer he's the festival runner and too busy for anybody. You buy a lemonade at the snack shack and watch the beach.
+
+It's a good day to watch. Ms. Barra's voice booms from the loudspeaker pole, calling heats. Dex Farrow is selling kite string out of a cooler and shouting about it. Down at the water's edge, old Mr. Pike stands beside his fishing rods like a post, ignoring the whole festival. At ten to one a little girl's red box kite takes a dive straight into the white judges' tent with a thump, and she runs in after it, and out again, scarlet with embarrassment.
+
+At one o'clock the gust comes. It hits the beach all at once, hard, off the sea. Hats fly. Blankets lift. Kites strain and three of them snap free and go tumbling toward the dunes. The judges' tent bellies like a sail and one of its flaps cracks loose, and Ms. Barra's voice over the loudspeaker shouts, "Hold your kites! Hold your kites!" Then it is over, as quickly as it came, and everyone laughs and starts untangling string.
+
+Ten minutes later Mrs. Okafor finds you at the snack shack and puts a hand on your shoulder.
+
+"You're the one who finds things," she says. She is the head judge, a retired science teacher with a whistle around her neck and a clipboard she never puts down. "Then find this. The cash box is gone."
+
+She walks you to the judges' tent, into the wind, which is still coming in off the sea the way it has all day. Above the beach a hundred kites hang in it, every one of them leaning toward the dunes.
+
+"At five to one I counted the entry fees," Mrs. Okafor says. "Eighty-four dollars, bundled in our green rubber bands, in a gray tin box on this table. When that gust hit, the back flap tore loose and nearly took the tent. I was hanging on to the front. By five past, the box was gone."
+
+She points to a dent in the canvas wall. "Pip Arnaud's box kite crashed in here at ten to one. She ran in, grabbed it and ran out again. That was before I counted."
+
+You look out the back flap. Beyond the tent the sand rises into the dunes. A paper cup goes bowling up the slope, and somebody's hat after it.
+
+"The festival closes at four," she says. "After that, everyone goes home, and so does whoever took it."
+[[Search the dunes, where the gust would have carried anything loose->The Dune Grass]]
+[[Talk to the kids who were near the tent at one->Three Kids by the Tent]]
+[[Accuse Pip; her kite crashed right into the tent->The Wrong Kite]]
+
+:: The Dune Grass [agent] {"position":"0,0"}
+If the gust tore the back flap loose, then the wind came through the tent toward the dunes. Paper cups went that way. A hat went that way. Maybe a cash box did too.
+
+You climb out the back flap and start up the slope. The sand is soft and hot, and the wind pushes at your back the whole way, as if it agrees with you. Marram grass whips your ankles. You find a candy wrapper, a broken kite spar, a sandal with no partner, and a great deal of sand.
+
+Twenty minutes go by. From the top of the first low rise you can see the whole festival below: the white judges' tent, the supply tent beside it with its rack of spare tails flapping, Dex Farrow's cooler of kite string, the loudspeaker pole, and beyond it all the sea, with a fisherman standing at the water's edge like a post.
+
+The dunes go back a long way. There are a hundred hollows a box could be lying in, and the sun is not getting any cooler. Down on the beach Ms. Barra's voice crackles over the loudspeaker, announcing the junior fliers.
+
+It is half past one. You could keep going, or you could admit the dunes are too big for one detective.
+[[Keep searching, deeper into the dunes->The Empty Box]]
+[[Give up on the dunes and go back to the tent->Sand in Your Shoes]]
+
+:: Three Kids by the Tent [agent] {"position":"0,0"}
+Boxes don't walk. Somebody near the tent at one o'clock saw something, even if they don't know it yet.
+
+Three kids are still close by. Pip Arnaud, ten, is sitting on the sand hugging her red box kite. One of its corners is crushed. "I didn't take anything," she says before you've asked. "I only got my kite. I said sorry."
+
+Dex Farrow, thirteen, is sitting on his cooler of kite string with a fat wad of bills sticking out of his shirt pocket. When he sees you look at it he shoves it deeper. "Don't even," he says.
+
+Then Gil Nash comes jogging past in his yellow volunteer vest. Gil is the festival runner; he fetches things, fixes things, and runs the supply tent next door. He sees you and slows down, grinning. "Hey, it's the detective. How's the delta flying?"
+
+Then he hears what happened, and the grin goes.
+
+"Eighty-four bucks? That's rotten," he says. "I didn't see a thing. At one o'clock I was down at the water's edge flying my kite. I had it way out over the waves, best flight of the day. When the gust hit I nearly lost it." He claps you on the shoulder. "Go get 'em, detective." And he jogs off toward the supply tent.
+
+Pip sniffs. Dex scowls at his cooler. Mrs. Okafor is back inside the tent, writing on her clipboard. Down at the water, a fisherman stands with his rod.
+[[Ask Dex where that wad of money came from->Dex's Pocket]]
+[[Ask Mrs. Okafor exactly what happened inside the tent during the gust->Mrs. Okafor's Account]]
+[[Walk down to the water where Gil says he was flying->The Water's Edge]]
+
+:: The Wrong Kite [agent] {"position":"0,0"}
+It seems simple. Pip Arnaud's kite crashed into the tent. Pip ran inside. Pip is the only person anyone saw go in.
+
+You find her by the snack shack and say it in front of everyone: she went in for her kite and came out with the cash box.
+
+Pip's face crumples. "I didn't! I said sorry!" Her mother arrives, hears the word "thief," and turns pale, then red.
+
+Mrs. Okafor comes over with her clipboard. She listens, then taps the page. "Pip was in my tent at ten to one," she says quietly. "I counted the money at five to. It was still there. She couldn't have taken it."
+
+The crowd that gathered to watch drifts away, muttering. Pip's mother packs up the box kite, the folding chairs and Pip, and they leave the festival without a word. Pip doesn't look back.
+
+Nobody looks for the thief after that. By four o'clock the tents come down, the cash box is never found, and the only thing anyone remembers about the Kite Festival is the girl who was called a thief for flying her kite badly.
+
+On your way home you pass the Arnauds' house. Out by the curb, sticking up from the trash can, is a red box kite with one corner crushed.
+
+:: The Empty Box [agent] {"position":"0,0"}
+You keep going. Over the next rise there is a hollow out of the wind, and in it, half-hidden in the dune grass, something gray.
+
+It is the cash box. Its lid hangs open. It is empty: no bills, no green rubber bands, nothing but a little sand in one corner.
+
+You crouch beside it. The tin is heavier than it looks; you need both hands to lift it. You look back at the judges' tent. It is a long way off, sixty yards at least, and uphill the whole way.
+
+A gust can carry a paper cup sixty yards. But a box of tin you need two hands to lift?
+
+The sand around the box is churned. In the lee of the dune, where the wind can't smooth it, there are marks.
+[[Carry the box back to Mrs. Okafor: the gust took it after all->Blown Away]]
+[[Leave the box where it is and read the marks around it->Chevrons in the Sand]]
+
+:: Sand in Your Shoes [agent] {"position":"0,0"}
+The dunes are too big. You could search them until dark. You slide back down the slope with sand in both shoes and go back to the judges' tent.
+
+Mrs. Okafor is on the phone when you arrive. She finishes the call and gives you a tired smile.
+
+"I've called the sheriff's office," she says. "A deputy will come out after the parade. Thank you for trying. Go enjoy the rest of the festival."
+
+You try to tell her about the wind, and the hollows, and how the box could be anywhere, but she has a festival to run and a line of kids waiting to register for the junior event. She says thank you again and turns to the line, and you understand that you have just been thanked out of the case.
+
+The deputy comes at half past three. He writes down what Mrs. Okafor tells him, looks at the back flap, looks at the dunes, and closes his notebook. By four the tents are down, and whoever took the box has gone home with everyone else.
+
+You empty your shoes in the parking lot. A lot of sand comes out. Nothing else does.
+
+:: Blown Away [agent] {"position":"0,0"}
+It must have been the gust. It tore the flap loose, swept the table and carried the box over the sand, spilling bills the whole way. The money is scattered across the dunes, or out to sea.
+
+You carry the box back down, both arms aching, and set it on the judges' table. Mrs. Okafor turns it over. Sand runs out of it.
+
+"In the dunes?" she says. "The wind did this?" She looks at the box for a long moment, then at you, and you nod. She sighs. "Well. It's not theft, then. It's bad luck."
+
+She climbs onto a chair and announces it over Ms. Barra's microphone: the entry fees blew away in the one o'clock gust, and the festival will refund every family out of the prize money. There will be no first prize this year.
+
+A groan goes up across the beach. A boy who has been building his kite since spring throws his hat on the sand.
+
+On your way home you pass the dunes again and think about the box: how heavy it was, how far it was, how you needed two hands to carry it down. Wind doesn't have hands. By then it doesn't matter.
+
+:: Chevrons in the Sand [agent] {"position":"0,0"}
+You leave the box where it lies and get down on your knees in the lee of the dune.
+
+The marks are footprints. Out in the open the wind has blurred the sand, but here, out of the wind, the prints are sharp: sneakers, a little bigger than yours, with a tread of zigzag chevrons like sergeant's stripes. They come over the rise from the direction of the judges' tent, stop beside the box where someone knelt, and turn back.
+
+Only one set. Whoever brought the box here walked in and walked out.
+
+You follow them back to the crest with your eyes. On the windward slope they fade, but you can still pick them out, a line of soft dents. They don't go back to the judges' tent's back flap. They bend a little to the north, toward the tent next door: the supply tent, with its rack of spare kite tails flapping in the wind.
+
+Down by the snack shack a crowd of kids is milling around, waiting for the two o'clock heats. Half of them are wearing sneakers. Any of them could be the one.
+[[Follow the chevron prints down to the supply tent->The Supply Tent]]
+[[Go down and check every kid's sneakers for chevron soles->Shoe Parade]]
+
+:: The Supply Tent [agent] {"position":"0,0"}
+You follow the line of dents down the slope. Where the beach starts they vanish into a thousand other footprints, but they were pointing straight at the back of the supply tent.
+
+The supply tent is a little striped canopy with a counter at the front: spools of string, patch kits, and a big cardboard box of spare kite tails. Gil Nash runs it. He is the festival runner, and he runs this tent alone; there is a hand-lettered sign on the counter that says BACK IN 5 — GIL. Right now he is off fetching something, and the tent is empty.
+
+Taped to the counter beside the sign is a flyer, soft from being handled: STATE KITE CHAMPIONSHIP, OCEAN BEND, AUGUST 14. ENTRY $75. Somebody has drawn a circle around the date, and then another, and another.
+
+You slip around the back. The tail box sits under the counter, crammed with coiled ribbons of red and yellow and blue. You lift one out. It is heavier than a ribbon should be.
+
+Rolled inside the tail, held with a green rubber band, is a fold of dollar bills. You unroll another tail. More bills, another green band. The judges' green bands.
+
+Your heart is going fast. Out front, someone laughs, and footsteps crunch past on the sand. It is a quarter past two. The money is here, in Gil's tent, but anyone could have walked around the back while Gil was out fetching things, just as you did.
+
+Anyone. You want it to be anyone.
+[[Put the tails back and wait out of sight to see who comes for them->Who Comes Back]]
+[[Grab the money and run it straight to Mrs. Okafor->Finders]]
+
+:: Shoe Parade [agent] {"position":"0,0"}
+The thief wore chevron-soled sneakers. All you have to do is find the shoes.
+
+You go down to the snack shack and start asking kids to lift their feet. It works for a while. Then you notice that the shoe store in town had a sale on exactly this kind of sneaker in June. Every third kid on the beach has chevrons.
+
+Dex Farrow is one of them. He also has a wad of bills in his shirt pocket. You say so, a little too loudly.
+
+Dex goes red to the ears. "It's string money!" he shouts. A ring of kids forms. Someone starts chanting "Lift your feet! Lift your feet!" and soon a dozen kids are lifting their feet at one another and laughing, and Dex is in the middle of it, being laughed at worst of all.
+
+Mrs. Okafor breaks it up with her whistle. Dex's sales add up to the dollar; she checks. She asks you, quite kindly, to stop examining people's shoes.
+
+Dex packs up his cooler and goes home early, which costs him the best selling hour of the day. The real thief, wearing the same sneakers as everybody else, watches the whole thing from somewhere in the crowd.
+
+:: Who Comes Back [agent] {"position":"0,0"}
+Whoever hid the money will come back for it. Nobody leaves eighty-four dollars in a box of ribbons forever.
+
+You roll the bills back into the tails, put the tails back exactly as they were, and find a spot behind the stacked folding chairs between the supply tent and the dunes, where you can see the back of the counter through a gap in the canvas.
+
+Gil comes back at half past two with a bag of patch kits and takes down his BACK IN 5 sign. He sells string. He sells a tail to a little boy. He doesn't go near the tail box under the counter. An hour passes. Your legs go to sleep. You want a lemonade more than you have ever wanted anything. Part of you wants nobody to come at all, so you can stand up and go home and never know.
+
+At half past three Ms. Barra calls the kite parade over the loudspeaker, and the whole beach drifts down to the water's edge to watch. The supply tent's customers go with them.
+
+Gil looks left. He looks right. He kneels behind the counter and pulls the tail box toward him, and starts unrolling tails into a canvas bag, fast.
+
+You knew. You've known since the flyer. It still feels like missing a step in the dark.
+
+Gil stands, slings the bag over his shoulder, and steps out of the back of the tent, heading for the crowd.
+[[Step out in front of him and shout for Mrs. Okafor->Caught at the Tails]]
+[[Follow him and see where he takes it->Lost in the Crowd]]
+
+:: Finders [agent] {"position":"0,0"}
+You stuff the tails into your shirt and run for the judges' tent before anyone can stop you.
+
+Mrs. Okafor counts it twice. Eighty-four dollars, every bill, green bands and all. She hugs you, which is embarrassing, and announces over the loudspeaker that the entry fees have been found.
+
+"Where?" she asks. "Who took it?"
+
+"In the supply tent," you say. "In the tail box."
+
+Gil Nash is there in a moment, wide-eyed. "In my tent? Anybody could've stuck it in there. I was out running errands all afternoon. That's awful." He offers to help look for the thief. Everyone thinks that is very decent of him.
+
+And there is no thief to look for. You found the money; you didn't find who put it there. Mrs. Okafor asks the obvious question, kindly: how did you know exactly which tail to unroll? A few of the parents look at you sideways after that.
+
+By four o'clock the money is back and the case is closed with no name on it. Gil waves to you as he packs up the supply tent. You are almost sure he is smiling.
+
+:: Caught at the Tails [agent] {"position":"0,0"}
+You stand up from behind the folding chairs, pins and needles in both legs, right in Gil's path.
+
+"Mrs. Okafor!" you yell. "Over here!"
+
+She is twenty yards away with her whistle and clipboard, marshalling the parade. She comes at a trot. Gil stops dead with the canvas bag on his shoulder. He looks at you, and for a second he isn't a thief or a runner or anything; he's just Gil, surprised to see you.
+
+"What's in the bag, Gil?" Mrs. Okafor asks.
+
+"Tails," Gil says. "For the parade. Spares."
+
+"Then you won't mind," she says, and holds out her hand.
+
+There are tails in the bag. There are also eighty-four dollars, rolled up in them and held by green rubber bands, the judges' own.
+
+You tell it in order. The box in the dunes, too heavy for any gust. The chevron prints running back toward the supply tent. The money in the tail box, in the one tent nobody but Gil works in. And an hour of watching Gil not touch that box until the whole beach had its back turned.
+
+"You runners go everywhere," Mrs. Okafor says. "Including through my back flap."
+
+Gil looks at the sand for a long time. Then he nods.
+
+Later, when the parade has gone by and the beach is emptying, Mrs. Okafor sits him down on the judges' bench. Nobody tells you to go away, so you hear it.
+
+The state championship at Ocean Bend is in August. Seventy-five dollars to enter, and the bus is extra. Gil has wanted to fly there since he was nine. In the spring his dad's hours at the boatyard got cut, and there isn't seventy-five dollars, and there isn't going to be.
+
+"I've run this festival for nothing for four years," Gil says to his sneakers. "I fix everybody's kites for nothing. And the prizes go to whoever's dad bought the best kite." He wipes his face with the back of his wrist. "I know. That's not a reason."
+
+"No," Mrs. Okafor says. "It isn't." But she says it gently. She doesn't call the sheriff. She calls Gil's dad, and then she unpins the RUNNER badge from Gil's vest and puts it in her pocket with the money.
+
+She buys you a lemonade, a large one. You hold it and don't drink it. You keep thinking about Gil's garage last summer, the red sail spread out on the floor between you, and Gil saying "You tie this one. You've got the hands for it."
+
+You solved it. It doesn't feel the way solving things usually feels.
+
+:: Lost in the Crowd [agent] {"position":"0,0"}
+If you stop him now he'll say the bag is full of tails. Better to see where it goes. Maybe there's a partner.
+
+You let him get ten steps ahead and follow, limping on legs still half asleep.
+
+Gil walks straight into the kite parade. Two hundred people are crowded at the water's edge, kids holding up their kites, parents holding up their phones, dogs barking at the tails. Gil threads through them like a fish. A dragon kite with a thirty-foot tail swings low over the crowd, everyone ducks, and when you come up again the yellow vest is gone.
+
+You find the vest ten minutes later, folded on the snack shack counter. You don't find Gil. You don't find the canvas bag.
+
+At four o'clock Gil turns up to take down the supply tent, whistling, with nothing in his hands. You tell Mrs. Okafor what you saw. Gil says he took a bag of spare tails to the parade; they're in his dad's truck now, if anyone wants to look. By the time anyone does, the truck has gone home.
+
+Mrs. Okafor writes down everything you tell her, every word, and you can see she believes you. At the bottom of the page, under your name, she writes two more words: no evidence. She doesn't mean it unkindly. She just underlines it.
+
+:: Dex's Pocket [agent] {"position":"0,0"}
+You sit down on the sand in front of Dex's cooler. "That's a lot of money in your pocket."
+
+"It's my money." Dex glares, then pulls out the wad and slaps it on the cooler lid. "Count it. Go on."
+
+You count it. Thirty-one dollars, all in ones and a few fives, soft and crumpled, held together with nothing at all.
+
+"String's a dollar a spool," Dex says. "I sell a lot of string. It's windy. Kites break."
+
+That is true. The wind has been strong all day, and broken strings have been sailing off toward the dunes since morning.
+
+Thirty-one dollars isn't eighty-four. But a thief could split the money and hide the rest. And Dex has been sitting right here, ten steps from the judges' tent, all afternoon.
+
+Dex stuffs the bills back in his pocket. "You want to accuse me, go ahead. Everybody always does."
+
+His cooler is open. Inside are the spools he hasn't sold, wound with white string and stacked in rows.
+[[Tell Mrs. Okafor that Dex has the money on him->Thirty-One Dollars]]
+[[Count the spools in his cooler to check his story->Counting Spools]]
+
+:: Mrs. Okafor's Account [agent] {"position":"0,0"}
+Mrs. Okafor sets down her clipboard and closes her eyes to remember.
+
+"The gust hit, and the back flap tore loose and started cracking like a flag. The whole tent wanted to go up. I grabbed the front pole and hung on. Ms. Barra was shouting 'Hold your kites!' on the loudspeaker; I remember that."
+
+"Did anyone come in?"
+
+"Yes." She opens her eyes. "Someone came in the back and pegged the flap down again, quick as anything, with a mallet. I was facing the other way, holding on. I saw a yellow vest out of the corner of my eye, and the mallet going. I called 'thank you' over my shoulder. That's all."
+
+"A volunteer vest?"
+
+"We have three volunteers in yellow vests today," she says. "Mr. Lund, who's doing the parking. Ms. Barra, on the loudspeaker. And Gil Nash, our runner. Gil's the only young one."
+
+She frowns. "When I turned around, the flap was fixed and the table was empty. I thought the wind had knocked the box off, and I looked under the table. It wasn't there."
+
+Three vests. One of them is Gil's. You find you've already started hoping it's one of the other two.
+[[Go straight to Gil and accuse him: he's the only kid in a vest->One of Three Vests]]
+[[Find all three volunteers and ask where each one was when the gust hit->Three Yellow Vests]]
+
+:: The Water's Edge [agent] {"position":"0,0"}
+You walk down the beach to the water's edge, where Gil says he stood at one o'clock with his kite way out over the waves.
+
+The wind is in your face here, straight off the sea. You turn around. Every kite on the beach is behind you, flying over the sand and the dunes, their strings slanting back toward the land. Not one is out over the water.
+
+A few yards along, an old man in a canvas hat is fishing, three rods stuck in holders in the sand. This is Mr. Pike. Everyone in Gull Point knows Mr. Pike, and everyone knows not to stand on his lines.
+
+"You been here long?" you ask.
+
+"Since noon," he says. "Same spot."
+
+"Was there a kid down here at one o'clock, flying a kite?"
+
+Mr. Pike snorts. "Down here? No. Nobody's been down here all afternoon but me and the gulls." He jerks his chin at the sky behind you. "And nobody's flying anything out over that water today, I'll tell you. Wind's coming in. Kite goes where the wind goes. You'd have to fly it backwards."
+
+He reels in a line, checks the bait and casts again. The wind carries the line a little toward the shore as it falls.
+[[Run back up the beach and tell Gil his alibi can't be true->Gil Changes His Story]]
+[[Ask Mr. Pike what he did see at one o'clock->What Mr. Pike Saw]]
+[[Borrow a kite and try to fly it out over the water yourself->Your Own Kite]]
+
+:: Thirty-One Dollars [agent] {"position":"0,0"}
+Thirty-one dollars, ten steps from the tent, and an attitude. It is enough. You go and tell Mrs. Okafor.
+
+She comes over with her clipboard. Dex doesn't shout this time. He just opens his cooler and lifts out a notebook with a rubber band around it.
+
+"Forty spools this morning," he says, very quietly. "I write down every one I sell. Thirty-one. Nine left. Count them."
+
+Mrs. Okafor counts them. Nine. She reads the notebook: thirty-one sales, each with the time beside it, the last at 12:58 and the next at 1:20. She hands it back to him and turns to you, and her face tells you everything before she says a word.
+
+"Dex," she says, "I'm sorry."
+
+Dex doesn't say anything to her. He doesn't say anything to you either. He just packs the notebook away, carefully, as if it's the only thing on the beach that has ever been on his side.
+
+The cash box is never found. At four o'clock, while the tents come down around him, Dex is still sitting on his cooler, writing in the notebook. He writes for a long time, a whole page, glancing up now and then at the back of the judges' tent.
+
+You would give a lot to know what's on that page. You don't ask. You've already used up your one question.
+
+:: Counting Spools [agent] {"position":"0,0"}
+"How many spools did you start with?"
+
+Dex blinks. Nobody has asked him a question before deciding about him. "Forty," he says, and pulls a notebook out of the cooler. "I write every sale down. My dad makes me."
+
+Nine spools left in the cooler. Thirty-one sales in the notebook, each one with a time. His money matches his sales to the dollar.
+
+"Twelve fifty-eight," you read. "Then nothing until one-twenty. Why the gap?"
+
+"The gust," Dex says. "Everybody was grabbing their kites. Nobody was buying." He hesitates, then lowers his voice. "Look. I wasn't going to say, because nobody believes me about anything. But right after the gust, like one-oh-two, I saw Gil come out the back of the judges' tent. His vest was all puffed out in front, like he had something stuffed under it. He went off toward the dunes, fast."
+
+"Gil?" It comes out louder than you meant. "Gil Nash?"
+
+"See? That's what everybody does." Dex shrugs. "He runs everywhere, so I didn't think anything. Then I heard about the box. It's my word against his. Everybody likes Gil."
+
+You like Gil. You'd like to tell Dex he's wrong, and you can't think of a single reason that isn't just that.
+
+Across the sand, Gil is jogging back from the supply tent, waving at a little kid with a kite.
+[[Catch Gil and ask him again where he was at one->Gil Again]]
+[[Take Dex straight to Mrs. Okafor to tell her what he saw->Hearsay]]
+
+:: Gil Again [agent] {"position":"0,0"}
+You catch Gil outside the supply tent. He's restringing a little kid's kite and he gives you a big smile over the top of it.
+
+"Still on the case? Any luck?"
+
+"Tell me again where you were when the gust hit."
+
+"Down at the water," Gil says easily. "Right at the edge. Had my kite way out over the waves; it was flying like a dream. That gust nearly yanked my arm off. I had to run along the sand to keep it up." He hands the kid her kite and ruffles her hair. "Why?"
+
+"Somebody saw you come out the back of the judges' tent at two minutes past one."
+
+Gil laughs. "Who, Dex? Dex would say anything. He's mad because I sell string in the supply tent, too, and mine's cheaper." He spreads his hands, and then he looks at you, really looks, the way he does when he's about to let you in on something. "Come on. You know me. I was at the water. Ask anybody."
+
+You do know him. That's the trouble.
+
+"Want to see my kite?" Gil says. "It's in the tent. Got sand all over it from that gust."
+[[Ask to see the kite->A Kite with Sand on It]]
+[[Point at the sky and ask Gil which way the wind is blowing->Over the Waves]]
+
+:: Hearsay [agent] {"position":"0,0"}
+Dex saw it. That's a witness. You take him by the sleeve to the judges' tent, and he tells Mrs. Okafor what he told you.
+
+Mrs. Okafor listens carefully. Then she sends for Gil.
+
+Gil arrives, hears it, and looks hurt rather than worried. "I was at the water's edge flying my kite," he says. "Dex has had it in for me since I started selling string. Ask him how much he's made today."
+
+"Thirty-one dollars, and I wrote down every one!" Dex shouts.
+
+"So he says," says Gil.
+
+Mrs. Okafor looks from one to the other. "One boy's word against another's," she says at last. "I can't accuse anyone on that. I'm sorry, both of you."
+
+It might have ended there. But at the snack shack ten minutes later Gil says something to Dex, low, and Dex shoves him, and Gil shoves back, and a cooler full of string spills across the sand. Mr. Lund has to pull them apart. Both of them are sent home early.
+
+That suits one of them. The supply tent closes at three, and whatever was in it leaves the beach in Gil's dad's truck.
+
+Dex goes home on foot, dragging his cooler through the sand. Half his spools went under the snack shack in the fight, and string is trailing from the lid behind him, white and tangled, a long line of it. He doesn't stop to wind it up.
+
+:: A Kite with Sand on It [agent] {"position":"0,0"}
+"Sure," you say. "Show me."
+
+Gil ducks into the supply tent and comes back with a blue diamond kite. Its spars are scuffed. There is sand in the folds of the sail and the string is wound unevenly, the way it is when you reel in fast in a wind.
+
+"See?" he says. "Flew it all day."
+
+You turn the kite over and over. It has been flown, that's certain. But by Gil, at one o'clock, at the water's edge? There's no way to tell. A kite doesn't remember where it was.
+
+Later you will find out that the blue diamond belongs to a kid named Marco, who lent it to Gil at two o'clock "to fix a spar." By then it won't matter.
+
+You spend the next hour trying to find someone else who saw Gil at the water. Nobody did; nobody didn't. Everyone was watching their own kite in the gust. At four o'clock the festival closes, the supply tent comes down, and Gil carries his boxes out to his dad's truck himself, all of them, refusing all help.
+
+When the beach is empty you walk down to the water's edge, where Gil said he stood. Somebody's lost kite is still flying there, snagged on a fence post at the top of the beach, its string stretched tight. It isn't out over the waves. It's straining the other way, back over the sand toward the dunes, the way every kite has strained all day.
+
+You stand there a long time, looking at it.
+
+:: Over the Waves [agent] {"position":"0,0"}
+"Look up, Gil," you say. "Which way are the kites flying?"
+
+He glances up, puzzled. "Toward the dunes. So?"
+
+"So the wind's coming in off the sea. It has all day. A kite flies downwind, so every kite on this beach is over the sand. You can't fly a kite out over the waves when the wind is blowing in from them. It would come straight back at you and land on your head."
+
+Gil's smile stays where it is, but the rest of his face goes still.
+
+"You weren't at the water's edge with a kite way out over the waves," you say. "Nobody was. You made it up, because you needed to be somewhere other than where Dex saw you: coming out the back of the judges' tent at one-oh-two with your vest stuffed full."
+
+"You don't know what you're talking about," Gil says. "You're eleven."
+
+"You taught me which way a kite flies," you say. "In your garage. You said it's the first thing."
+
+That is the moment it goes out of him. He sits down on the edge of the counter, all at once, like a kite when the wind drops.
+
+Dex has come over, and Mrs. Okafor behind him, drawn by the look on Dex's face across the sand. You tell her all of it: the gust, the alibi, the wind, the sighting. Gil doesn't argue with any of it. When you're done he says, to nobody in particular, "Ocean Bend's seventy-five dollars. Plus the bus."
+
+Dex is the one who understands first. "The championship," he says. "He's been talking about it since March."
+
+"Gil," Mrs. Okafor says, quietly, "where is it?"
+
+"Tail box," Gil says. "Under the counter. Rolled up in the spares."
+
+She walks him to the supply tent, and when she comes out again her cardigan pocket is bulging and her face is tired, and Gil is walking behind her with his vest off, folded over his arm.
+
+Dex doesn't say "told you." He sits down on his cooler, takes out a spool of string, and holds it out to you.
+
+"For the delta," he says. "No charge. You're the only one who asked."
+
+:: One of Three Vests [agent] {"position":"0,0"}
+A yellow vest came in the back. Gil wears a yellow vest. Gil is a kid, and kids steal cash boxes more than grown-ups do. That's what you tell yourself, walking over, and you try not to think about how much you don't want it to be him.
+
+You find him at the supply tent and tell him you know he took it.
+
+Gil's eyebrows go up. "Me? Why me?"
+
+"Mrs. Okafor saw a yellow vest come in the back flap."
+
+"There are three yellow vests," Gil says. "Did she see my face?"
+
+She didn't. You know she didn't. Gil knows it too, now, because you've just told him everything you have.
+
+"I was at the water," he says, loud enough for his customers to hear. "Flying my kite. Ask anyone." And then, quieter, just to you: "Wow. Thanks a lot."
+
+Mrs. Okafor arrives, hears both of you out, and says the only thing she can: a vest is not a face, and she won't accuse anyone without proof. She asks you to leave Gil alone.
+
+You do. And now Gil knows someone is watching. At three o'clock, an hour before closing, he packs the supply tent's boxes into his dad's truck "to beat the traffic." The truck drives away up the dune road. Whatever was in those boxes goes with it.
+
+Gil is in the passenger seat with the window down. As the truck goes by he lifts one hand off the door, the way he used to wave from his garage when you rode past on your bike. You can't tell if he means it.
+
+:: Three Yellow Vests [agent] {"position":"0,0"}
+Three vests. One of them came through the back flap. You take them one at a time.
+
+Mr. Lund is in the parking lot behind the dunes, waving cars into rows with an orange flag. "One o'clock? Right here," he says. "Ask Rosa." Rosa, the lot attendant, looks up from her cash apron. "He's been standing next to me since noon. Hasn't moved. I'd have noticed; he's been talking about his tomatoes for two hours."
+
+Ms. Barra is at the loudspeaker pole with a microphone and a list of events. "At one I was right here, yelling 'Hold your kites!'" she says. "The whole beach heard me. I didn't leave this pole until the junior heats at half past." Everyone you ask remembers her voice in the gust. Nobody can be in the judges' tent and at the loudspeaker at the same time.
+
+That leaves Gil. By the time you've walked back over the dunes it's two o'clock, and you find him coming out of the supply tent.
+
+"At one?" he says. "Down at the water's edge, flying my kite. Had it way out over the waves. Best flight of the day." He grins. "Why, does somebody think I did it?"
+
+He jogs off before you can answer, and you stand there with three vests in your head and only one of them left.
+[[Bring Mrs. Okafor to Gil and lay it all out->The Only Vest Left]]
+[[Look behind the supply-tent counter before you say anything->Behind Gil's Counter]]
+
+:: The Only Vest Left [agent] {"position":"0,0"}
+You bring Mrs. Okafor to the supply tent and ask Gil to step out from behind the counter.
+
+"A volunteer in a yellow vest came in the back flap after the gust and pegged it down," you say. "There are three vests."
+
+"Sure," Gil says. "And two of them are grown-ups. Did you ask them?"
+
+"Mr. Lund was in the parking lot. Rosa stood next to him the whole time; she had to listen to him talk about tomatoes. Ms. Barra was on the loudspeaker. The whole beach heard her."
+
+Gil folds his arms. "So? I told you. I was at the water, flying my kite way out over the waves."
+
+"That's the part that gives you away." You point up. Every kite on Gull Point is leaning over the dunes. "The wind's been coming in off the sea all day. A kite flies downwind. You couldn't fly one out over the waves today if you tried. It would blow straight back onto the beach."
+
+"Maybe the wind changed for a second. In the gust."
+
+"The gust came off the sea too," Mrs. Okafor says. She's looking up at the kites, not at Gil. "It knocked three kites into the dunes. I watched them go." She has been watching kites all day, and she doesn't need the wind explained twice.
+
+"Gil," she says. "The box."
+
+Gil's shoulders drop. He kneels, pulls a cardboard box of spare kite tails out from under the counter, and starts unrolling them. Out come the bills, in their green bands, one fold at a time, until there are eighty-four dollars on the counter.
+
+Taped to the front of the counter, right at Mrs. Okafor's knee, is a flyer for the state kite championship at Ocean Bend. Entry seventy-five dollars. The date has been circled so many times the pen has gone through the paper.
+
+Mrs. Okafor sees it. You watch her read it, and add it up, the way she must have added up a thousand homework answers.
+
+"Oh, Gil," she says. "You could have asked."
+
+"Asked who?" Gil says, and nobody has an answer for that.
+
+:: Behind Gil's Counter [agent] {"position":"0,0"}
+Before you say anything to anyone, you want something you can hold in your hand.
+
+The supply tent is Gil's. He runs it alone; nobody else ever stands behind that counter. When he jogs off on an errand, you walk around the back.
+
+There's a flyer taped to the inside of the counter, where only the person behind it would see it: STATE KITE CHAMPIONSHIP, OCEAN BEND, AUGUST 14. ENTRY $75. The date is circled over and over.
+
+Under the counter there is a cardboard box crammed with spare kite tails, red and yellow and blue ribbon. You pick one up. It's heavier than ribbon. You unroll it, and a fold of bills slides out, held by a green rubber band. The judges' green bands. You unroll three more tails. More bills, more green bands.
+
+You're still kneeling there when a shadow falls across the box.
+
+"Hey," Gil says. He's back, breathing hard, and he isn't smiling now. "What are you doing in my stuff?"
+
+Then he sees what's in your hands, and for a second his face shows everything. Then it closes up again, and he puts on a worried look like a coat.
+
+"Whoa," he says. "Is that the money? In my tent? Somebody put that there. I've been out all afternoon. Anybody could walk around back." He glances toward the judges' tent. "We should tell Mrs. Okafor. I'll come with you. I can explain."
+[[Carry the tails to Mrs. Okafor yourself and do the explaining->Green Bands]]
+[[Let Gil come along and explain it first->Gil's Explanation]]
+
+:: Green Bands [agent] {"position":"0,0"}
+"I'll do the explaining," you say, and you carry the tails, money and all, to the judges' tent. Gil follows, talking the whole way.
+
+Mrs. Okafor counts the bills on the table. Eighty-four dollars, in the judges' own green bands.
+
+"Somebody planted it," Gil says. "Anybody could get behind my counter."
+
+"Anybody could," you agree. "But whoever took the box came in at the back flap of this tent right after the gust, in a yellow vest, and pegged the flap down with a mallet."
+
+Mrs. Okafor looks up. "I told you that."
+
+"You did. And there are three vests. Mr. Lund was in the parking lot with Rosa next to him the whole time. Ms. Barra was on the loudspeaker; the whole beach heard her."
+
+"So it was a grown-up who snuck off for one minute," Gil says. "Or somebody borrowed a vest. You can't..."
+
+"Which mallet did they use?" you ask Mrs. Okafor.
+
+She stops. You can see her remembering it: the gust, the canvas cracking, her own voice calling thank you over her shoulder, and the mallet going, quick as anything.
+
+"The supply tent mallet," she says slowly. "The one with the blue tape on the handle. I said thank you to whoever it was." She turns and looks at Gil. "I said thank you, Gil."
+
+Gil opens his mouth to explain again. Nothing comes out. After a while he sits down on the judges' bench and puts his face in his hands.
+
+Nobody asks him why. Maybe nobody wants to hear it. But you saw the flyer taped inside his counter, with its date circled over and over, and you think you already know.
+
+Mrs. Okafor puts the money in her own pocket this time, and keeps her hand on it for the rest of the afternoon. When the festival closes, you take your red delta down from where you hung it on the snack shack fence, and for the first time all summer you don't feel like flying it.
+
+:: Gil's Explanation [agent] {"position":"0,0"}
+"All right," you say. "You explain."
+
+It's a mistake, and you know it the moment Gil starts talking.
+
+He gets to Mrs. Okafor first, a step ahead of you, holding the tails out in both hands. "Mrs. Okafor! We found it! It was in my tail box. Somebody must have stuffed it in there during the gust, while I was out. I can't believe it. I'm so glad it's back."
+
+Mrs. Okafor counts it. All eighty-four dollars. Her face fills with relief.
+
+"Gil, that's wonderful," she says. "Thank goodness you two found it."
+
+You try to say the rest: the vests, the alibis, the back flap. But now the story is that Gil found the money, and you are the kid who was digging around in his tent without asking. Every time you start, Gil says "We already found it, though!" and laughs, and the grown-ups laugh with him.
+
+At the closing ceremony Mrs. Okafor thanks Gil over the loudspeaker for his honesty. He gets a festival T-shirt and a round of applause.
+
+He catches your eye from the stage and winks. Everyone is clapping. After a moment, so do you, because the whole beach is watching to see if you will.
+
+:: Gil Changes His Story [agent] {"position":"0,0"}
+You run back up the sand to the supply tent, where Gil is selling a patch kit.
+
+"You weren't at the water's edge with your kite out over the waves," you say. "The wind's coming in off the sea. Nobody could fly a kite out over the water today."
+
+Gil hands over the patch kit, takes the dollar, and only then turns to you. He doesn't look worried. He looks patient, the way he looked in his garage last summer when you threaded a spar in backwards.
+
+"I didn't say it was over the water," he says. "I said I was at the water's edge, flying. The kite was out over the beach, behind me. Waves, sand, whatever. I was looking back at it over my shoulder the whole time." He shrugs. "You must have heard me wrong."
+
+You didn't hear him wrong. But Pip was there and didn't listen, and Dex wasn't paying attention, and Gil said it once, cheerfully, in passing. Now he has said something different, just as cheerfully, and it is your memory against his.
+
+"Anything else?" Gil asks. A little girl is waiting behind you with a broken spar.
+
+You step aside. The clock on the snack shack says twenty past two. Down at the water's edge, Mr. Pike is a small dark shape beside his rods. He was there at one o'clock. He was there all afternoon.
+[[Drop the wind argument and search the beach for the money instead->Low Tide]]
+[[Go and ask Mr. Pike to tell Mrs. Okafor who was at the water at one->The Fisherman's Word]]
+
+:: What Mr. Pike Saw [agent] {"position":"0,0"}
+"If nobody was down here," you say, "what did you see at one?"
+
+Mr. Pike thinks about it, which with Mr. Pike takes a while. He reels in, checks the bait, casts again.
+
+"Gust came through at one. Knocked one of my rods over. I was setting it up again, facing up the beach, and I saw that tent of theirs flapping like a sheet on a line." He nods at the judges' tent. "Couple of minutes after, a boy came out the back of it, in one of those yellow vests. Carrying something gray, both arms. Went straight up over the first dune there. Came back down a minute later without it, and went into the little striped tent next door."
+
+"A boy? Not a grown-up?"
+
+"Skinny. Fast. A boy." Mr. Pike looks at his watch, an old steel one. "One-oh-three, about. I check the time when I bait up. Habit."
+
+The little striped tent next door is the supply tent. Above the first dune, the marram grass is bending in the wind.
+
+"You'd better be quick, whatever you're doing," Mr. Pike says. "Folks pack up early when the wind's like this."
+[[Go straight to the striped tent Mr. Pike saw him walk into->Into the Supply Tent]]
+[[Climb the first dune and find what he left there->Over the First Dune]]
+
+:: Your Own Kite [agent] {"position":"0,0"}
+A detective should test things, not take a fisherman's word for them. If you can fly a kite out over the water, Gil could have. If you can't, you'll have proof with your own hands.
+
+You borrow a kite from a kid by the snack shack, a big yellow delta, promise to bring it right back, and run down to the water's edge. You face the sea and let it go.
+
+The wind takes it at once and slams it backward over your head, up the beach. The string whips across a line of kites flying behind you. There is a sound like a guitar breaking. Three kites tangle with yours and come down together onto the flying field in a heap of string and sail, right in the middle of the junior heats.
+
+Ms. Barra stops the event over the loudspeaker. Three furious kids and one furious parent arrive at once. Mrs. Okafor arrives a minute later and hears what you were doing.
+
+"So now we know a kite won't fly out to sea today," she says. "Thank you. Off the field, please."
+
+You spend the rest of the afternoon untangling string with a kid who won't speak to you. The borrowed delta has a snapped spar and a hole you could put your fist through, and you promise its owner two weeks of your allowance.
+
+By four o'clock Gil has packed up the supply tent and gone. The wind is still coming in off the sea, exactly the way you said it was. You were right, and you have a torn kite and two weeks of allowance to show for it.
+
+:: Low Tide [agent] {"position":"0,0"}
+Arguing with Gil is like arguing with the tide. Forget what he said. Money is real; find the money and the rest will follow.
+
+The thief would have wanted to get rid of the box fast. Somewhere close. You start with the sand around the judges' tent, then the trash cans, then under the boardwalk by the snack shack, where you find four dollars in quarters that have nothing to do with anything and a dog that wants your sandwich.
+
+The tide goes out. You dig along the wrack line. You check the dumpster behind the parking lot and get told off by Mr. Lund. You look under every overturned boat on the north end of the beach.
+
+At four o'clock the festival closes. You are at the far end of the beach with sand to your elbows when the loudspeaker announces that the entry fees are still missing and asks anyone who knows anything to call the sheriff's office.
+
+Walking back, you pass the supply tent. Gil is taping up his last box. He sees your sandy arms and grins. "Find anything?"
+
+You found four dollars in quarters. You hand them in to Mrs. Okafor. She puts them in an envelope marked "lost and found," which is where the case ends up, too.
+
+:: The Fisherman's Word [agent] {"position":"0,0"}
+Gil can change what he said about the kite. He can't change where he was standing.
+
+Mr. Pike won't leave his lines, so you bring Mrs. Okafor down to Mr. Pike. Gil comes too; she insists.
+
+"Gil says he was right here at the water's edge at one o'clock, flying his kite," Mrs. Okafor says. "Was he?"
+
+Mr. Pike looks Gil up and down, slowly. "Nobody was down here at one but me," he says. "Nor at noon, nor since. I'd remember a boy in a yellow vest; I'd have told him to mind my lines." He spits into the surf. "And whatever he's told you about his kite, it wasn't over that water. Not in this wind."
+
+Gil starts to say something about having been a bit further up the beach. You get in first.
+
+"At one o'clock you said your kite was way out over the waves," you say. "At twenty past two it was behind you, over the beach. Now you weren't even at the water."
+
+Mrs. Okafor holds up one hand to stop Gil before he tries a fourth version. "I taught science for thirty years," she says. "When the answer keeps changing, it's because the question is right."
+
+Gil looks at Mr. Pike, and at the steady wind, and at the sea, which has nothing to say for him. For a while nobody says anything. A gull lands by the bait bucket and Mr. Pike shoos it off with his hat.
+
+"It's in my tail box," Gil says at last. "All of it. I didn't spend any."
+
+Mrs. Okafor nods, as if that is the answer to a different question. She takes him back up the beach. You stay, because Mr. Pike hasn't finished.
+
+"That's Frank Nash's boy," he says, watching them go. "Frank's at the boatyard. Was. They cut his hours in April." He reels in, looks at his bait, and casts again. "Doesn't make it right. Just makes it a shame."
+
+Mr. Pike catches a striped bass at a quarter past three, the biggest of his summer. He tells everyone at the bait shop that he solved the case. You let him.
+
+:: Into the Supply Tent [agent] {"position":"0,0"}
+The little striped tent is the supply tent. Spools of string, patch kits, spare spars, and a big cardboard box of kite tails. Gil Nash runs it, and he runs it alone; there's a sign on the counter in his handwriting: GIL'S SUPPLIES — ASK ME ANYTHING! Beside it is a flyer for the state kite championship at Ocean Bend, entry seventy-five dollars, with the date circled again and again.
+
+He's behind the counter now, yellow vest and all, doing good business. The wind breaks spars and snaps strings faster than people can fix them, and there's a line of five kids.
+
+You wait your turn and watch. He sells string from a carton on the left. He sells patches from a tin. When a girl asks for a long red tail, he reaches under the counter toward the big box of tails, stops, and pulls one instead from the rack of tails hanging up outside, the ones flapping in the wind.
+
+"Those under there are spoken for," he says when she points at the box. "Reserved for the parade."
+
+Spoken for. The box of tails is right there, a foot from his knee. The yellow vest Mr. Pike saw went into this tent at three minutes past one. The money has to be somewhere.
+
+Then the line moves, and it's your turn. Gil smiles at you, the same smile as always, and somehow that's the worst part. "Hey, detective. What'll it be?"
+[[Offer to buy the whole box of tails under the counter->Buying the Tails]]
+[[Tell him, in front of everyone in line, that you know what he did->A Scene at the Tent]]
+
+:: Over the First Dune [agent] {"position":"0,0"}
+You run up the beach, around behind the judges' tent, and up the first dune. The wind shoves at your back the whole way.
+
+On the far side, in a hollow out of the wind, the gray cash box is lying in the dune grass. The lid is open. It's empty.
+
+You try to pick it up with one hand and can't; the tin is too heavy. No gust carried this sixty yards uphill. Somebody did, with both arms, just as Mr. Pike said.
+
+In the hollow the sand is sheltered and the footprints are sharp. One set of sneakers, a little bigger than yours, with a tread of zigzag chevrons. They come over the crest from the judges' tent, stop by the box where someone knelt, and go back. On the windward slope the dents are softer, but you can follow them with your eye: down the dune, bending a little north, toward the little striped supply tent.
+
+Down by the tents, Ms. Barra is announcing the junior heats. The thief emptied this box at three minutes past one, not even an hour ago. Wherever the money went, it went that way.
+[[Carry the box down to Mrs. Okafor and tell her a yellow vest took it->The Box Alone]]
+[[Leave the box and follow the chevron prints down to the supply tent->Following the Chevrons]]
+
+:: Buying the Tails [agent] {"position":"0,0"}
+"I'll take the box of tails," you say, and point under the counter. "The whole thing. I've got my allowance."
+
+Gil's smile doesn't move, but his knee does: it nudges the box farther under the counter. "Those aren't for sale. Parade spares. Take some off the rack."
+
+"I want those ones."
+
+"I said they're not for sale." He says it too fast and too loud, and the kids in line behind you go quiet.
+
+Mrs. Okafor is walking past with her clipboard. She has been walking past every few minutes all afternoon, and this time she stops, because she has never heard Gil raise his voice before.
+
+"Problem?" she says.
+
+You tell her. A boy in a yellow vest carried something gray out the back of her tent at three minutes past one, over the first dune and back, and into this tent. Mr. Pike saw him, and Mr. Pike checks his watch every time he baits up. This is Gil's tent; nobody else works it. And Gil won't sell a box of kite tails to a customer with cash in hand.
+
+Mrs. Okafor looks at Gil for a long moment.
+
+"Gil," she says, "hand me the box."
+
+He does. She unrolls the first tail, and a fold of bills slides out, held by a green rubber band. She doesn't unroll the second. She doesn't need to.
+
+Gil doesn't argue. While Mrs. Okafor is sending the kids in line away, he leans over the counter toward you and says, so quietly that only you hear it, "I was going to fly at Ocean Bend." He nods at the flyer with the circled date. "I was going to win it. I'd have paid it all back."
+
+You don't know what to say to that, so you don't say anything. Gil looks at you as if he'd hoped you would.
+
+You never do get to buy the tails. At the closing ceremony Mrs. Okafor gives you one anyway, a long red one, and tells the whole beach why. Everyone claps. Gil isn't there to hear it; his dad came for him at three.
+
+That night you tie the red tail onto your delta, the one you built in Gil's garage. It flies better with it. You wish it didn't.
+
+:: A Scene at the Tent [agent] {"position":"0,0"}
+"I know what you did," you say, loud enough for the whole line to hear. "You took the cash box out of the judges' tent. Mr. Pike saw you."
+
+Every kid in line turns to stare. Gil's face goes red, and then he does the smartest thing he could do: he gets angry, loudly.
+
+"Old Pike? He can't see past his own bait bucket! I've been running my legs off for this festival all day for free, and this is what I get?" A couple of parents frown at you. A girl in line says, "Gil fixed my kite for nothing." Someone else says, "That's not fair."
+
+In the middle of all of it, Gil steps back from the counter, scoops the box of tails out from under it, and says to the nearest grown-up, "I'm taking a break. I can't do this." He walks off up the dune road with the box under his arm, and nobody stops him, because who stops a hurt volunteer carrying kite tails?
+
+By the time you bring Mrs. Okafor, he is gone. So is the box. Mr. Pike, asked again, will only say he saw "a boy in a vest" from a long way off, and after the scene at the tent nobody on the beach wants to hear any more about Gil.
+
+Walking home along the dune road, you pass a trash can by the bus stop. Sticking out of it is a cardboard box with a few red and yellow ribbons still caught in its flaps. It's empty. You knew it would be.
+
+:: The Box Alone [agent] {"position":"0,0"}
+You carry the box down, hugging it against your chest, and put it on the judges' table.
+
+"It was in the dunes," you tell Mrs. Okafor. "Mr. Pike saw someone in a yellow vest carry it up there right after the gust."
+
+Mrs. Okafor's face goes very still. Yellow vests are her volunteers. She trusted them with the festival.
+
+She doesn't ask which one. She blows her whistle, calls all three to the tent, and tells them, quietly and terribly, that one of them has betrayed the festival, and until she knows who, none of them is working for it. Mr. Lund looks as if he's been slapped. Ms. Barra hands over her microphone without a word and walks off the beach in tears. Gil looks shocked along with them, and says he can't believe it.
+
+The festival runs the last two hours without its loudspeaker, its parking, or its supply tent. Cars jam the dune road. Nobody can hear the events. The parade is cancelled.
+
+And Gil, sent home with the others, takes his boxes from the supply tent with him, since nobody's working it now.
+
+That evening you climb the first dune one more time, to look at the chevron prints again and see where they went. The wind has been at them all afternoon. The hollow is smooth as a bedsheet.
+
+:: Following the Chevrons [agent] {"position":"0,0"}
+You leave the box exactly where it is, so anyone can see it, and follow the chevron prints down the dune. On the beach they dissolve into a thousand others, but by then you can see where they were headed: the back of the little striped supply tent.
+
+The supply tent is Gil Nash's. He runs it alone. Right now he's out front selling string, and you go in around the back and look under the counter. There's a big box of spare kite tails. One tail is heavy. Inside it is a fold of bills, held with a green rubber band.
+
+You don't touch the rest. You go and get Mrs. Okafor, and on the way you get Mr. Pike to wave from the water's edge so she knows you mean him.
+
+You show her in order: the box in the dune grass, sixty yards uphill, too heavy for any gust. The single line of chevron prints from the tent's back flap to the box and back down toward the supply tent.
+
+"Lots of kids have those sneakers," Mrs. Okafor says.
+
+"Mr. Pike saw a boy in a yellow vest carry something gray up there at three minutes past one," you say, "and come back with nothing, and walk into the striped tent." You lift the flap behind the counter. "And this is the only tent Gil works."
+
+She looks at the green band. Then she looks at Gil, who has come around the side of the tent and stopped.
+
+"Gil," she says. "Would you lift your foot, please?"
+
+He doesn't want to. She asks again, and he does. Zigzag chevrons, packed with sand.
+
+"I was going to give it back," Gil says. He isn't looking at Mrs. Okafor. He's looking at you. "The state championship's at Ocean Bend in August. Seventy-five to enter. I was going to win it, and give it all back, and nobody would ever know."
+
+It is the worst thing he could have said, because you can tell he believes it.
+
+Mrs. Okafor sends him to sit in the judges' tent to wait for his dad. On his way past, Gil stops beside you. For a moment you think he's going to say something mean, or something sorry.
+
+"You read the sand," he says instead. "I never taught you that." Then he goes.

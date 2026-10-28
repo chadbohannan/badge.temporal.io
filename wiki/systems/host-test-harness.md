@@ -173,6 +173,6 @@ Not covered: the `machine`, `network`, `socket`, `espnow`, and `ssl` modules, wh
 
 ### Phase 3
 
-Checked on 2026-09-29. `host/run-tests.sh` runs eight scripts and two unit-test steps; `packit-screen` (menu, resume, move, rotate, a falling piece, then Exit back to the home grid) and `helgrind-screen` (intro pages, then walking east and south in the world) pass, and the `packit-core` and `helgrind-core` steps (`make test`, and `make check` for Helgrind) pass after the viewers were removed. Neither script plays a game through: game logic stays covered by the per-game tests.
+Since 2026-09-30, `host/run-tests.sh` also runs the SQLite VFS unit test (`host/sqlite`) and `--sqlite-check`, a harness option that opens a database on the real FAT volume through the badge's read-only VFS; see [TREEWALK](../components/treewalk.md). Checked on 2026-09-29. `host/run-tests.sh` runs eight scripts and two unit-test steps; `packit-screen` (menu, resume, move, rotate, a falling piece, then Exit back to the home grid) and `helgrind-screen` (intro pages, then walking east and south in the world) pass, and the `packit-core` and `helgrind-core` steps (`make test`, and `make check` for Helgrind) pass after the viewers were removed. Neither script plays a game through: game logic stays covered by the per-game tests.
 
 The world-data checker `check-world.py` and the string-width probe stay on the standalone Helgrind binary, because the harness cannot measure a font.

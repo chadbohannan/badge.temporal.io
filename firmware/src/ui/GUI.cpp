@@ -20,6 +20,7 @@
 #include "screens/HelgrindScreen.h"
 #include "screens/VectortankScreen.h"
 #include "screens/PackitScreen.h"
+#include "screens/TreewalkScreen.h"
 #include "screens/InputTestScreen.h"
 #include "screens/LEDScreen.h"
 #include "screens/MapScreens.h"
@@ -274,6 +275,9 @@ static const GridMenuItem kCuratedMenuItems[] = {
     {"PACKIT",      "3D block-packing game: pack trominoes into a shaft",
      AppIcons::games,     kScreenPackit,      nullptr, nullptr, nullptr},
 
+    {"TREEWALK",    "Choose-your-own-adventure stories",
+     AppIcons::games,     kScreenTreewalk,    nullptr, nullptr, nullptr},
+
     // {"APPS",        "Run MicroPython apps stored on the badge",
     //  AppIcons::apps,      kScreenApps,        nullptr, nullptr, nullptr},
      {"COMMUNITY APPS",
@@ -469,6 +473,7 @@ static AssetDetailScreen sAssetDetail;
 static HelgrindScreen sHelgrind;
 static VectortankScreen sVectortank;
 static PackitScreen sPackit;
+static TreewalkScreen sTreewalk;
 
 // Default sort key offsets:
 //   Curated items: 10 * array index, leaving room (1, 2, ..., 9) for
@@ -699,6 +704,7 @@ void GUIManager::begin(oled* display, Inputs* inputs) {
   registerScreen(&sHelgrind);
   registerScreen(&sVectortank);
   registerScreen(&sPackit);
+  registerScreen(&sTreewalk);
 
   // Populate the main-menu grid with curated items + AppRegistry-discovered
   // dynamic Python apps before the first render. Safe to call again later

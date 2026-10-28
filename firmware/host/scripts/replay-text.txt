@@ -3,11 +3,7 @@
 # scrolls it.
 # Run from firmware/.
 wait 1000
-stick 0 1 400
-wait 500
-stick 1 0 300
-wait 600
-tap B
+open matrix
 wait 1500
 stick 1 0 150     # carousel: Temporal -> Replay
 wait 600

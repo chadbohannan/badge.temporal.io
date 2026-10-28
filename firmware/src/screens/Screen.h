@@ -51,6 +51,7 @@ enum ScreenId : uint8_t {
   kScreenHelgrind,
   kScreenVectortank,
   kScreenPackit,
+  kScreenTreewalk,
 };
 
 enum class ScreenAccess : uint8_t {

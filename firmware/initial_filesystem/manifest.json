@@ -514,6 +514,14 @@
       "fnv1a32": "0xFF9F20D6",
       "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/matrixApps/led_runtime.py",
       "baked": true
+    },
+    {
+      "path": "/treewalk/treewalk.db",
+      "size": 70656,
+      "sha256": "6864355d7cd5f56d8c9086d3b4221f675e6147be8d666104a1186aa3df89fbdf",
+      "fnv1a32": "0x73D32E3A",
+      "url": "https://raw.githubusercontent.com/temporal-community/badge.temporal.io/main/firmware/initial_filesystem/treewalk/treewalk.db",
+      "baked": false
     }
   ]
 }

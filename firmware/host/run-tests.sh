@@ -64,4 +64,13 @@ unit() {
 }
 unit packit-core host/packit test
 unit helgrind-core host/helgrind test check
+unit sqlite-vfs host/sqlite test
+# The same VFS on the harness's real FAT volume, over the fixture the unit test built.
+if "$bin" --fs-dir host/sqlite/build/fixture:/db --sqlite-check /db/fixture.db --wall-timeout 300 >"$out/sqlite-fat.log" 2>&1; then
+  echo "PASS  sqlite-fat"
+else
+  echo "FAIL  sqlite-fat (exit $?)  log: $out/sqlite-fat.log"
+  tail -n 5 "$out/sqlite-fat.log" | sed 's/^/      /'
+  fail=1
+fi
 exit $fail

@@ -1,0 +1,61 @@
+:: StoryTitle
+The Lantern Keeper
+
+:: StoryData
+{
+  "ifid": "5B7F3C52-8E0D-4A4B-9C55-0F1D6F2A9E11",
+  "format": "Twee3",
+  "start": "Start"
+}
+
+:: Start
+Fog rolls over the cliffs. A dark lighthouse stands at the end of the path, its door ajar and a light in one window.
+
+[[Climb the spiral stairs->Stairs]]
+[[Check the cellar->Cellar]]
+[[Knock at the keeper's door->Keeper]]
+
+:: Stairs
+The stairs wind up into the dark. Halfway, there is a landing with a wooden bench, and above it a hatch to the lamp room.
+
+[[Open the hatch->Lamp]]
+[[Rest on the bench->Landing]]
+
+:: Cellar
+The cellar smells of oil and salt. On a shelf sits an old brass lantern, still warm. A stair leads back up.
+
+[[Take the lantern->Lantern]]
+[[Go back up->Stairs]]
+
+:: Keeper
+An old keeper opens the door before you knock. "You are late," he says, and holds out a steaming cup.
+
+[[Accept the tea->Tea]]
+
+:: Lamp
+The great lamp is cold. Its glass is clouded, and far out at sea a ship sounds its horn.
+
+[[Light the lamp->Beacon]]
+[[Leave it dark->Dark]]
+
+:: Landing
+The bench is warm from the day. Fog presses against the window, and you are very tired.
+
+[[Sleep->Sleep]]
+
+:: Lantern
+The lantern hums in your hand and casts a steady yellow glow. It would light the lamp in an instant.
+
+[[Carry it up to the lamp->Lamp]]
+
+:: Tea
+The tea tastes of smoke and honey. The keeper smiles, hands you his keys, and walks out into the fog. The lighthouse is yours now.
+
+:: Beacon
+The lamp catches. A beam sweeps the water and the ship turns away from the rocks. At dawn the crew rows in to thank you.
+
+:: Dark
+Without your light the ship finds the rocks. You watch the fog swallow the sound, and the lighthouse stays dark.
+
+:: Sleep
+You wake at noon. The fog is gone, the lamp is unlit, and the keeper never returns. Some stories are only a nap.

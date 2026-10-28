@@ -1,0 +1,111 @@
+# Opens TREEWALK on a fresh badge: book picker, reading with scroll, a choice, the X menu, continue, back (to the line left, and along
+# the path taken), an ending, books, exit, resume and back after resume, then choices whose labels wrap over several lines.
+# The story is initial_filesystem/treewalk/treewalk.db, loaded onto the FAT volume by the .args file.
+wait 1000
+open treewalk
+wait 800
+expect oled host/scripts/golden/treewalk-picker-oled.txt
+stick 0 1 250     # The Lantern Keeper, second in the picker
+wait 300
+tap B             # open it at its root
+wait 500
+expect oled host/scripts/golden/treewalk-root-oled.txt
+stick 0 1 1800    # scroll down to the last choice
+wait 500
+expect oled host/scripts/golden/treewalk-choices-oled.txt
+tap X             # at the root, Back is dimmed and the menu opens on Continue
+wait 500
+expect oled host/scripts/golden/treewalk-root-menu-oled.txt
+tap X             # close it
+wait 300
+tap A             # Climb the spiral stairs
+wait 500
+expect oled host/scripts/golden/treewalk-stairs-oled.txt
+tap X             # open the menu
+wait 500
+expect oled host/scripts/golden/treewalk-menu-oled.txt
+stick 0 1 250     # Continue -> Back
+wait 300
+tap B             # Back: the root, still scrolled to the last choice
+wait 500
+expect oled host/scripts/golden/treewalk-choices-oled.txt
+tap X
+wait 300
+tap B             # Continue: closes the menu and stays on the page
+wait 300
+expect oled host/scripts/golden/treewalk-continue-oled.txt
+tap B             # Check the cellar
+wait 500
+tap B             # Go back up: the stairs again, reached this time through the cellar
+wait 500
+tap X
+wait 300
+stick 0 1 250     # Continue -> Back
+wait 300
+tap B             # Back retraces the path: the cellar, not the stairs' parentID (the root)
+wait 500
+expect oled host/scripts/golden/treewalk-back-path-oled.txt
+tap X
+wait 300
+stick 0 1 250
+wait 300
+tap B             # Back again: the root
+wait 500
+tap Y             # third choice: Keeper (no scroll needed, choices are pressed by slot)
+wait 500
+tap A             # Accept the tea: an ending
+wait 500
+stick 0 1 1500    # scroll to the end marker
+wait 500
+expect oled host/scripts/golden/treewalk-ending-oled.txt
+tap X
+wait 300
+stick 0 1 250     # Continue -> Back
+wait 300
+stick 0 1 250     # -> Books
+wait 300
+tap B
+wait 500
+expect oled host/scripts/golden/treewalk-books-oled.txt
+tap X             # back to the ending, still scrolled to the end marker
+wait 500
+expect oled host/scripts/golden/treewalk-ending-oled.txt
+tap X
+wait 300
+stick 0 1 250
+wait 300
+stick 0 1 250
+wait 300
+stick 0 1 250     # Continue -> Back -> Books -> Exit
+wait 300
+tap B
+wait 1000
+expect oled host/scripts/golden/treewalk-exit-oled.txt
+open treewalk     # the saved node is the ending: reopening resumes there, not at the picker
+wait 800
+expect oled host/scripts/golden/treewalk-resume-oled.txt
+tap X
+wait 300
+stick 0 1 250     # Continue -> Back: no history after a resume, so it follows parentID
+wait 300
+tap B             # the keeper's door, at the top
+wait 500
+expect oled host/scripts/golden/treewalk-resume-back-oled.txt
+tap X
+wait 300
+stick 0 1 250
+wait 300
+stick 0 1 250     # Continue -> Back -> Books
+wait 300
+tap B
+wait 500
+stick 0 -1 250    # The Case of the Kite-Day Cash
+wait 300
+tap B
+wait 500
+stick 0 1 30000   # to the bottom: three-line labels, the first choice scrolled off the top
+wait 500
+expect oled host/scripts/golden/treewalk-wrapped-choices-oled.txt
+tap A             # the off-screen first choice still answers to A: The Dune Grass
+wait 500
+expect oled host/scripts/golden/treewalk-wrapped-a-oled.txt

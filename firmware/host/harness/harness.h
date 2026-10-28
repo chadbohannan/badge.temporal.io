@@ -27,6 +27,7 @@ struct Options {
   bool repl = false;            // feed stdin to the MicroPython REPL
   // Host directories copied onto the FAT volume after boot, as SRC or SRC:/DEST.
   std::vector<std::string> fsDirs;
+  std::string sqliteCheck;      // a database on the FAT volume to check through the SQLite VFS, then exit
   bool window = false;          // show the SDL window (live mode always does)
   std::string outDir = ".pio/host-out";  // where snap writes its files (git-ignored)
   std::string stateDir;         // persist fat.img and nvs.txt here when set
@@ -41,6 +42,10 @@ extern Options gOptions;
 // there, then rescan /apps. Each spec is SRC (copied to /) or SRC:/DEST. Called
 // once after setup(), when MicroPython has mounted the volume.
 bool populateFilesystem(const std::vector<std::string>& specs);
+
+// Opens `path` on the FAT volume through the badge SQLite VFS and checks the
+// make_fixture.py contents. Returns kExitOk or kExitAssertion.
+int sqliteCheck(const std::string& path);
 
 // ── Panels ────────────────────────────────────────────────────────────────
 constexpr int kOledW = 128;

@@ -32,6 +32,7 @@ scripted runs work.
 | `--out DIR` | Where `snap` writes files. Default `.pio/host-out`. |
 | `--state-dir DIR` | Keep the FAT image and settings between runs. |
 | `--fs-dir SRC[:/DEST]` | Copy a host directory onto the badge's filesystem after boot, then rebuild the menu. Repeatable. Files already there are kept. |
+| `--sqlite-check PATH` | After boot and `--fs-dir`, open the database at PATH on the FAT volume through the badge SQLite VFS, check it against the `host/sqlite/make_fixture.py` fixture, and exit (0, or 3 on a failed check). |
 | `--repl` | Feed stdin to the MicroPython REPL. Runs in real time. |
 | `--max-virtual-ms N` | Fail if the script runs longer than this. |
 | `--wall-timeout S` | Real-time watchdog. |
@@ -74,7 +75,7 @@ wait <ms>
 snap <prefix>         # <prefix>-oled.png / -matrix.png / -oled.txt / -matrix.txt
 dump oled|matrix      # text rendering to stdout
 expect oled|matrix <golden file>
-open <screen>         # push a screen directly: helgrind, vectortank, packit, matrix
+open <screen>         # push a screen directly: helgrind, vectortank, packit, treewalk, matrix
 log <text>            quit [code]
 ```
 
@@ -112,6 +113,7 @@ the goldens.
 | `replacements/` | Whole-class replacements for WiFi, OTA, IR, the Python HTTP API, and the empty port modules. |
 | `fixtures/` | Test apps for the scripts. |
 | `scripts/` | Test scripts and their goldens. |
+| `sqlite/` | SDL-free test for the read-only SQLite VFS over a POSIX backend (`make test`); it also builds the fixture database that `run-tests.sh` loads for `--sqlite-check`. |
 | `packit/`, `helgrind/` | SDL-free unit tests for the two game cores (`make test`). Helgrind also has `make check`. Play the games in the harness itself. |
 
 ## Limits
